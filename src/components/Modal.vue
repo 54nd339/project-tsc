@@ -40,9 +40,10 @@ export default {
 		const warnmsg = ref('')
 		const handleSubmit = async() => {
 			const pathName = this.selected
+			console.log(pathName)
 			const res = await login(email.value, password.value)
 			if (res) {
-				router.push({ path: `/${pathName}` })
+				router.push({ name: `/${pathName}` })
 			}
 			this.warnmsg = error.value
 		}
