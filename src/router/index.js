@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { auth } from '../db/config'
-import Welcome from '../views/Welcome.vue'
+import { auth } from '@/db/config'
+import Welcome from '@/views/Welcome.vue'
 
 const requireAuth = (to, from, next) => {
     let user = auth.currentUser

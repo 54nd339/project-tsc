@@ -1,30 +1,32 @@
 import { ref, watchEffect } from 'vue'
-import { db } from './config'
+import { db } from '@/db/config'
+import { collection, query, where, getDocs } from 'firebase/firestore'
 
-const getCollection = (collection, query) => {
-    let error = ref(null)
-    let documents = ref(null)
+const getCollection = (collectionId, queries) => {
+    const error = ref(null)
+    const documents = ref([])
+    let collectionRef = collection(db, collectionId)
 
-    let collectionRef = db.collection(collection).orderBy('createdAt')
-
-    if (query) {
-        collectionRef = collectionRef.where(...query)
+    if (queries) {
+        collectionRef = query(collectionRef, where(...queries))
     }
 
-    let unsubscribe = collectionRef.onSnapshot(snap => {
-        let results = []
-        snap.docs.forEach(doc => {
-            results.push({ ...doc.data(), id: doc.id })
+    let unsub = async () => {
+        return await getDocs(collectionRef).then((querySnapshot) => {
+            let results = []
+            querySnapshot.forEach((doc) => {
+                results.push({ ...doc.data(), id: doc.uid })
+            })
+            documents.value = results
+            return results
+        }).catch((err) => {
+            console.log(err.message)
+            error.value = 'Could not fetch data'
         })
-        documents.value = results
-        error.value = null
-    }, err => {
-        console.log(err.message)
-        error.value = 'Could not fetch data'
-    })
+    }
 
     watchEffect((onInvalidate) => {
-        onInvalidate(() => unsubscribe())
+        onInvalidate(() => unsub())
     })
 
     return { error, documents }

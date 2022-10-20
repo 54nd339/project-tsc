@@ -6,17 +6,15 @@
 </template>
 
 <script>
-  import Navbar from './components/Navbar.vue'
-  import Modal from './components/Modal.vue'
-  import Footer from './components/Footer.vue'
+	import Navbar from './components/Navbar.vue'
+	import Modal from './components/Modal.vue'
+	import Footer from './components/Footer.vue'
 
-  export default {
-    components: {
-			Navbar,
-			Modal,
-			Footer
+	export default {
+		components: {
+				Navbar, Modal, Footer
+			}
 		}
-	}
 </script>
 
 <style>

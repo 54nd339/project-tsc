@@ -1,41 +1,36 @@
 import { ref } from 'vue'
-import { db } from './config'
+import { db } from '@/db/config'
+import { doc, deleteDoc, updateDoc } from 'firebase/firestore'
 
-const useDocument = async (collection, id) => {
+const useDocument = async (collectionId, docId) => {
     let error = ref(null)
     let isPending = ref(false)
-    let docRef = db.collection(collection).doc(id)
+    let docRef = doc(db, collectionId, docId)
 
-    const deleteDoc = async () => {
-        error.value = null
+    const delDoc = async () => {
         isPending.value = true
 
-        try {
-            const res = await docRef.delete()
+        return await deleteDoc(docRef).then(() => {
             isPending.value = false
-            return res
-        } catch (err) {
+        }).catch((err) => {
             console.log(err.message)
             error.value = 'Could not delete document'
-             a
             isPending.value = false
-        }
+        })
     }
     const updateDoc = async (updates) => {
-        error.value = null
         isPending.value = true
-
-        try {
-            const res = await docRef.update(updates)
+        
+        return await updateDoc(docRef, updates).then(() => {
             isPending.value = false
-            return res
-        } catch (err) {
+        }
+        ).catch((err) => {
             console.log(err.message)
             error.value = 'Could not update document'
             isPending.value = false
-        }
+        })
     }
-    return { error, deleteDoc, updateDoc, isPending }
+    return { error, delDoc, updateDoc, isPending }
 }
 
 export default useDocument
