@@ -1,31 +1,25 @@
 import { ref } from 'vue'
-import { auth } from './config'
-
-const error = ref(null)
-const isPending = ref(false)
-
-const signup = async (email, password, displayName) => {
-    error.value = null
-    isPending.value = true
-
-    try {
-        const res = await auth.createUserWithEmailAndPassword(email, password)
-        if (!res) {
-            throw new Error('Could not add User')
-        }
-        await res.user.updateProfile({ displayName })
-        error.value = null
-        isPending.value = false
-        return res
-    } catch (err) {
-        console.log(err.message)
-        error.value = err.message
-        isPending.value = false
-    }
-}
+import { auth } from '@/db/config'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 
 const useSignup = () => {
+    const error = ref(null)
+    const isPending = ref(false)
+
+    const signup = async (email, password, displayName) => {
+        isPending.value = true
+
+        return await createUserWithEmailAndPassword(auth, email, password)
+        .then(async (userCredential) => {
+            await updateProfile(userCredential.user, { displayName })
+            isPending.value = false
+            return userCredential.user
+        }).catch((err) => {
+            console.log(err.message)
+            error.value = 'Could not create account'
+            isPending.value = false
+        })
+    }
     return { error, signup, isPending }
 }
-
 export default useSignup

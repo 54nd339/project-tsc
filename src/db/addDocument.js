@@ -1,23 +1,23 @@
 import { ref } from 'vue'
-import { db } from './config'
+import { db } from '@/db/config'
+import { doc, setDoc } from 'firebase/firestore'
 
-const addCollection = async (collection) => {
+const addCollection = async (collectionId) => {
     const error = ref(null)
     const isPending = ref(false)
     
-    const addDoc = async (doc) => {
-        error.value = null
+    const addDoc = async (docId, data) => {
         isPending.value = true
 
-        try {
-            const res = await db.collection(collection).add(doc)
+        const docRef = doc(db, collectionId, docId)
+        return await setDoc(docRef, data).then(() => {
+            console.log('Document written with ID: ', docRef.uid)
             isPending.value = false
-            return res
-        } catch (err) {
+        }).catch((err) => {
             console.log(err.message)
             error.value = 'Could not add document'
             isPending.value = false
-        }
+        })
     }
     return { error, addDoc, isPending }
 }

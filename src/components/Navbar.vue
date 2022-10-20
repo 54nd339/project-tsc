@@ -10,38 +10,38 @@
 				<span> </span><span> </span><span> </span>
 			</button>
 			<div class="collapse navbar-collapse justify-content-center" id="navbarCollapse">
-				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-if="isLoggedIn()">
+				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-if="userType === 'Guest'">
 					<button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
 					<button class="nav-link" id="pills-course-tab" data-bs-toggle="pill" data-bs-target="#courses" type="button" role="tab" aria-controls="courses" aria-selected="false">Courses</button>
 					<button class="nav-link" id="pills-success-tab" data-bs-toggle="pill" data-bs-target="#success" type="button" role="tab" aria-controls="success" aria-selected="false">Our Success</button>
 					<button class="nav-link" id="pills-about-tab" data-bs-toggle="pill" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="false">About Us</button>
 					<button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact Us</button> 
 				</div>
-				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-else-if="userType() === 'Student'">
+				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-else-if="userType === 'Student'">
 					<button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
 					<button class="nav-link" id="pills-course-tab" data-bs-toggle="pill" data-bs-target="#download" type="button" role="tab" aria-controls="courses" aria-selected="false">Download</button>
 					<button class="nav-link" id="pills-success-tab" data-bs-toggle="pill" data-bs-target="#exam" type="button" role="tab" aria-controls="success" aria-selected="false">Exam</button>
 					<button class="nav-link" id="pills-about-tab" data-bs-toggle="pill" data-bs-target="#feedback" type="button" role="tab" aria-controls="about" aria-selected="false">Feedback</button>      
 				</div>
-				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-else-if="userType() === 'Teacher'">
+				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-else-if="userType === 'Teacher'">
 					<button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
 					<button class="nav-link" id="pills-course-tab" data-bs-toggle="pill" data-bs-target="#download" type="button" role="tab" aria-controls="courses" aria-selected="false">Download</button>
 					<button class="nav-link" id="pills-success-tab" data-bs-toggle="pill" data-bs-target="#exam" type="button" role="tab" aria-controls="success" aria-selected="false">Exam</button>   
 				</div>
-				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-else-if="userType() === 'Admin'">
+				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-else-if="userType === 'Admin'">
 					<button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
 					<button class="nav-link" id="pills-course-tab" data-bs-toggle="pill" data-bs-target="#students" type="button" role="tab" aria-controls="courses" aria-selected="false">Students</button>
 					<button class="nav-link" id="pills-success-tab" data-bs-toggle="pill" data-bs-target="#teachers" type="button" role="tab" aria-controls="success" aria-selected="false">Teachers</button>
 					<button class="nav-link" id="pills-success-tab" data-bs-toggle="pill" data-bs-target="#courses" type="button" role="tab" aria-controls="success" aria-selected="false">Courses</button>
 					<button class="nav-link" id="pills-about-tab" data-bs-toggle="pill" data-bs-target="#site" type="button" role="tab" aria-controls="about" aria-selected="false">Site</button>      
 				</div>
-				<div class="col-md-3 text-end" v-if="isLoggedIn()">
+				<div class="col-md-3 text-end" v-if="userType === 'Guest'">
 					<!-- Button trigger modal -->
 					<button type="button" class="btn btn-outline-success mx-md-2" v-b-modal.loginForm>Login</button>
 					<button type="button" class="btn btn-success">Register</button>
 				</div>
 				<div class="col-md-3 text-end" v-else>
-					<h3 class="text-success">Welcome User!</h3>
+					<h3 class="text-success">Welcome {{ userName }}!</h3>
 				</div> 
 			</div>
 		</div>
@@ -50,25 +50,35 @@
 </template>
 
 <script>
+import { db } from '@/db/config'
+import { doc, getDoc } from 'firebase/firestore'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 export default {
-	props:[
-		'name'
-	],
-	methods: {
-		isLoggedIn(){
-			// console.log(this.$route.path)
-			return this.$route.path == '/'
-		},
-		userType() {
-			const name = this.$route.name
-			// console.log(name)
-			if (name == 'Student')
-				return 'Student'
-			if (name == 'Teacher')
-				return 'Teacher'
-			if (name == 'Admin')
-				return 'Admin'
+	props:[ 'name' ],
+	setup() {
+		const route = useRoute()
+		const userName = ref('User')
+		const userType = ref('Guest')
+
+		const getName = () => {
+			userType.value = route.name ? route.name : 'Guest'
+			let user = userType.value
+			console.log(user)
+			if (user !== 'Guest') {
+				const docRef = doc(db, user, route.params.id)
+				getDoc(docRef).then((doc) => {
+					if (doc.exists()) {
+						userName.value = doc.data().name
+					} else {
+						console.log('No such document!')
+					}
+				}).catch((error) => {
+					console.log('Error getting document:', error)
+				})
+			}
 		}
+		return { userName, userType, getName }
 	}
 }
 </script>

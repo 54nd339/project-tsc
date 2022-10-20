@@ -1,14 +1,15 @@
-import { watchEffect, ref } from 'vue'
-import { db } from './config'
+import { ref, watchEffect } from 'vue'
+import { db } from '@/db/config'
+import { doc, onSnapshot } from 'firebase/firestore'
 
-const getDocument = (collection, id) => {
-    let error = ref(null)
-    let document = ref(null)
-    let documentRef = db.collection(collection).doc(id)
+const getDocument = (collectionId, docId) => {
+    const error = ref(null)
+    const document = ref(null)
+    let docRef = doc(db, collectionId, docId)
 
-    let unsubscribe = documentRef.onSnapshot(doc => {
+    let unsubscribe = onSnapshot(docRef, doc => {
         if (doc.data()) {
-            document.value = { ...doc.data(), id: doc.id }
+            document.value = { ...doc.data(), id: doc.uid }
             error.value = null
         } else {
             error.value = 'That document does not exist'
