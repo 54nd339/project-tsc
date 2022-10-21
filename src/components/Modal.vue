@@ -17,63 +17,86 @@
 				<div class="mt-3" v-if="selected">Login as <strong>{{ selected }}</strong></div>
 				<div id="warn" class="mt-3 text-danger" v-if="warnmsg"><strong>{{ warnmsg }}</strong></div>
 			</div>
-			<b-button id="loginpg" variant="success d-flex mx-auto mt-2" size="lg" type="button" @click="handleSubmit()"
-				v-model="loginpg" :disabled=isPending>{{ LoginText }}</b-button>
+			<b-button id="loginpg" variant="success d-flex mx-auto mt-2" size="lg" type="button" @click="handleLogin()"
+				v-model="loginpg" :disabled=isLoginPending>{{ LoginText }}</b-button>
+		</form>
+	</b-modal>
+	<b-modal id="logoutConfirm" title="Logout" aria-labelledby="logoutConfirm" aria-hidden="true" :hide-footer="true">
+		<form ref="form">
+			<p class="justify-content-center align-items-center" id="logoutText">Confirm Logout?</p>
+			<b-button id="logoutpg" variant="success d-flex mx-auto mt-2" size="lg" type="button" @click="handleLogout()"
+				v-model="logoutpg" :disabled=isLogoutPending>{{ LogoutText }}</b-button>
 		</form>
 	</b-modal>
 </template>
 
-<script>
+<script setup>
 import useLogin from '../db/login'
+import useLogout from '../db/logout'
 import { db } from '../db/config'
 import { doc, getDoc } from 'firebase/firestore'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-export default {
-	setup() {
-		const { error, login, isPending } = useLogin()
-		const router = useRouter()
-		const email = ref('')
-		const password = ref('')
-		const selected = ref('')
-		const warnmsg = ref('')
-		const loginpg = ref(false)
-		const LoginText = ref('Login')
-		const options = [
-				{ item: 'student', name: 'Student' },
-				{ item: 'teacher', name: 'Teacher' },
-				{ item: 'admin', name: 'Admin' },
-			]
-		const handleSubmit = async() => {
-			const pathName = selected.value
-			LoginText.value = 'Logging in...'
-			loginpg.value = true
-			console.log(pathName)
-			const res = await login(email.value, password.value)
-			.then(async(res) => {
-				console.log('Login Success')
-				LoginText.value = 'Login'
-				loginpg.value = false
-				document.querySelector('.btn-close').click()
-				if(res) {
-					const docRef = doc(db, pathName, res.uid)
-					const docSnap = await getDoc(docRef)
-					if (docSnap.exists()) {
-						console.log('Document data:', docSnap.data())
-						router.push({ path: `/${pathName}/${res.uid}` })
-					} else {
-						// doc.data() will be undefined in this case
-						warnmsg.value = 'No such document!'
-					}
-				}
-				else {
-					warnmsg.value = error.value
+const router = useRouter()
+const { loginErr, login, isLoginPending } = useLogin()
+const { logoutErr, logout, isLogoutPending } = useLogout()
+
+const email = ref('')
+const password = ref('')
+const selected = ref('')
+const warnmsg = ref('')
+const options = [
+		{ item: 'student', name: 'Student' },
+		{ item: 'teacher', name: 'Teacher' },
+		{ item: 'admin', name: 'Admin' },
+	]
+const loginpg = ref(false)
+const LoginText = ref('Login')
+const handleLogin = async() => {
+	const pathName = selected.value
+	LoginText.value = 'Logging in...'
+	loginpg.value = true
+
+	await login(email.value, password.value).then(async(res) => {
+		LoginText.value = 'Login'
+		loginpg.value = false
+		if(res) {
+			// console.log('Login Success')
+			const docRef = doc(db, pathName, res.uid)
+			// console.log(db, pathName, res.uid)
+			await getDoc(docRef).then((doc) => {
+				if(doc.exists()) {
+					document.querySelector('.btn-close').click()
+					// console.log('Document data:', doc.data())
+					router.push({ path: `/${pathName}/${res.uid}` })
+				} else {
+					// console.log('No such user as ', pathName, '!')
+					warnmsg.value = 'No such user as ' + pathName + '!'
 				}
 			})
 		}
-		return { email, password, handleSubmit, selected, options, warnmsg, isPending, loginpg, LoginText }
-	}
+		else {
+			warnmsg.value = loginErr
+		}
+	})
+}
+
+const logoutpg = ref(false)
+const LogoutText = ref('Logout')
+const handleLogout = async() => {
+	LogoutText.value = 'Logging out...'
+	logoutpg.value = true
+
+	await logout().then(async() => {
+		LogoutText.value = 'Logout'
+		logoutpg.value = false
+		document.querySelectorAll('.btn-close')[1].click()
+		router.push({ path: `/` })
+	}).catch((err) => {
+		console.log(err)
+		warnmsg.value = logoutErr
+	})
 }
 </script>
 

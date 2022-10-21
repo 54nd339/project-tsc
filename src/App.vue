@@ -1,20 +1,22 @@
 <template>
-  <Navbar name = "Talent Sprint Classes"/>
+	<Suspense>
+		<Navbar :key="$route.fullPath"/>
+	</Suspense>
 	<Modal />
 	<router-view />
 	<Footer />
 </template>
 
 <script>
-	import Navbar from './components/Navbar.vue'
-	import Modal from './components/Modal.vue'
-	import Footer from './components/Footer.vue'
+	import Navbar from '@/components/Navbar.vue'
+	import Modal from '@/components/Modal.vue'
+	import Footer from '@/components/Footer.vue'
 
 	export default {
 		components: {
-				Navbar, Modal, Footer
-			}
+			Navbar, Modal, Footer
 		}
+	}
 </script>
 
 <style>
