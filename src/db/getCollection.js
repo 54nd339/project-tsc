@@ -4,20 +4,18 @@ import { collection, query, where, getDocs } from 'firebase/firestore'
 
 const getCollection = (collectionId, queries) => {
     const error = ref(null)
-    const documents = ref([])
     let collectionRef = collection(db, collectionId)
 
     if (queries) {
         collectionRef = query(collectionRef, where(...queries))
     }
 
-    let unsub = async () => {
+    const getDocuments = async () => {
         return await getDocs(collectionRef).then((querySnapshot) => {
             let results = []
             querySnapshot.forEach((doc) => {
-                results.push({ ...doc.data(), id: doc.uid })
+                results.push({ ...doc.data(), id: doc.id })
             })
-            documents.value = results
             return results
         }).catch((err) => {
             console.log(err.message)
@@ -26,10 +24,10 @@ const getCollection = (collectionId, queries) => {
     }
 
     watchEffect((onInvalidate) => {
-        onInvalidate(() => unsub())
+        onInvalidate(() => getDocuments())
     })
 
-    return { error, documents }
+    return { getDocuments, error }
 }
 
 export default getCollection

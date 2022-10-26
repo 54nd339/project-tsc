@@ -37,7 +37,10 @@
 
 <style>
 #home .col-lg-4, #toppers .col-lg-12 {
-	margin-bottom: 1.5rem;
 	text-align: center;
+}
+.body {
+	margin-top: 5vh;
+  	margin-bottom: 5vh;
 }
 </style>

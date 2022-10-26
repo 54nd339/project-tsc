@@ -11,7 +11,7 @@ const addCollection = async (collectionId) => {
 
         const docRef = doc(db, collectionId, docId)
         return await setDoc(docRef, data).then(() => {
-            console.log('Document written with ID: ', docRef.uid)
+            // console.log('Document written with ID: ', docRef.id)
             isPending.value = false
         }).catch((err) => {
             console.log(err.message)

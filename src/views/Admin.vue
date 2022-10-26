@@ -4,7 +4,7 @@
 			<Home />
 		</div>
 		<div id="students" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-courses-tab" tabindex="0">
-			<Students />
+			<Suspense><Students /></Suspense>
 		</div>
 		<div id="teachers" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-success-tab" tabindex="0">
             <Teachers />
@@ -19,22 +19,25 @@
 </template>
 
 <script>
-import Home from '../composable/admin/Home.vue'
-import Teachers from '../composable/admin/Teachers.vue'
-import Courses from '../composable/admin/Courses.vue'
-import Site from '../composable/admin/Site.vue'
-import Students from '../composable/admin/Students.vue'
+import Home from '@/composable/admin/Home.vue'
+import Teachers from '@/composable/admin/Teachers.vue'
+import Courses from '@/composable/admin/Courses.vue'
+import Site from '@/composable/admin/Site.vue'
+import Students from '@/composable/admin/Students.vue'
 export default {
     components: { 
         Home, 
         Teachers, 
         Courses, 
         Site, 
-        Students 
+        Students
     }
 }
 </script>
 
 <style>
-
+.body {
+	margin-top: 5vh;
+    margin-bottom: 5vh;
+}
 </style>

@@ -5,11 +5,11 @@ import { doc, onSnapshot } from 'firebase/firestore'
 const getDocument = (collectionId, docId) => {
     const error = ref(null)
     const document = ref(null)
-    let docRef = doc(db, collectionId, docId)
+    const docRef = doc(db, collectionId, docId)
 
-    let unsubscribe = onSnapshot(docRef, doc => {
+    const unsubscribe = onSnapshot(docRef, doc => {
         if (doc.data()) {
-            document.value = { ...doc.data(), id: doc.uid }
+            document.value = { ...doc.data(), id: doc.id }
             error.value = null
         } else {
             error.value = 'That document does not exist'
@@ -23,7 +23,7 @@ const getDocument = (collectionId, docId) => {
         onInvalidate(() => unsubscribe())
     })
 
-    return { error, document }
+    return { error, document, docRef }
 }
 
 export default getDocument

@@ -2,10 +2,10 @@
 	<!-- Modal -->
 	<b-modal id="loginForm" title="Login" aria-labelledby="loginForm" aria-hidden="true" :hide-footer="true">
 		<form ref="form">
-			<b-form-input id="email" type="email" v-model="email" class="form-control form-control-lg d-flex mx-auto"
+			<b-form-input id="email" type="email" v-model="email" class="form-control form-control-lg d-flex mx-auto my-1"
 				placeholder="Enter Email" required trim></b-form-input>
 			<b-form-input id="password" type="password" v-model="password"
-				class="form-control form-control-lg d-flex mx-auto" placeholder="Enter Password" required>
+				class="form-control form-control-lg d-flex mx-auto my-1" placeholder="Enter Password" required>
 			</b-form-input>
 			<!-- <div id="Remember" class="d-flex mx-auto mt-2">
 				<input class="form-check-input" type="checkbox" value="" id="remme">
@@ -31,9 +31,9 @@
 </template>
 
 <script setup>
-import useLogin from '../db/login'
-import useLogout from '../db/logout'
-import { db } from '../db/config'
+import useLogin from '@/db/login'
+import useLogout from '@/db/logout'
+import { db } from '@/db/config'
 import { doc, getDoc } from 'firebase/firestore'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -70,6 +70,7 @@ const handleLogin = async() => {
 					document.querySelector('.btn-close').click()
 					// console.log('Document data:', doc.data())
 					router.push({ path: `/${pathName}/${res.uid}` })
+					warnmsg.value = ''
 				} else {
 					// console.log('No such user as ', pathName, '!')
 					warnmsg.value = 'No such user as ' + pathName + '!'
@@ -77,6 +78,7 @@ const handleLogin = async() => {
 			})
 		}
 		else {
+			// loginErr Not showing for invalid credentials
 			warnmsg.value = loginErr
 		}
 	})
