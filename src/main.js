@@ -13,7 +13,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faAnglesUp, faPenToSquare, faTrash, faPlus, faCheck)
 
-
 import App from '@/App.vue'
 import router from '@/router/index.js'
 import '@/assets/styles.css'

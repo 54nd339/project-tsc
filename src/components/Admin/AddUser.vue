@@ -1,12 +1,20 @@
 <template>
-	<b-modal id="addUser" :title="titleName" aria-labelledby="addUser" aria-hidden="true" :hide-footer="true">
-		<b-form @submit="onSubmit" @reset="onReset">
-			<b-form-input id="addEmail" v-model="email" type="email" placeholder="Enter email" required></b-form-input>
-			<b-form-input id="addPassword" v-model="password" type="password" placeholder="Enter password" required></b-form-input>
-			<b-form-input id="addName" v-model="name" type="text" placeholder="Enter name" required></b-form-input>
-			<b-form-input id="addPhone" v-model="phone" type="text" placeholder="Enter phone" required></b-form-input>
-			<b-button type="submit" variant="primary">Submit</b-button>
-			<b-button type="reset" variant="danger">Reset</b-button>
+	<b-modal :id="modalId" :title="titleName" aria-labelledby="addUser" aria-hidden="true" :hide-footer="true">
+		<b-form @submit="onSubmit">
+			<b-form-input v-model="email" type="email" class="d-flex mx-auto my-1"
+				size="lg" placeholder="Enter email" required></b-form-input>
+			<b-form-input v-model="password" type="password" class="d-flex mx-auto my-1"
+				size="lg" placeholder="Enter password" required></b-form-input>
+			<b-form-input v-model="name" type="text" class="d-flex mx-auto my-1"
+				size="lg" placeholder="Enter name" required></b-form-input>
+			<b-form-input v-model="phone" type="text" class="d-flex mx-auto my-1"
+				size="lg" placeholder="Enter phone" required></b-form-input>
+			<div class="d-flex mb-1 justify-content-end">
+				<b-button-group>
+					<b-button type="reset" variant="danger" size="lg">Reset </b-button>
+					<b-button type="submit" variant="primary" size="lg">Submit</b-button>
+				</b-button-group>
+			</div>
 		</b-form>
 	</b-modal>
 </template>
@@ -19,10 +27,14 @@ import { ref } from 'vue'
 
 const props = defineProps({
 	title: String,
-	cls: Number
+	cls: {
+		type: Number,
+		default: 0
+	}
 })
 const emit = defineEmits(['submitClick'])
 const titleName = 'Add ' + props.title
+const modalId = 'add' + props.title
 const collectionId = props.title.toLowerCase()
 
 const email = ref('')
@@ -43,7 +55,22 @@ const onSubmit = async() => {
 				if(collectionId == 'student') {
 					(await useDocument('student', res.uid)).updateDocs({
 						class: props.cls,
-						subjects: {}
+						attendance: 0,
+						subjects: {
+							eng1: [],
+							eng2: [],
+							odia: [],
+							hind: [],
+							math: [],
+							comp: [],
+							sci: [],
+							phys: [],
+							chem: [],
+							bio: [],
+							sst: [],
+							hist: [],
+							geo: []
+						}
 					}).then(() => {
 						emit('submitClick')
 					}).catch((err) => {
@@ -53,7 +80,15 @@ const onSubmit = async() => {
 				if(collectionId == 'teacher') {
 					(await useDocument('teacher', res.uid)).updateDocs({
 						rating: 0,
-						subjects: {}
+						attendance: 0,
+						classes: {
+							10: [],
+							9: [],
+							8: [],
+							7: [],
+							6: [],
+							5: []
+						}
 					}).then(() => {
 						emit('submitClick')
 					}).catch((err) => {
@@ -68,12 +103,6 @@ const onSubmit = async() => {
 			console.log('error')
 		}
 	})
-}
-const onReset = () => {
-	email.value = ''
-	password.value = ''
-	name.value = ''
-	phone.value = ''
 }
 </script>
 

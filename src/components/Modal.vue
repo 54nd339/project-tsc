@@ -1,32 +1,31 @@
 <template>
-	<!-- Modal -->
 	<b-modal id="loginForm" title="Login" aria-labelledby="loginForm" aria-hidden="true" :hide-footer="true">
-		<form ref="form">
-			<b-form-input id="email" type="email" v-model="email" class="form-control form-control-lg d-flex mx-auto my-1"
-				placeholder="Enter Email" required trim></b-form-input>
-			<b-form-input id="password" type="password" v-model="password"
-				class="form-control form-control-lg d-flex mx-auto my-1" placeholder="Enter Password" required>
+		<b-form>
+			<b-form-input id="email" type="email" v-model="email" class="d-flex mx-auto my-1"
+				size="lg" placeholder="Enter Email" required trim></b-form-input>
+			<b-form-input id="password" type="password" v-model="password" size="lg"
+				class="d-flex mx-auto my-1" placeholder="Enter Password" required>
 			</b-form-input>
 			<!-- <div id="Remember" class="d-flex mx-auto mt-2">
 				<input class="form-check-input" type="checkbox" value="" id="remme">
 				<label class="form-check-label" for="remme"> Remember Me</label><br>
 			</div> -->
 			<div>
-				<b-form-radio-group v-model="selected" :options="options" class="mb-3" value-field="item"
+				<b-form-radio-group v-model="selected" :options="options" class="my-1" value-field="item"
 					text-field="name"></b-form-radio-group>
-				<div class="mt-3" v-if="selected">Login as <strong>{{ selected }}</strong></div>
-				<div id="warn" class="mt-3 text-danger" v-if="warnmsg"><strong>{{ warnmsg }}</strong></div>
+				<div class="m-1" v-if="selected">Login as <strong>{{ selected }}</strong></div>
+				<div id="warn" class="m-1 text-danger" v-if="warnmsg"><strong>{{ warnmsg }}</strong></div>
 			</div>
 			<b-button id="loginpg" variant="success d-flex mx-auto mt-2" size="lg" type="button" @click="handleLogin()"
 				v-model="loginpg" :disabled=isLoginPending>{{ LoginText }}</b-button>
-		</form>
+		</b-form>
 	</b-modal>
 	<b-modal id="logoutConfirm" title="Logout" aria-labelledby="logoutConfirm" aria-hidden="true" :hide-footer="true">
-		<form ref="form">
+		<b-form @submit="handleLogout">
 			<p class="justify-content-center align-items-center" id="logoutText">Confirm Logout?</p>
-			<b-button id="logoutpg" variant="success d-flex mx-auto mt-2" size="lg" type="button" @click="handleLogout()"
+			<b-button id="logoutpg" type="submit" variant="success" class="d-flex mx-auto mb-1" size="lg" @click="click()"
 				v-model="logoutpg" :disabled=isLogoutPending>{{ LogoutText }}</b-button>
-		</form>
+		</b-form>
 	</b-modal>
 </template>
 
@@ -72,7 +71,6 @@ const handleLogin = async() => {
 					router.push({ path: `/${pathName}/${res.uid}` })
 					warnmsg.value = ''
 				} else {
-					// console.log('No such user as ', pathName, '!')
 					warnmsg.value = 'No such user as ' + pathName + '!'
 				}
 			})
@@ -86,6 +84,11 @@ const handleLogin = async() => {
 
 const logoutpg = ref(false)
 const LogoutText = ref('Logout')
+const btn = ref(null)
+const click = () => {
+    btn.value = event.target.closest('.modal-content')
+                            .querySelector('.btn-close')
+}
 const handleLogout = async() => {
 	LogoutText.value = 'Logging out...'
 	logoutpg.value = true
@@ -93,7 +96,7 @@ const handleLogout = async() => {
 	await logout().then(async() => {
 		LogoutText.value = 'Logout'
 		logoutpg.value = false
-		document.querySelectorAll('.btn-close')[1].click()
+		btn.value.click()
 		router.push({ path: `/` })
 	}).catch((err) => {
 		console.log(err)
@@ -103,4 +106,5 @@ const handleLogout = async() => {
 </script>
 
 <style>
+
 </style>

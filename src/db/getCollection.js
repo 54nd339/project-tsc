@@ -23,10 +23,6 @@ const getCollection = (collectionId, queries) => {
         })
     }
 
-    watchEffect((onInvalidate) => {
-        onInvalidate(() => getDocuments())
-    })
-
     return { getDocuments, error }
 }
 
