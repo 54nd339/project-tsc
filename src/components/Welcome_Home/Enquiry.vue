@@ -1,50 +1,66 @@
 <template>
-  <div id="Enquiry" class="col-md-6 p-2" style="min-height: 45vh;">
-    <div class="rounded" style="background-color: #57cc99;">
-        <h2 class="py-2 underline">Let's Get in Touch</h2>
-        <form>
-            <div class="col-md-11 px-3 mx-3">
-                <select id="selectCourse" class="form-select mx-1 px-1">
-                    <option selected>Select Course</option>
-                    <option>ICSE</option>
-                    <option>CBSE</option>									
-                    <option>CHSE</option>
-                    <option>JEE/NEET</option>
-                </select>
-            </div><br>
-            <div class="col-md-11 px-3 mx-3">
-                <select id="selectClass" class="form-select mx-1 px-1">
-                    <option selected>Select Class</option>
-                    <option>6</option>
-                    <option>7</option>									
-                    <option>8</option>
-                    <option>9</option>
-                    <option>10</option>									
-                    <option>11</option>
-                    <option>12</option>
-                </select>
-            </div><br>
-            <div class="col-md-11 px-3 mx-3">
-                <input type="text" class="form-control" id="name" placeholder="Enter name" required>
-            </div><br>
-            <div class="col-md-11 px-3 mx-3">
-                <input type="tel" class="form-control" id="phone" placeholder="Enter phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
-            </div><br>
-            <div class="col-md-11 px-3 mx-3">
-                <textarea class="form-control" id="message" rows="5"></textarea>
-            </div><br>
-            <div class="col-lg-12 d-flex justify-content-center">
-                <button class="my-2 btn btn-success">Submit</button>
+  <div id="Enquiry" class="col-md-6 p-1">
+    <b-container fluid>
+        <div class="col-lg-12">
+            <h2 class="shadow m-md-1 py-3 d-flex justify-content-center heading">Let's Get in Touch</h2>
+        </div>
+        <b-form class="p-1 p-md-3 rounded" @submit="onSubmit" style="background-color: #57cc99;">
+            <b-form-select v-model="course" :options="courseList" size="lg" class="d-flex mx-auto m-2"></b-form-select>
+            <b-form-select v-model="grade" :options="gradeList" size="lg" class="d-flex mx-auto m-2"></b-form-select>
+            <b-form-input v-model="name" type="text" class="d-flex mx-auto m-2"
+				size="lg" placeholder="Enter name" required></b-form-input>
+            <b-form-input v-model="phone" type="text" class="d-flex mx-auto m-2"
+				size="lg" placeholder="Enter phone" required></b-form-input>
+            <b-form-textarea v-model="message" class="d-flex mx-auto m-2" size="lg" no-resize
+                placeholder="Enter your message" rows="3" max-rows="8" required></b-form-textarea>
+            <div class="d-flex justify-content-center">
+                <b-button type="submit" variant="primary" size="lg">Submit</b-button>
             </div>
-        </form>
-    </div>
-</div>
-
+        </b-form>
+    </b-container>
+  </div>
 </template>
 
-<script>
-export default {
+<script setup>
+import addCollection from '@/db/addDocument.js'
+import { ref } from 'vue'
 
+const course = ref('default')
+const courseList = [
+    { value: 'default', text: 'Select Course' },
+    { value: 'ICSE', text: 'ICSE' },
+    { value: 'CBSE', text: 'CBSE' },
+    { value: 'CHSE', text: 'CHSE' },
+    { value: 'JEE/NEET', text: 'JEE/NEET' }
+]
+const grade = ref(0)
+const gradeList = [
+	{ value: 0, text: 'Select Grade'},
+    { value: 5, text: '5' },
+    { value: 6, text: '6' },
+    { value: 7, text: '7' },
+    { value: 8, text: '8' },
+    { value: 9, text: '9' },
+    { value: 10, text: '10' },
+    { value: 11, text: '11' },
+    { value: 12, text: '12' }
+]
+const name = ref('')
+const phone = ref('')
+const message = ref('')
+
+const onSubmit = async() => {
+    (await addCollection('enquiry')).addDocument('', {
+        name: name.value,
+        phone: phone.value,
+        course: course.value,
+        grade: grade.value,
+        message: message.value
+    }).then(async() => {
+        // console.log('Added User is',collectionId)
+    }).catch((err) => {
+        console.log(err)
+    })
 }
 </script>
 

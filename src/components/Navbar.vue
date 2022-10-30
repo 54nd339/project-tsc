@@ -34,13 +34,10 @@
 					<button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
 					<button class="nav-link" id="pills-course-tab" data-bs-toggle="pill" data-bs-target="#students" type="button" role="tab" aria-controls="courses" aria-selected="false">Students</button>
 					<button class="nav-link" id="pills-success-tab" data-bs-toggle="pill" data-bs-target="#teachers" type="button" role="tab" aria-controls="success" aria-selected="false">Teachers</button>
-					<button class="nav-link" id="pills-success-tab" data-bs-toggle="pill" data-bs-target="#courses" type="button" role="tab" aria-controls="success" aria-selected="false">Courses</button>
 					<button class="nav-link" id="pills-about-tab" data-bs-toggle="pill" data-bs-target="#site" type="button" role="tab" aria-controls="about" aria-selected="false">Site</button>      
 				</div>
 				<div class="col-md-3 text-end" v-if="userType === 'Guest'">
-					<!-- Button trigger modal -->
 					<button type="button" id="login" class="btn btn-outline-success mx-md-2" v-b-modal.loginForm>Login</button>
-					<button type="button" id="register" class="btn btn-success">Register</button>
 				</div>
 				<div class="col-md-3 text-end" v-else>
 					<button type="button" id="logout" class="btn btn-outline-success mx-md-2" v-b-modal.logoutConfirm>Logout</button>

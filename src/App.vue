@@ -1,10 +1,10 @@
 <template>
 	<Suspense>
-		<Navbar :key="$route.fullPath"/>
+		<Navbar :key="$route.fullPath" v-if="$route.name != 'NotFound'"/>
 	</Suspense>
 	<Modal />
 	<router-view />
-	<Footer />
+	<Footer v-if="$route.name != 'NotFound'"/>
 </template>
 
 <script>

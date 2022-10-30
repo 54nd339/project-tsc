@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<b-form-select v-model="grade" :options="grades" class="mt-5" @update:modelValue="loadData"></b-form-select>
-		<b-button class="m-3" v-if="grade != 69" variant="success" v-b-modal.addStudent>Add</b-button>
+		<b-button class="m-3" v-if="grade != 0" variant="success" v-b-modal.addStudent>Add</b-button>
 		<b-button class="m-3" v-else variant="secondary" v-b-modal.promoteAll>Promote All</b-button>
 		<b-button class="m-3" variant="secondary" v-b-modal.resetStudent>reset Attendance</b-button>
 		<b-button class="m-3" v-if="selected.length > 0" variant="danger" v-b-modal.deleteStudent>Delete</b-button>
@@ -11,7 +11,7 @@
 			<tr>
 				<th scope="col">#</th>
 				<th scope="col">Name</th>
-				<th scope="col" v-if="grade == 69">Class</th>
+				<th scope="col" v-if="grade == 0">Class</th>
 				<th scope="col">Phone</th>
 				<th scope="col">Email</th>
 				<th scope="col">Attendance</th>
@@ -27,7 +27,7 @@
 						<!-- {{ student.id }} -->
 					</td>
 					<td>{{ student.name }}</td>
-					<td v-if="grade == '69'"><table>
+					<td v-if="grade == 0"><table>
 						<tr>
 							<td v-if="noClassEdit || student.id != target">{{ student.class }}</td>
 							<td v-else>
@@ -114,10 +114,10 @@
 </template>
 
 <script setup>
-import AddUser from '@/components/Admin/AddUser.vue'
-import DeleteUser from '@/components/Admin/DeleteUser.vue'
-import ModifyUser from '@/components/Admin/ModifyUser.vue'
-import ResetUser from '@/components/Admin/ResetUser.vue'
+import AddUser from '@/components/Admin_Modals/AddUser.vue'
+import DeleteUser from '@/components/Admin_Modals/DeleteUser.vue'
+import ModifyUser from '@/components/Admin_Modals/ModifyUser.vue'
+import ResetUser from '@/components/Admin_Modals/ResetUser.vue'
 
 import getCollection from '@/db/getCollection'
 import useDocument from '@/db/useDocument'
@@ -133,7 +133,7 @@ const props = defineProps({
 		required: true
 	}
 })
-const grade = ref(69)
+const grade = ref(0)
 const subject = ref('default')
 const students = ref([])
 const target = ref(null)
@@ -144,7 +144,7 @@ const getMarks = (subs) => {
 	return subs[subject.value]
 }
 const loadData = async () => {
-	let collection = grade.value == 69 ? getCollection('student', '') :
+	let collection = grade.value == 0 ? getCollection('student', '') :
 		getCollection('student', ['class', '==', grade.value])
 	collection.getDocuments().then((docs) => {
 		students.value = docs

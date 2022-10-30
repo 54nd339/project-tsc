@@ -91,10 +91,10 @@
 </template>
 
 <script setup>
-import AddUser from '@/components/Admin/AddUser.vue'
-import DeleteUser from '@/components/Admin/DeleteUser.vue'
-import ModifyUser from '@/components/Admin/ModifyUser.vue'
-import ResetUser from '@/components/Admin/ResetUser.vue'
+import AddUser from '@/components/Admin_Modals/AddUser.vue'
+import DeleteUser from '@/components/Admin_Modals/DeleteUser.vue'
+import ModifyUser from '@/components/Admin_Modals/ModifyUser.vue'
+import ResetUser from '@/components/Admin_Modals/ResetUser.vue'
 
 import getCollection from '@/db/getCollection'
 import useDocument from '@/db/useDocument'
@@ -156,12 +156,12 @@ const updateSub = async(id, classes) => {
 	})
 	loadData()
 }
-const grade = ref(69)
+const grade = ref(0)
 const subject = ref('default')
 const addSub = async(id, classes) => {
 	classes[grade.value].push(subject.value)
 	updateSub(id, classes).then(() => {
-		grade.value = 69
+		grade.value = 0
 		subject.value = 'default'
 	}).catch((err) => {
 		console.log(err)
@@ -171,7 +171,7 @@ const addSub = async(id, classes) => {
 const delSub = async(id, classes, grad, index) => {
 	classes[grad].splice(index, 1)
 	updateSub(id, classes).then(() => {
-		grade.value = 69
+		grade.value = 0
 		subject.value = 'default'
 	}).catch((err) => {
 		console.log(err)

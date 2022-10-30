@@ -1,10 +1,10 @@
 <template>
-  <p>Exam</p>
+	<p>Enquiries</p>
 </template>
 
 <script>
 export default {
-
+	
 }
 </script>
 

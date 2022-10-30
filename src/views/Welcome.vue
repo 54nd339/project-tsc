@@ -1,5 +1,5 @@
 <template>
-	<main role="main" id="content" class="tab-content mb-md-3" style="min-height: 85vh;">
+	<main role="main" id="content" class="tab-content pb-5 pt-2" style="min-height: 85vh;">
 		<div id="home" class="tab-pane fade show active tab-content" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
 			<Home />
 		</div>
@@ -19,18 +19,14 @@
 </template>
 
 <script>
-	import Home from '../composable/home/Home.vue'
-	import Courses from '../composable/home/Courses.vue'
-	import Success from '../composable/home/Success.vue'
-	import About from '../composable/home/About.vue'
-	import Contact from '../composable/home/Contact.vue'
+	import Home from '@/tabs/home/Home.vue'
+	import Courses from '@/tabs/home/Courses.vue'
+	import Success from '@/tabs/home/Success.vue'
+	import About from '@/tabs/home/About.vue'
+	import Contact from '@/tabs/home/Contact.vue'
 	export default {
-			components: {
-			Home,
-			Courses,
-			Success,
-			About,
-			Contact
+		components: {
+			Home, Courses, Success, About, Contact
 		}
 	}
 </script>
@@ -38,9 +34,5 @@
 <style>
 #home .col-lg-4, #toppers .col-lg-12 {
 	text-align: center;
-}
-.body {
-	margin-top: 5vh;
-  	margin-bottom: 5vh;
 }
 </style>

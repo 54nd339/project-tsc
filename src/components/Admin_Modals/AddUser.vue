@@ -46,7 +46,7 @@ const { errSignIn, signup, isSignInPending } = useSignup()
 const onSubmit = async() => {
 	await signup(email.value, password.value, name.value).then(async(res) => {
 		if(res) {
-			(await addCollection(collectionId)).addDoc(res.uid, {
+			(await addCollection(collectionId)).addDocument(res.uid, {
 				name: name.value,
 				phone: phone.value,
 				email: email.value,

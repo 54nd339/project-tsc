@@ -23,8 +23,8 @@ const collectionId = props.title.toLowerCase()
 const onSubmit = async() => {
 	event.target.closest('.modal-content')
                 .querySelector('.btn-close').click()
+	// console.log(props.ids)
 	props.ids.forEach(async (docId) => {
-		console.log(docId)
 		await (await useDocument(collectionId, docId.id))
 		.updateDocs({attendance: 0}).then(() => {
 			// console.log('deleted')

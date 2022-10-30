@@ -13,16 +13,14 @@
 </template>
 
 <script>
-  import Home from '../composable/teacher/Home.vue'
-  import Download from '../composable/teacher/Download.vue'
-  import Exam from '../composable/teacher/Exam.vue'
-export default {
-    components: { 
-        Home, 
-        Download, 
-        Exam 
-    }
-}
+	import Home from '@/tabs/teacher/Home.vue'
+	import Download from '@/tabs/teacher/Download.vue'
+	import Exam from '@/tabs/teacher/Exam.vue'
+	export default {
+		components: { 
+			Home, Download, Exam 
+		}
+	}
 </script>
 
 <style>

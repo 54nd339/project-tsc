@@ -1,5 +1,5 @@
 <template>
-  <div id="content" class="container-fluid my-5 p-5">
+  	<div id="content" class="container-fluid my-5 p-5">
 		<div id="contact" class="row featurette">
 			<div class="col-md-12">
 				<h2 class="featurette-heading pb-md-2"><span class="text-muted">DON'T BE SHY,</span> LET'S TALK ABOUT EVERYTHING.</h2>
