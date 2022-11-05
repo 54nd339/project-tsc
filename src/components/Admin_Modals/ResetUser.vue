@@ -8,8 +8,7 @@
 </template>
 
 <script setup> 
-import useDocument from '@/db/useDocument';
-import { ref } from 'vue'
+import useDocument from '@/db/useDocument'
 
 const props = defineProps({
 	title: String,

@@ -1,18 +1,18 @@
 <template>
-	<main role="main" id="content" class="tab-content pb-5 pt-2" style="min-height: 85vh;">
+	<main role="main" id="content" class="tab-content mt-2 mb-5" style="min-height: 85vh;">
 		<div id="home" class="tab-pane fade show active tab-content" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
 			<Home />
 		</div>
-		<div id="courses" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-courses-tab" tabindex="0">
+		<div id="courses" class="tab-pane fade tab-content pt-5" role="tabpanel" aria-labelledby="pills-courses-tab" tabindex="0">
 			<Courses />	
 		</div>
-		<div id="success" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-success-tab" tabindex="0">
+		<div id="success" class="tab-pane fade tab-content pt-3" role="tabpanel" aria-labelledby="pills-success-tab" tabindex="0">
 			<Success />
 		</div>
-		<div id="about" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-about-tab" tabindex="0">
+		<div id="about" class="tab-pane fade tab-content pt-5" role="tabpanel" aria-labelledby="pills-about-tab" tabindex="0">
 			<About />
 		</div>
-		<div id="contact" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">
+		<div id="contact" class="tab-pane fade tab-content pt-5" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">
 			<Contact />
 		</div>
 	</main>

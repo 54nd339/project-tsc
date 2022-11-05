@@ -1,11 +1,13 @@
 <template>
-	<div>
-		<b-form-select v-model="grade" :options="grades" class="mt-5" @update:modelValue="loadData"></b-form-select>
-		<b-button class="m-3" v-if="grade != 0" variant="success" v-b-modal.addStudent>Add</b-button>
-		<b-button class="m-3" v-else variant="secondary" v-b-modal.promoteAll>Promote All</b-button>
-		<b-button class="m-3" variant="secondary" v-b-modal.resetStudent>reset Attendance</b-button>
-		<b-button class="m-3" v-if="selected.length > 0" variant="danger" v-b-modal.deleteStudent>Delete</b-button>
-		<b-button class="m-3" v-if="selected.length == 1" variant="primary" v-b-modal.modifyStudent @click="$refs.modUser.loadData">Modify</b-button>
+	<div id="content" class="container-fluid">
+		<b-button-group class="my-1">
+			<b-form-select v-model="grade" :options="grades" @update:modelValue="loadData" />
+			<b-button v-if="grade != 0" variant="success" v-b-modal.addStudent>Add</b-button>
+			<b-button v-else variant="secondary" v-b-modal.promoteAll>Promote All</b-button>
+			<b-button variant="secondary" v-b-modal.resetStudent>Reset Attendance</b-button>
+			<b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteStudent>Delete</b-button>
+			<b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyStudent @click="$refs.modUser.loadData">Modify</b-button>
+		</b-button-group>
 		<table class="table table-hover table-responsive">
 			<thead>
 			<tr>
@@ -15,16 +17,13 @@
 				<th scope="col">Phone</th>
 				<th scope="col">Email</th>
 				<th scope="col">Attendance</th>
-				<th scope="col">
-					<b-form-select v-model="subject" :options="subjects"></b-form-select>
-				</th>
+				<th scope="col"><b-form-select v-model="subject" :options="subjects" /></th>
 			</tr>
 			</thead>
 			<tbody ref="rows" id="rows">
 				<tr v-for="student in students" :key="student">
 					<td>
-						<input type="checkbox" :value="student.id" @click="updateSelected">
-						<!-- {{ student.id }} -->
+						<b-form-checkbox :value="student.id" @click="updateSelected" /><!-- {{ student.id }} -->
 					</td>
 					<td>{{ student.name }}</td>
 					<td v-if="grade == 0"><table>
@@ -32,7 +31,7 @@
 							<td v-if="noClassEdit || student.id != target">{{ student.class }}</td>
 							<td v-else>
 								<b-input-group :prepend="student.class">
-									<b-form-select v-model="student.class" :options="grades"></b-form-select>
+									<b-form-select v-model="student.class" :options="grades" />
 									<b-input-group-append>
 									<b-button variant="outline-success" size="sm" @click="modC(student)">
 										<font-awesome-icon icon="fa-solid fa-check" size="1x" />
@@ -52,7 +51,7 @@
 							<td v-if="noAttEdit || student.id != target">{{ student.attendance }}/ 30</td>
 							<td v-else>
 								<b-input-group :prepend="student.attendance">
-									<b-form-input v-model="student.attendance"></b-form-input>
+									<b-form-input type="number" v-model="student.attendance" />
 									<b-input-group-append>
 									<b-button variant="outline-success" size="sm" @click="noAttEdit = !noAttEdit; modA(student)">
 										<font-awesome-icon icon="fa-solid fa-check" size="1x" />
@@ -71,16 +70,16 @@
 					<td>
 						<div v-if="subject != 'default'">
 							<tr>
-								<td><b-form-input type="text" placeholder="Enter Mark"></b-form-input></td>
+								<td><b-form-input type="number" placeholder="Enter Mark" /></td>
 								<td><b-button variant="outline-success" class="mx-1" @click="add(student.id, student.subjects)">
 									<font-awesome-icon icon="fa-solid fa-plus" />
 								</b-button></td>
 							</tr>
-							<tr v-for="(mark, index) in getMarks(student.subjects)" :key="mark">
+							<tr v-for="(mark, index) in student.subjects[subject.value]" :key="mark">
 								<td v-if="noMarkEdit || student.id != target">{{ mark }}</td>
 								<td v-else>
 									<b-input-group :prepend="mark">
-										<b-form-input></b-form-input>
+										<b-form-input type="number" />
 										<b-input-group-append>
 										<b-button variant="outline-success" size="sm" @click="mod(student.id, student.subjects, index)">
 											<font-awesome-icon icon="fa-solid fa-check" size="1x" />
@@ -102,7 +101,7 @@
 		</table>
 		<AddUser title="Student" :cls="grade" v-on:submitClick="loadData"/>
 		<ModifyUser title="Student" :id="docID" ref="modUser" v-on:submitClick="loadData"/>
-		<DeleteUser title="Student" :ids="selected" v-on:submitClick="loadData"/>
+		<DeleteModal title="Student" :ids="selected" v-on:submitClick="loadData"/>
 		<ResetUser title="Student" :ids="students" v-on:submitClick="loadData"/>
 		<b-modal id="promoteAll" title="Promote" aria-labelledby="promoteAll" aria-hidden="true" :hide-footer="true">
 			<b-form @submit="promoteAll">
@@ -115,7 +114,7 @@
 
 <script setup>
 import AddUser from '@/components/Admin_Modals/AddUser.vue'
-import DeleteUser from '@/components/Admin_Modals/DeleteUser.vue'
+import DeleteModal from '@/components/Admin_Modals/DeleteModal.vue'
 import ModifyUser from '@/components/Admin_Modals/ModifyUser.vue'
 import ResetUser from '@/components/Admin_Modals/ResetUser.vue'
 
@@ -124,6 +123,10 @@ import useDocument from '@/db/useDocument'
 import { ref } from 'vue'
 
 const props = defineProps({
+	// courses: {
+	// 	type: Array,
+	// 	required: true
+	// },
 	grades: {
 		type: Array,
 		required: true
@@ -133,6 +136,7 @@ const props = defineProps({
 		required: true
 	}
 })
+// const course = ref('default')
 const grade = ref(0)
 const subject = ref('default')
 const students = ref([])
@@ -140,9 +144,6 @@ const target = ref(null)
 const selected = ref([])
 const docID = ref('default')
 
-const getMarks = (subs) => {
-	return subs[subject.value]
-}
 const loadData = async () => {
 	let collection = grade.value == 0 ? getCollection('student', '') :
 		getCollection('student', ['class', '==', grade.value])
@@ -167,11 +168,11 @@ const updateSelected = () => {
 const updateMarks = async (id, marks) => {
 	await (await useDocument('student', id))
 	.updateDocs({subjects: marks}).then(() => {
+		loadData()
 		// console.log('updated')
 	}).catch((err) => {
 		console.log(err)
 	})
-	loadData()
 }
 const add = (id, subs) => {
 	const textBody = event.target.closest('tr').querySelector('input[type=text]')
@@ -218,20 +219,20 @@ const modC = async(student) => {
 	await (await useDocument('student', student.id))
 	.updateDocs({class: student.class}).then(() => {
 		// console.log('updated')
+		loadData()
 	}).catch((err) => {
 		console.log(err)
 	})
-	loadData()
 }
 const noAttEdit = ref(true)
 const modA = async(student) => {
 	await (await useDocument('student', student.id))
 	.updateDocs({attendance: student.attendance}).then(() => {
 		// console.log('updated')
+		loadData()
 	}).catch((err) => {
 		console.log(err)
 	})
-	loadData()
 }
 
 const promoteAll = async() => {
@@ -245,16 +246,12 @@ const promoteAll = async() => {
 			console.log(err)
 		})
 	})
-	loadData()	
+	loadData()
 }
 
 loadData()
 </script>
 
 <style>
-	.body {
-		overflow-x: scroll;
-		margin-top: 6vh;
-		margin-bottom: 6vh;
-	}
+
 </style>

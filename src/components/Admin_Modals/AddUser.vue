@@ -2,13 +2,13 @@
 	<b-modal :id="modalId" :title="titleName" aria-labelledby="addUser" aria-hidden="true" :hide-footer="true">
 		<b-form @submit="onSubmit">
 			<b-form-input v-model="email" type="email" class="d-flex mx-auto my-1"
-				size="lg" placeholder="Enter email" required></b-form-input>
+				size="lg" placeholder="Enter email" required />
 			<b-form-input v-model="password" type="password" class="d-flex mx-auto my-1"
-				size="lg" placeholder="Enter password" required></b-form-input>
+				size="lg" placeholder="Enter password" required />
 			<b-form-input v-model="name" type="text" class="d-flex mx-auto my-1"
-				size="lg" placeholder="Enter name" required></b-form-input>
-			<b-form-input v-model="phone" type="text" class="d-flex mx-auto my-1"
-				size="lg" placeholder="Enter phone" required></b-form-input>
+				size="lg" placeholder="Enter name" required />
+			<b-form-input v-model="phone" type="tel" class="d-flex mx-auto my-1"
+				size="lg" placeholder="Enter phone" required />
 			<div class="d-flex mb-1 justify-content-end">
 				<b-button-group>
 					<b-button type="reset" variant="danger" size="lg">Reset </b-button>
@@ -21,8 +21,8 @@
 
 <script setup>
 import useSignup from '@/db/addUser'
-import addCollection from '@/db/addDocument';
-import useDocument from '@/db/useDocument';
+import addCollection from '@/db/addDocument'
+import useDocument from '@/db/useDocument'
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -30,7 +30,7 @@ const props = defineProps({
 	cls: {
 		type: Number,
 		default: 0
-	}
+	}  
 })
 const emit = defineEmits(['submitClick'])
 const titleName = 'Add ' + props.title
@@ -51,7 +51,7 @@ const onSubmit = async() => {
 				phone: phone.value,
 				email: email.value,
 			}).then(async() => {
-				// console.log('Added User is',collectionId)
+				if(collectionId == 'admin') emit('submitClick')
 				if(collectionId == 'student') {
 					(await useDocument('student', res.uid)).updateDocs({
 						class: props.cls,

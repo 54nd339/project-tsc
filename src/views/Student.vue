@@ -1,5 +1,5 @@
 <template>
-	<main role="main" id="content" class="tab-content mb-md-5" style="min-height: 85vh;">
+	<main role="main" id="content" class="tab-content mt-3 mb-5" style="min-height: 85vh;">
 		<div id="home" class=" tab-pane fade show active tab-content" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
 			<Home />
 		</div>

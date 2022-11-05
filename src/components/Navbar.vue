@@ -76,15 +76,15 @@ if(userType.value != 'Guest') {
 	// console.log(db, docName, route.params.id)
 	await getDoc(docRef).then((doc) => {
 		if (doc.exists()) {
-			// console.log("Document data:", doc.data());
+			// console.log("Document data:", doc.data())
 			userName.value = doc.data().name
 		} else {
 			// doc.data() will be undefined in this case
-			console.log("No User Found!");
+			console.log("No User Found!")
 		}
 	}).catch((error) => {
-		console.log("Error getting document:", error);
-	});
+		console.log("Error getting document:", error)
+	})
 }
 
 const home = () => {

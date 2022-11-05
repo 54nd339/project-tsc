@@ -8,8 +8,7 @@
 </template>
 
 <script setup> 
-import useDocument from '@/db/useDocument';
-import { ref } from 'vue'
+import useDocument from '@/db/useDocument'
 
 const props = defineProps({
 	title: String,
@@ -23,14 +22,15 @@ const collectionId = props.title.toLowerCase()
 const onSubmit = async() => {
 	event.target.closest('.modal-content')
                 .querySelector('.btn-close').click()
-	for (var i = 0; i < props.ids.length; i++) {
-		await (await useDocument(collectionId, props.ids[i]))
+
+	props.ids.forEach(async (docId) => {
+		await (await useDocument(collectionId, docId))
 		.delDoc().then(() => {
 			// console.log('deleted')
 		}).catch((err) => {
 			console.log(err)
 		})
-	}
+	})
 	emit('submitClick')
 }
 </script>

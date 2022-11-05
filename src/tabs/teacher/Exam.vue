@@ -1,5 +1,7 @@
 <template>
-	<p>Exam</p>
+	<div id="content" class="container-fluid">
+		<p>Exam</p>
+	</div>
 </template>
 
 <script>

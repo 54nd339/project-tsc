@@ -1,13 +1,14 @@
 <template>
-	<div>
-		<b-button class="m-3" variant="success" v-b-modal.addTeacher>Add</b-button>
-		<b-button class="m-3" variant="secondary" v-b-modal.resetRate>Reset Ratings</b-button>
-		<b-button class="m-3" variant="secondary" v-b-modal.resetTeacher>reset Attendance</b-button>
-		<b-button class="m-3" v-if="selected.length > 0" variant="danger" v-b-modal.deleteTeacher>Delete</b-button>
-		<b-button class="m-3" v-if="selected.length == 1" variant="primary" v-b-modal.modifyTeacher @click="$refs.modUser.loadData">Modify</b-button>
+	<div id="content" class="container-fluid">
+		<b-button-group class="my-1">
+			<b-button variant="success" v-b-modal.addTeacher>Add</b-button>
+			<b-button variant="secondary" v-b-modal.resetRate>Reset Ratings</b-button>
+			<b-button variant="secondary" v-b-modal.resetTeacher>reset Attendance</b-button>
+			<b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteTeacher>Delete</b-button>
+			<b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyTeacher @click="$refs.modUser.loadData">Modify</b-button>
+		</b-button-group>
 		<table class="table table-hover table-responsive">
-			<thead>
-			<tr>
+			<thead><tr>
 				<th scope="col">#</th>
 				<th scope="col">Name</th>
 				<th scope="col">Rating</th>
@@ -16,13 +17,11 @@
 				<th scope="col">Attendance</th>
 				<th scope="col">Classes</th>
 				<th scope="col">Add Class</th>
-			</tr>
-			</thead>
+			</tr></thead>
 			<tbody ref="rows" id="rows">
 				<tr v-for="teacher in teachers" :key="teacher">
 					<td>
-						<input type="checkbox" :value="teacher.id" @click="updateSelected">
-						<!-- {{ teacher.id }} -->
+						<b-form-checkbox :value="teacher.id" @click="updateSelected" /><!-- {{ teacher.id }} -->
 					</td>
 					<td>{{ teacher.name }}</td>
 					<td>{{ teacher.rating }}</td>
@@ -33,7 +32,7 @@
 							<td v-if="noAttEdit || teacher.id != target">{{ teacher.attendance }}/ 30</td>
 							<td v-else>
 								<b-input-group :prepend="teacher.attendance">
-									<b-form-input v-model="teacher.attendance"></b-form-input>
+									<b-form-input type="number" v-model="teacher.attendance" />
 									<b-input-group-append>
 									<b-button variant="outline-success" @click="noAttEdit = !noAttEdit; modA(teacher)">
 										<font-awesome-icon icon="fa-solid fa-check" size="1x" />
@@ -64,8 +63,8 @@
 					<td>
 						<b-input-group>
 							<b-input-group-prepend>
-								<b-form-select v-model="grade" :options="grades"></b-form-select>
-								<b-form-select v-model="subject" :options="subjects"></b-form-select>
+								<b-form-select v-model="grade" :options="grades" />
+								<b-form-select v-model="subject" :options="subjects" />
 							</b-input-group-prepend>
 							<b-input-group-append>
 								<b-button variant="outline-success" @click="addSub(teacher.id, teacher.classes)">
@@ -79,7 +78,7 @@
 		</table>
 		<AddUser title="Teacher" v-on:submitClick="loadData"/>
 		<ModifyUser title="Teacher" :id="docID" ref="modUser" v-on:submitClick="loadData"/>
-		<DeleteUser title="Teacher" :ids="selected" v-on:submitClick="loadData"/>
+		<DeleteModal title="Teacher" :ids="selected" v-on:submitClick="loadData"/>
 		<ResetUser title="Teacher" :ids="teachers" v-on:submitClick="loadData"/>
 		<b-modal id="resetRate" title="Reset Teacher Ratings" aria-labelledby="resetRate" aria-hidden="true" :hide-footer="true">
 			<b-form @submit="resetRate">
@@ -92,7 +91,7 @@
 
 <script setup>
 import AddUser from '@/components/Admin_Modals/AddUser.vue'
-import DeleteUser from '@/components/Admin_Modals/DeleteUser.vue'
+import DeleteModal from '@/components/Admin_Modals/DeleteModal.vue'
 import ModifyUser from '@/components/Admin_Modals/ModifyUser.vue'
 import ResetUser from '@/components/Admin_Modals/ResetUser.vue'
 
@@ -140,21 +139,21 @@ const noAttEdit = ref(true)
 const modA = async(teacher) => {
 	await (await useDocument('teacher', teacher.id))
 	.updateDocs({attendance: teacher.attendance}).then(() => {
+		loadData()
 		// console.log('updated')
 	}).catch((err) => {
 		console.log(err)
 	})
-	loadData()
 }
 
 const updateSub = async(id, classes) => {
 	await (await useDocument('teacher', id))
 	.updateDocs({classes: classes}).then(() => {
+		loadData()
 		// console.log('updated')
 	}).catch((err) => {
 		console.log(err)
 	})
-	loadData()
 }
 const grade = ref(0)
 const subject = ref('default')
@@ -163,20 +162,20 @@ const addSub = async(id, classes) => {
 	updateSub(id, classes).then(() => {
 		grade.value = 0
 		subject.value = 'default'
+		loadData()
 	}).catch((err) => {
 		console.log(err)
 	})
-	loadData()
 }
 const delSub = async(id, classes, grad, index) => {
 	classes[grad].splice(index, 1)
 	updateSub(id, classes).then(() => {
 		grade.value = 0
 		subject.value = 'default'
+		loadData()
 	}).catch((err) => {
 		console.log(err)
 	})
-	loadData()
 }
 
 const resetRate = async() => {
@@ -197,9 +196,5 @@ loadData()
 </script>
 
 <style>
-	.body {
-		overflow-x: scroll;
-		margin-top: 6vh;
-		margin-bottom: 6vh;
-	}
+
 </style>

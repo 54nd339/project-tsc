@@ -2,17 +2,15 @@
 	<b-modal id="loginForm" title="Login" aria-labelledby="loginForm" aria-hidden="true" :hide-footer="true">
 		<b-form>
 			<b-form-input id="email" type="email" v-model="email" class="d-flex mx-auto my-1"
-				size="lg" placeholder="Enter Email" required trim></b-form-input>
+				size="lg" placeholder="Enter Email" required trim />
 			<b-form-input id="password" type="password" v-model="password" size="lg"
-				class="d-flex mx-auto my-1" placeholder="Enter Password" required>
-			</b-form-input>
+				class="d-flex mx-auto my-1" placeholder="Enter Password" required />
 			<!-- <div id="Remember" class="d-flex mx-auto mt-2">
 				<input class="form-check-input" type="checkbox" value="" id="remme">
 				<label class="form-check-label" for="remme"> Remember Me</label><br>
 			</div> -->
 			<div>
-				<b-form-radio-group v-model="selected" :options="options" class="my-1" value-field="item"
-					text-field="name"></b-form-radio-group>
+				<b-form-radio-group v-model="selected" :options="options" class="my-1" value-field="item" text-field="name" />
 				<div class="m-1" v-if="selected">Login as <strong>{{ selected }}</strong></div>
 				<div id="warn" class="m-1 text-danger" v-if="warnmsg"><strong>{{ warnmsg }}</strong></div>
 			</div>

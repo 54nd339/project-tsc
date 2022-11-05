@@ -5,16 +5,17 @@
             <h2 class="shadow m-md-1 py-3 d-flex justify-content-center heading">Let's Get in Touch</h2>
         </div>
         <b-form class="p-1 p-md-3 rounded" @submit="onSubmit" style="background-color: #57cc99;">
-            <b-form-select v-model="course" :options="courseList" size="lg" class="d-flex mx-auto m-2"></b-form-select>
-            <b-form-select v-model="grade" :options="gradeList" size="lg" class="d-flex mx-auto m-2"></b-form-select>
+            <b-form-select v-model="course" :options="courseList" size="lg" class="d-flex mx-auto m-2" />
+            <b-form-select v-model="grade" :options="gradeList" size="lg" class="d-flex mx-auto m-2" />
             <b-form-input v-model="name" type="text" class="d-flex mx-auto m-2"
-				size="lg" placeholder="Enter name" required></b-form-input>
-            <b-form-input v-model="phone" type="text" class="d-flex mx-auto m-2"
-				size="lg" placeholder="Enter phone" required></b-form-input>
+				size="lg" placeholder="Enter name" required />
+            <b-form-input v-model="phone" type="tel" class="d-flex mx-auto m-2"
+				size="lg" placeholder="Enter phone" required />
             <b-form-textarea v-model="message" class="d-flex mx-auto m-2" size="lg" no-resize
-                placeholder="Enter your message" rows="3" max-rows="8" required></b-form-textarea>
+                placeholder="Enter your message" rows="3" max-rows="8" required />
             <div class="d-flex justify-content-center">
-                <b-button type="submit" variant="primary" size="lg">Submit</b-button>
+                <b-button type="submit" variant="primary" size="lg" v-if="submit">Submit</b-button>
+                <b-button type="submit" size="lg" v-else disabled>Submitted</b-button>
             </div>
         </b-form>
     </b-container>
@@ -48,6 +49,7 @@ const gradeList = [
 const name = ref('')
 const phone = ref('')
 const message = ref('')
+const submit = ref(true)
 
 const onSubmit = async() => {
     (await addCollection('enquiry')).addDocument('', {
@@ -57,7 +59,15 @@ const onSubmit = async() => {
         grade: grade.value,
         message: message.value
     }).then(async() => {
-        // console.log('Added User is',collectionId)
+        name.value = ''
+        phone.value = ''
+        course.value = 'default'
+        grade.value = 0
+        message.value = ''
+        submit.value = false
+        setTimeout(() => {
+            submit.value = true
+        }, 5000)
     }).catch((err) => {
         console.log(err)
     })

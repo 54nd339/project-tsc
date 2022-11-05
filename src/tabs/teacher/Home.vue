@@ -5,17 +5,17 @@
 			<Performance />	
 		</div>
 		<div class="row justify-content-center">
-			<ToDo />
 			<Timetable />
+			<ToDo />
 		</div>
 	</div>
 </template>
 
 <script>
-	import Personal from '@/components/Teacher_Home/Personal.vue';
-	import Performance from '@/components/Teacher_Home/Performance.vue';
-	import ToDo from '@/components/Teacher_Home/ToDo.vue';
-	import Timetable from '@/components/Teacher_Home/Timetable.vue';
+	import Personal from '@/components/Teacher_Home/Personal.vue'
+	import Performance from '@/components/Teacher_Home/Performance.vue'
+	import ToDo from '@/components/Teacher_Home/ToDo.vue'
+	import Timetable from '@/components/Teacher_Home/Timetable.vue'
 
 	export default {
 		components: { 

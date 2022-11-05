@@ -2,13 +2,13 @@
 	<b-modal :id="modalId" :title="titleName" aria-labelledby="modifyUser" aria-hidden="true" :hide-footer="true">
 		<b-form @submit="onSubmit">
 			<b-form-input v-model="name" type="text" class="d-flex mx-auto my-1"
-				size="lg" placeholder="Enter name" :value="name" required></b-form-input>
-			<b-form-input v-model="phone" type="text" class="d-flex mx-auto my-1"
-				size="lg" placeholder="Enter phone" :value="phone" required></b-form-input>
+				size="lg" placeholder="Enter name" :value="name" required />
+			<b-form-input v-model="phone" type="tel" class="d-flex mx-auto my-1"
+				size="lg" placeholder="Enter phone" :value="phone" required />
 			<div class="d-flex mb-1 justify-content-end">
 				<b-button-group>
 					<b-button type="reset" variant="danger" size="lg">Reset </b-button>
-					<b-button type="submit" variant="primary" size="lg" @click="click">Submit</b-button>
+					<b-button type="submit" variant="primary" size="lg">Submit</b-button>
 				</b-button-group>
 			</div>
 		</b-form>
@@ -16,8 +16,8 @@
 </template>
 
 <script setup>
-import useDocument from '@/db/useDocument';
-import getDocument from '@/db/getDocument';
+import useDocument from '@/db/useDocument'
+import getDocument from '@/db/getDocument'
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -34,7 +34,7 @@ const phone = ref('')
 
 const loadData = async () => {
 	let doc = getDocument(collectionId, props.id)
-	console.log(doc, collectionId, props.id)
+	// console.log(doc, collectionId, props.id)
 	doc.getDetail().then((doc) => {
 		name.value = doc.name
 		phone.value = doc.phone
@@ -46,14 +46,10 @@ defineExpose({
 	loadData
 })
 
-const btn = ref(null)
-const click = () => {
-    btn.value = event.target.closest('.modal-content')
-                            .querySelector('.btn-close')
-    // console.log(btn.value)
-}
-
 const onSubmit = async() => {
+	const btn = event.target.closest('.modal-content')
+                            .querySelector('.btn-close')
+
 	await (await useDocument(collectionId, props.id)).updateDocs({
 		name: name.value,
 		phone: phone.value

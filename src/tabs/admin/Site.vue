@@ -1,11 +1,11 @@
 <template>
-   <h1>Site</h1>
+   <div id="content" class="container-fluid">
+      <p>Site</p>
+   </div>
 </template>
 
-<script>
-export default {
+<script setup>
 
-}
 </script>
 
 <style>

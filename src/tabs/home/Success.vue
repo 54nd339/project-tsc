@@ -1,5 +1,5 @@
 <template>
-  <div id="content" class="container-fluid mt-5">
+  <div id="content" class="container-fluid">
 	<div class="row featurette">
 		<section class="container-fluid">
 			<div class="light-overlay">

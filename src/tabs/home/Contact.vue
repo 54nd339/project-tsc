@@ -1,5 +1,5 @@
 <template>
-  	<div id="content" class="container-fluid my-5 p-5">
+  	<div id="content" class="container-fluid">
 		<div id="contact" class="row featurette">
 			<div class="col-md-12">
 				<h2 class="featurette-heading pb-md-2"><span class="text-muted">DON'T BE SHY,</span> LET'S TALK ABOUT EVERYTHING.</h2>
@@ -43,52 +43,30 @@
 			<div class="col-md-12">
 				<h2 class="shadow featurette-heading pb-md-2">FAQs</h2>
 				<div class="accordion" id="qna">
-					<div class="accordion-item">
-						<h2 class="accordion-header" id="headingOne">
-							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-								Question #1
+					<div class="accordion-item" v-for="(faq, index) in faqs" :key="faq">
+						<h2 class="accordion-header" :id="'heading' + index">
+							<button class="accordion-button collapsed" type="button" v-b-toggle="'collapse' + index">
+								{{ faq.question }}
 							</button>
 						</h2>
-						<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#qna">
+						<div :id="'collapse' + index" class="accordion-collapse collapse" data-bs-parent="#qna">
 							<div class="accordion-body">
-								<strong>This is the first item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+								{{ faq.answer }}
 							</div>
 						</div>
 					</div>
-					<div class="accordion-item">
-						<h2 class="accordion-header" id="headingTwo">
-							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-								Question #2
-							</button>
-						</h2>
-						<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#qna">
-							<div class="accordion-body">
-								<strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-							</div>
-						</div>
-					</div>
-					<div class="accordion-item">
-						<h2 class="accordion-header" id="headingThree">
-							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-								Question #3
-							</button>
-						</h2>
-						<div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#qna">
-							<div class="accordion-body">
-								<strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-							</div>
-						</div>
-					</div>
-					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 </template>
 
-<script>
-export default {
-
-}
+<script setup>
+const faqs = [
+	{ question: 'Question #1', answer: 'Answer #1' },
+	{ question: 'Question #2', answer: 'Answer #2' },
+	{ question: 'Question #3', answer: 'Answer #3' }
+]
 </script>
 
 <style>

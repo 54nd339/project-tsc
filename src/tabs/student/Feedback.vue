@@ -1,14 +1,16 @@
 <template>
-    <div id="Enquiry" class="rounded justify-content-center" style="background-color: #57cc99;">
-        <form>
-            <h3><u>FEEDBACK FORM !!</u></h3>
-            <b-form-select v-model="subject" :options="subjectList"></b-form-select>
-            <div class="form-group" v-for="question in questions" :key="question">
-                <label class="col-md-7 px-4 mx-3">{{ question }}</label>
-                <b-form-radio-group v-model="selected" :options="options" class="my-1" value-field="item"
-                text-field="name"></b-form-radio-group>
-            </div>
-        </form>
+    <div id="content" class="container-fluid">
+        <div id="Enquiry" class="rounded justify-content-center" style="background-color: #57cc99;">
+            <form>
+                <h3><u>FEEDBACK FORM !!</u></h3>
+                <b-form-select v-model="subject" :options="subjectList" />
+                <div class="form-group" v-for="question in questions" :key="question">
+                    <label class="col-md-7 px-4 mx-3">{{ question }}</label>
+                    <b-form-radio-group v-model="selected" :options="options" class="my-1" value-field="item"
+                    text-field="name"></b-form-radio-group>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 
