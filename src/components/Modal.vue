@@ -21,7 +21,7 @@
 	<b-modal id="logoutConfirm" title="Logout" aria-labelledby="logoutConfirm" aria-hidden="true" :hide-footer="true">
 		<b-form @submit="handleLogout">
 			<p class="justify-content-center align-items-center" id="logoutText">Confirm Logout?</p>
-			<b-button id="logoutpg" type="submit" variant="success" class="d-flex mx-auto mb-1" size="lg" @click="click()"
+			<b-button id="logoutpg" type="submit" variant="success" class="d-flex mx-auto mb-1" size="lg"
 				v-model="logoutpg" :disabled=isLogoutPending>{{ LogoutText }}</b-button>
 		</b-form>
 	</b-modal>
@@ -82,19 +82,16 @@ const handleLogin = async() => {
 
 const logoutpg = ref(false)
 const LogoutText = ref('Logout')
-const btn = ref(null)
-const click = () => {
-    btn.value = event.target.closest('.modal-content')
-                            .querySelector('.btn-close')
-}
 const handleLogout = async() => {
+	const btn = event.target.closest('.modal-content')
+                        .querySelector('.btn-close')
 	LogoutText.value = 'Logging out...'
 	logoutpg.value = true
 
 	await logout().then(async() => {
 		LogoutText.value = 'Logout'
 		logoutpg.value = false
-		btn.value.click()
+		btn.click()
 		router.push({ path: `/` })
 	}).catch((err) => {
 		console.log(err)

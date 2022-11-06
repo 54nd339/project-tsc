@@ -75,7 +75,7 @@
 									<font-awesome-icon icon="fa-solid fa-plus" />
 								</b-button></td>
 							</tr>
-							<tr v-for="(mark, index) in student.subjects[subject.value]" :key="mark">
+							<tr v-for="(mark, index) in student.subjects[subject]" :key="mark">
 								<td v-if="noMarkEdit || student.id != target">{{ mark }}</td>
 								<td v-else>
 									<b-input-group :prepend="mark">
@@ -145,15 +145,15 @@ const selected = ref([])
 const docID = ref('default')
 
 const loadData = async () => {
-	let collection = grade.value == 0 ? getCollection('student', '') :
-		getCollection('student', ['class', '==', grade.value])
+	let collection = grade.value == 0 ? getCollection('student', '', '') :
+		getCollection('student', ['class', '==', grade.value], '')
 	collection.getDocuments().then((docs) => {
 		students.value = docs
+		selected.value = []
+		docID.value = 'default'
 	}).catch((err) => {
 		console.log(err)
 	})
-	selected.value = []
-	docID.value = 'default'
 }
 const updateSelected = () => {
 	const checked = event.target.closest('table').querySelectorAll('input[type=checkbox]:checked')
@@ -175,7 +175,7 @@ const updateMarks = async (id, marks) => {
 	})
 }
 const add = (id, subs) => {
-	const textBody = event.target.closest('tr').querySelector('input[type=text]')
+	const textBody = event.target.closest('tr').querySelector('input[type=number]')
 	const val = textBody.value
 	if(val != '') {
 		subs[subject.value].push(val)
@@ -242,11 +242,11 @@ const promoteAll = async() => {
 		await (await useDocument('student', student.id))
 		.updateDocs({class: student.class + 1}).then(() => {
 			// console.log('promoted')
+			loadData()
 		}).catch((err) => {
 			console.log(err)
 		})
 	})
-	loadData()
 }
 
 loadData()

@@ -1,6 +1,8 @@
 <template>
-	<div class="row">
-		<b-button class="m-3" v-if="selected.length > 0" variant="danger" v-b-modal.deleteEnquiry>Delete</b-button>
+	<section class="container-fluid">
+		<b-button-group class="my-1">
+			<b-button class="m-3" v-if="selected.length > 0" variant="danger" v-b-modal.deleteEnquiry>Delete</b-button>
+		</b-button-group>
 		<table class="table table-hover table-responsive">
 			<thead><tr>
 				<th scope="col">#</th>
@@ -25,7 +27,7 @@
 			</tbody>
 		</table>
 		<DeleteModal title="Enquiry" :ids="selected" v-on:submitClick="loadData"/>
-	</div>
+	</section>
 </template>
 
 <script setup>
@@ -33,24 +35,13 @@ import DeleteModal from '@/components/Admin_Modals/DeleteModal.vue'
 import getCollection from '@/db/getCollection'
 import { ref } from 'vue'
 
-const props = defineProps({
-	gradeList: {
-		type: Array,
-		required: true
-	},
-	subjectList: {
-		type: Array,
-		required: true
-	}
-})
-
 const enquiries = ref([])
 const loadData = async () => {
-	let collection = getCollection('enquiry', '')
+	let collection = getCollection('enquiry', '', '')
 	collection.getDocuments().then((docs) => {
 		// console.log(docs)
 		enquiries.value = docs
-	selected.value = []
+		selected.value = []
 	}).catch((err) => {
 		console.log(err)
 	})

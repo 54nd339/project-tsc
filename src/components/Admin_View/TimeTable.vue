@@ -1,5 +1,5 @@
 <template>
-	<div class="col-md-5 rounded-3 m-2" style="background-color:#57CC99; max-height: 45vh; overflow-y: auto;">
+	<div class="col-md-5 rounded-3 m-2" style="background-color:#57CC99; max-height: 70vh; overflow-y: auto;">
         <div class="shadow m-3 p-1 rounded-3" style="background-color:#80ED99">
             <h3 class="text-center" style>Time Table</h3>
         </div>
@@ -93,10 +93,10 @@ const loadData = async () => {
     await getDocument('schedule', docId).getDetail().then((doc) => {
         schedule.value = doc
         // console.log(doc)
+        modify.value = false
     }).catch((err) => {
         console.log(err)
     })
-    modify.value = false
 }
 const saveData = async () => {
     const btn = event.target.closest('.modal-content')

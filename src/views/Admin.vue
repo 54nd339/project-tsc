@@ -10,7 +10,7 @@
             <Suspense><Teachers :grades="gradeList" :subjects="subjectList" /></Suspense>
 		</div>
         <div id="site" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-about-tab" tabindex="0">
-            <Site />
+            <Suspense><Site /></Suspense>
 		</div>
 	</main>
 </template>

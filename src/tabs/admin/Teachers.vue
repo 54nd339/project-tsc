@@ -113,14 +113,14 @@ const teachers = ref([])
 const target = ref(null)
 
 const loadData = async () => {
-	let collection = getCollection('teacher', '')
+	let collection = getCollection('teacher', '', '')
 	collection.getDocuments().then((docs) => {
 		teachers.value = docs
+		selected.value = []
+		docID.value = 'default'
 	}).catch((err) => {
 		console.log(err)
 	})
-	selected.value = []
-	docID.value = 'default'
 }
 
 const selected = ref([])
@@ -185,11 +185,11 @@ const resetRate = async() => {
 		await (await useDocument('teacher', teacher.id))
 		.updateDocs({rating: 0}).then(() => {
 			// console.log('updated')
+			loadData()
 		}).catch((err) => {
 			console.log(err)
 		})
 	})
-	loadData()
 }
 // Fix dropdown
 loadData()

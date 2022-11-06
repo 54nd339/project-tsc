@@ -54,7 +54,7 @@ const onSubmit = async() => {
 		name: name.value,
 		phone: phone.value
 	}).then(() => {
-		btn.value.click()
+		btn.click()
 		emit('submitClick')
 	}).catch((err) => {
 		console.log(err)
