@@ -1,8 +1,9 @@
 <template>
 	<div id="content" class="container-fluid">
 		<b-button-group class="my-1">
+			<b-form-select v-model="course" :options="courses" @update:modelValue="loadData" />
 			<b-form-select v-model="grade" :options="grades" @update:modelValue="loadData" />
-			<b-button v-if="grade != 0" variant="success" v-b-modal.addStudent>Add</b-button>
+			<b-button v-if="grade != 0 && course != 'default'" variant="success" v-b-modal.addStudent>Add</b-button>
 			<b-button v-else variant="secondary" v-b-modal.promoteAll>Promote All</b-button>
 			<b-button variant="secondary" v-b-modal.resetStudent>Reset Attendance</b-button>
 			<b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteStudent>Delete</b-button>
@@ -13,6 +14,7 @@
 			<tr>
 				<th scope="col">#</th>
 				<th scope="col">Name</th>
+				<th scope="col" v-if="course == 'default'">Course</th>
 				<th scope="col" v-if="grade == 0">Class</th>
 				<th scope="col">Phone</th>
 				<th scope="col">Email</th>
@@ -26,12 +28,12 @@
 						<b-form-checkbox :value="student.id" @click="updateSelected" /><!-- {{ student.id }} -->
 					</td>
 					<td>{{ student.name }}</td>
-					<td v-if="grade == 0"><table>
+					<td v-if="course == 'default'"><table>
 						<tr>
-							<td v-if="noClassEdit || student.id != target">{{ student.class }}</td>
+							<td v-if="noCourseEdit || student.id != target">{{ student.course }}</td>
 							<td v-else>
-								<b-input-group :prepend="student.class">
-									<b-form-select v-model="student.class" :options="grades" />
+								<b-input-group :prepend="student.course">
+									<b-form-select v-model="student.course" :options="courses" />
 									<b-input-group-append>
 									<b-button variant="outline-success" size="sm" @click="modC(student)">
 										<font-awesome-icon icon="fa-solid fa-check" size="1x" />
@@ -39,7 +41,25 @@
 									</b-input-group-append>
 								</b-input-group>
 							</td>
-							<td><b-button variant="outline-primary" size="sm" class="mx-1" @click="noClassEdit = !noClassEdit; target = student.id">
+							<td><b-button variant="outline-primary" size="sm" class="mx-1" @click="noCourseEdit = !noCourseEdit; target = student.id">
+								<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
+							</b-button></td>
+						</tr>
+					</table></td>
+					<td v-if="grade == 0"><table>
+						<tr>
+							<td v-if="noGradeEdit || student.id != target">{{ student.class }}</td>
+							<td v-else>
+								<b-input-group :prepend="student.class">
+									<b-form-select v-model="student.class" :options="grades" />
+									<b-input-group-append>
+									<b-button variant="outline-success" size="sm" @click="modG(student)">
+										<font-awesome-icon icon="fa-solid fa-check" size="1x" />
+									</b-button>
+									</b-input-group-append>
+								</b-input-group>
+							</td>
+							<td><b-button variant="outline-primary" size="sm" class="mx-1" @click="noGradeEdit = !noGradeEdit; target = student.id">
 								<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
 							</b-button></td>
 						</tr>
@@ -99,7 +119,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<AddUser title="Student" :cls="grade" v-on:submitClick="loadData"/>
+		<AddUser title="Student" :cls="grade" :crs="course" v-on:submitClick="loadData"/>
 		<ModifyUser title="Student" :id="docID" ref="modUser" v-on:submitClick="loadData"/>
 		<DeleteModal title="Student" :ids="selected" v-on:submitClick="loadData"/>
 		<ResetUser title="Student" :ids="students" v-on:submitClick="loadData"/>
@@ -123,10 +143,10 @@ import useDocument from '@/db/useDocument'
 import { ref } from 'vue'
 
 const props = defineProps({
-	// courses: {
-	// 	type: Array,
-	// 	required: true
-	// },
+	courses: {
+		type: Array,
+		required: true
+	},
 	grades: {
 		type: Array,
 		required: true
@@ -136,7 +156,7 @@ const props = defineProps({
 		required: true
 	}
 })
-// const course = ref('default')
+const course = ref('default')
 const grade = ref(0)
 const subject = ref('default')
 const students = ref([])
@@ -144,9 +164,16 @@ const target = ref(null)
 const selected = ref([])
 const docID = ref('default')
 
-const loadData = async () => {
-	let collection = grade.value == 0 ? getCollection('student', '', '') :
-		getCollection('student', ['class', '==', grade.value], '')
+const loadData = async () => {let collection
+	if (grade.value == 0 && course.value == 'default') 
+		collection = getCollection('students', '', '', '')
+	else if (grade.value == 0 && course.value != 'default')
+		collection = getCollection('students', ['course', '==', course.value], '', '')
+	else if (grade.value != 0 && course.value == 'default')
+		collection = getCollection('students', ['class', '==', grade.value], '', '')
+	else
+		collection = getCollection('students', ['class', '==', grade.value], ['course', '==', course.value], '')
+
 	collection.getDocuments().then((docs) => {
 		students.value = docs
 		selected.value = []
@@ -166,7 +193,7 @@ const updateSelected = () => {
 }
 
 const updateMarks = async (id, marks) => {
-	await (await useDocument('student', id))
+	await (await useDocument('students', id))
 	.updateDocs({subjects: marks}).then(() => {
 		loadData()
 		// console.log('updated')
@@ -213,11 +240,22 @@ const mod = (id, subs, ind) => {
 		})
 	}
 }
-const noClassEdit = ref(true)
-const modC = async(student) => {
-	noClassEdit.value = !noClassEdit.value
-	await (await useDocument('student', student.id))
+const noGradeEdit = ref(true)
+const modG = async(student) => {
+	noGradeEdit.value = !noGradeEdit.value
+	await (await useDocument('students', student.id))
 	.updateDocs({class: student.class}).then(() => {
+		// console.log('updated')
+		loadData()
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+const noCourseEdit = ref(true)
+const modC = async(student) => {
+	noCourseEdit.value = !noCourseEdit.value
+	await (await useDocument('students', student.id))
+	.updateDocs({course: student.course}).then(() => {
 		// console.log('updated')
 		loadData()
 	}).catch((err) => {
@@ -226,7 +264,7 @@ const modC = async(student) => {
 }
 const noAttEdit = ref(true)
 const modA = async(student) => {
-	await (await useDocument('student', student.id))
+	await (await useDocument('students', student.id))
 	.updateDocs({attendance: student.attendance}).then(() => {
 		// console.log('updated')
 		loadData()
@@ -239,7 +277,7 @@ const promoteAll = async() => {
 	event.target.closest('.modal-content')
 				.querySelector('.btn-close').click()
 	students.value.forEach(async(student) => {
-		await (await useDocument('student', student.id))
+		await (await useDocument('students', student.id))
 		.updateDocs({class: student.class + 1}).then(() => {
 			// console.log('promoted')
 			loadData()

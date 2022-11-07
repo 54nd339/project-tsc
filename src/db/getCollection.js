@@ -1,14 +1,18 @@
-import { ref, watchEffect } from 'vue'
+import { ref } from 'vue'
 import { db } from '@/db/config'
 import { collection, query, where, getDocs } from 'firebase/firestore'
 
-const getCollection = (collectionId, queries1, queries2) => {
+const getCollection = (collectionId, queries1, queries2, queries3) => {
     const error = ref(null)
     let collectionRef = collection(db, collectionId)
 
     if (queries1) {
-        if(queries2)
-            collectionRef = query(collectionRef, where(...queries1), where(...queries2))
+        if(queries2) {
+            if(queries3)
+                collectionRef = query(collectionRef, where(...queries1), where(...queries2), where(...queries3))
+            else
+                collectionRef = query(collectionRef, where(...queries1), where(...queries2))
+        }
         else
             collectionRef = query(collectionRef, where(...queries1))
     }
@@ -28,5 +32,4 @@ const getCollection = (collectionId, queries1, queries2) => {
 
     return { getDocuments, error }
 }
-
 export default getCollection

@@ -1,28 +1,28 @@
 <template>
-	<div class="col-md-5 rounded-3 m-2" style="background-color:#80ED99; max-height: 70vh; overflow-y: auto;">
+	<div class="col-md-5 rounded-3 m-2" style="background-color:#80ED99; min-height: 50vh; max-height: 70vh; overflow-y: auto;">
         <div class="shadow m-3 p-1 rounded-3" style="background-color:#57CC99">
             <h3 class="text-center" style>Uploads</h3>
         </div>
         <div id="content" class="container-fluid">
             <b-button-group class="my-1">
+                <b-form-select v-model="course" :options="courseList" @update:modelValue="loadData" />
                 <b-form-select v-model="grade" :options="gradeList" @update:modelValue="loadData" />
                 <b-form-select v-model="subject" :options="subjectList" @update:modelValue="loadData" />
-                <b-button variant="success" v-b-modal.addNote>Add</b-button>
+                <b-button v-if="course != 'default' && grade != 0 && subject != 'default'"
+                    variant="success" v-b-modal.addNote>Add</b-button>
             </b-button-group>
             <table class="table table-hover table-responsive">
                 <thead><tr>
                     <th scope="col">Topic</th>
                     <th scope="col">Date</th>
-                    <th scope="col">View</th>
-                    <th scope="col">Delete</th>
+                    <th scope="col">View/Delete</th>
                 </tr></thead>
                 <tbody ref="rows" id="rows">
                     <tr v-for="note in notes" :key="note">
                         <td>{{ note.topic }}</td>
                         <td>{{ note.date }}</td>
-                        <td><b-button @click="download(note)" :disabled="downloadText != 'Download'">
-                            {{ downloadText }}</b-button></td>
-                        <td><b-button variant="outline-danger" size="sm" class="m-1" @click="delNote(note)">
+                        <td><b-button @click="openUrl(note.url)">View</b-button>
+                            <b-button variant="outline-danger" size="sm" class="m-1" @click="delNote(note)">
                             <font-awesome-icon icon="fa-solid fa-trash" size="1x" />
                         </b-button></td>
                     </tr>
@@ -54,6 +54,10 @@ import useStorage from '@/db/useStorage'
 import { ref } from 'vue'
 
 const props = defineProps({  
+	courseList: {
+		type: Array,
+		required: true
+	},
 	gradeList: {
 		type: Array,
 		required: true
@@ -63,6 +67,7 @@ const props = defineProps({
 		required: true
 	}
 })
+const course = ref('ICSE')
 const grade = ref(10)
 const subject = ref('eng1')
 const topic = ref('')
@@ -70,16 +75,21 @@ const file1 = ref(null)
 const onFileChange = (e) => {
     file1.value = e.target.files[0]
 }
+const openUrl = (url) => {
+    window.open(url)
+}
 
 const notes = ref([])
 const loadData = async () => {
-    let collection = getCollection('notes',
+    if(course.value == 'default' || grade.value == 0 || subject.value == 'default') {
+        return
+    }
+    let collection = getCollection('notes', ['course', '==', course.value],
         ['class', '==', grade.value], ['subject', '==', subject.value])
 
 	collection.getDocuments().then((docs) => {
 		notes.value = docs
         uploadText.value = 'Upload'
-        downloadText.value = 'Download'
 	}).catch((err) => {
 		console.log(err)
 	})
@@ -88,12 +98,13 @@ const loadData = async () => {
 const uploadText = ref('Upload')
 const addNote = async () => {
     let file = file1.value
-    let path = `notes/${grade.value + 'th'}/${subject.value}/${file.name}` 
+    let path = `notes/${course.value + '_' + grade.value}/${subject.value}/${file.name}` 
     uploadText.value = 'Uploading...'
 
     await useStorage().uploadFile(file, path).then(async(res) => {
         if(res) {
             await (await addCollection('notes')).addDocument('', {
+                course: course.value,
                 class: grade.value,
                 subject: subject.value,
                 topic: topic.value,
@@ -114,22 +125,12 @@ const addNote = async () => {
         console.log(err)
     })
 }
-const downloadText = ref('Download')
-const download = async (note) => {
-    const url = note.url
-    const name = note.class + 'th_' + note.subject + '_' + note.topic
-    downloadText.value = 'Downloading...'
 
-    useStorage().downloadFile(url, name).then(() => {
-        downloadText.value = 'Download'
-    }).catch((err) => {
-        console.log(err)
-    })
-}
 const delNote = async (note) => {
     await useStorage().deleteFile(note.path).then(async(res) => {
         if(res) {
-            await (await useDocument('notes', note.id)).delDoc().then(() => {
+            await (await useDocument('notes', note.id))
+            .delDoc().then(() => {
                 loadData()
             }).catch((err) => {
                 console.log(err)
@@ -141,7 +142,6 @@ const delNote = async (note) => {
         console.log(err)
     })
 }
-
 loadData()
 </script>
 

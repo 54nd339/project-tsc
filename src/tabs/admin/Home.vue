@@ -1,12 +1,12 @@
 <template>
 	<div id="content" class="container-fluid">
 		<div class="row justify-content-center">
-			<Suspense><TimeTable :gradeList="grades" :subjectList="subjects" /></Suspense>
-			<Suspense><Tests :gradeList="grades" :subjectList="subjects" /></Suspense>
+			<TimeTable :courseList="courses" :gradeList="grades" :subjectList="subjects" />
+			<Tests :courseList="courses" :gradeList="grades" :subjectList="subjects" />
 		</div>
 		<div class="row justify-content-center">
-			<Suspense><Uploads :gradeList="grades" :subjectList="subjects" /></Suspense>
-			<Suspense><Admins /></Suspense>
+			<Uploads :courseList="courses" :gradeList="grades" :subjectList="subjects" />
+			<Admins />
 		</div>
 	</div>
 </template>
@@ -18,6 +18,10 @@ import TimeTable from '@/components/Admin_View/TimeTable.vue'
 import Uploads from '@/components/Admin_View/Uploads.vue'
 
 const props = defineProps({  
+	courses: {
+		type: Array,
+		required: true
+	},
 	grades: {
 		type: Array,
 		required: true

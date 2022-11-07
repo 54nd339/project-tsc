@@ -17,7 +17,7 @@ const props = defineProps({
 const emit = defineEmits(['submitClick'])
 const titleName = 'Reset ' + props.title + ' Attendance'
 const modalId = 'reset' + props.title
-const collectionId = props.title.toLowerCase()
+const collectionId = props.title.toLowerCase() + 's'
 
 const onSubmit = async() => {
 	event.target.closest('.modal-content')

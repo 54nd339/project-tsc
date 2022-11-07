@@ -10,8 +10,7 @@
 				<th scope="col">Context</th>
 				<th scope="col" v-if="role == 'default'">Role</th>
 				<th scope="col">Date</th>
-				<th scope="col">View</th>
-				<th scope="col">Delete</th>
+				<th scope="col">View/Delete</th>
 			</tr></thead>
 			<tbody ref="rows" id="rows">
 				<tr v-for="pic in pics" :key="pic">
@@ -19,12 +18,11 @@
 					<td>{{ pic.context }}</td>
 					<td v-if="role == 'default'">{{ pic.role }}</td>
 					<td>{{ pic.date }}</td>
-					<td><b-button @click="download(pic)" :disabled="downloadText != 'Download'">
-						{{ downloadText }}
-					</b-button></td>
-					<td><b-button variant="outline-danger" size="sm" class="m-1" @click="delPic(pic)">
-						<font-awesome-icon icon="fa-solid fa-trash" size="1x" />
-					</b-button></td>
+					<td><b-button @click="target = pic" v-b-modal.Pic>View</b-button>
+                        <b-button variant="outline-danger" size="sm" class="m-1" @click="delPic(pic)">
+                            <font-awesome-icon icon="fa-solid fa-trash" size="1x" />
+                        </b-button>
+                    </td>
 				</tr>
 			</tbody>
 		</table>
@@ -42,10 +40,13 @@
 				</div>
 			</b-form>
 		</b-modal>
+		<ViewImage name="Pic" :title="target.title" :src="target.url" />
 	</section>
 </template>
 
 <script setup>
+import ViewImage from '@/components/Admin_Modals/ViewImage.vue'
+
 import getCollection from '@/db/getCollection'
 import addCollection from '@/db/addDocument'
 import useDocument from '@/db/useDocument'
@@ -66,21 +67,19 @@ const file1 = ref(null)
 const onFileChange = (e) => {
     file1.value = e.target.files[0]
 }
-
+const target = ref({})
 const pics = ref([])
 const loadData = async () => {
-    let collection = role.value == 'default' ? getCollection('gallery', '', '') :
-					getCollection('gallery', ['role', '==', role.value], '')
+    let collection = role.value == 'default' ? getCollection('gallery', '', '', '') :
+					getCollection('gallery', ['role', '==', role.value], '', '')
 
 	collection.getDocuments().then((docs) => {
 		pics.value = docs
         uploadText.value = 'Upload'
-        downloadText.value = 'Download'
 	}).catch((err) => {
 		console.log(err)
 	})
 }
-
 const uploadText = ref('Upload')
 const addPic = async () => {
     let file = file1.value
@@ -111,7 +110,6 @@ const addPic = async () => {
         console.log(err)
     })
 }
-
 const delPic = async (pic) => {
     await useStorage().deleteFile(pic.path).then(async(res) => {
         if(res) {
@@ -124,19 +122,6 @@ const delPic = async (pic) => {
         }
         else
             console.log('File not found')
-    }).catch((err) => {
-        console.log(err)
-    })
-}
-
-const downloadText = ref('Download')
-const download = async (pic) => {
-    const url = pic.url
-    const name = pic.role + '_' + pic.title
-    downloadText.value = 'Downloading...'
-
-    useStorage().downloadFile(url, name).then(() => {
-        downloadText.value = 'Download'
     }).catch((err) => {
         console.log(err)
     })

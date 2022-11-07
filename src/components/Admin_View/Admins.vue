@@ -1,5 +1,5 @@
 <template>
-	<div class="col-md-5 rounded-3 m-2" style="background-color:#57CC99; max-height: 70vh; overflow-y: auto;">
+	<div class="col-md-5 rounded-3 m-2" style="background-color:#57CC99; min-height: 50vh; max-height: 70vh; overflow-y: auto;">
         <div class="shadow m-3 p-1 rounded-3" style="background-color:#80ED99">
             <h3 class="text-center" style>Admins</h3>
         </div>
@@ -44,7 +44,7 @@ import { ref } from 'vue'
 
 const admins = ref([])
 const loadData = async () => {
-	let collection = getCollection('admin', '', '')
+	let collection = getCollection('admins', '', '', '')
 	collection.getDocuments().then((docs) => {
 		admins.value = docs
         selected.value = []

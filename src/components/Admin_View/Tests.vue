@@ -1,18 +1,21 @@
 <template>
-	<div class="col-md-5 rounded-3 m-2" style="background-color:#80ED99; max-height: 70vh; overflow-y: auto;">
+	<div class="col-md-5 rounded-3 m-2" style="background-color:#80ED99; min-height: 50vh; max-height: 70vh; overflow-y: auto;">
         <div class="shadow m-3 p-1 rounded-3" style="background-color:#57CC99">
             <h3 class="text-center" style>Schedule Test</h3>
         </div>
         <div id="content" class="container-fluid">
             <b-button-group class="my-1">
+                <b-form-select v-model="course" :options="courseList" @update:modelValue="loadData" />
                 <b-form-select v-model="grade" :options="gradeList" @update:modelValue="loadData" />
                 <b-form-select v-model="subject" :options="subjectList" @update:modelValue="loadData" />
-                <b-button variant="success" v-b-modal.addTest>Add</b-button>
+                <b-button v-if="course != 'default' && grade != 0 && subject != 'default'"
+                    variant="success" v-b-modal.addTest>Add</b-button>
             </b-button-group>
             <table class="table table-hover table-responsive">
                 <thead><tr>
                     <th scope="col">Topic</th>
                     <th scope="col">FM</th>
+                    <th scope="col">Date</th>
                     <th scope="col">View</th>
                     <th scope="col">Delete</th>
                 </tr></thead>
@@ -20,9 +23,13 @@
                     <tr v-for="test in tests" :key="test">
                         <td>{{ test.topic }}</td>
                         <td>{{ test.fm }}</td>
-                        <td><b-button @click="download(test)" :disabled="downloadText != 'Download'">
-                            {{ downloadText }}</b-button></td>
-                        <td><b-button variant="outline-danger" size="sm" class="m-1" @click="delTest(test)">
+                        <td>{{ test.date }}</td>
+                        <td><b-button v-if="test.url" @click="download(test)"
+                            :disabled="downloadText != 'Download'">{{ downloadText }}</b-button>
+                            <b-button v-else v-b-modal.addFile @click="target = test">Upload File</b-button>
+                        </td>
+                        <td><b-button variant="outline-danger" size="sm" class="m-1"
+                                @click="test.url ? delTest(test) : delDoc(test)">
                             <font-awesome-icon icon="fa-solid fa-trash" size="1x" />
                         </b-button></td>
                     </tr>
@@ -32,7 +39,18 @@
                 <b-form @submit="addTest">
                     <b-form-input v-model="topic" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Topic" required />
                     <b-form-input v-model="fm" class="d-flex mx-auto my-1" type="number" size="lg" placeholder="Enter F.M." required />
-                    <input type="file" class="d-flex mx-auto my-1" name="file" @change="onFileChange" required/>
+                    <input v-model="date" class="d-flex mx-auto my-1" type="date" required/>
+                    <div class="d-flex mb-1 justify-content-end">
+                        <b-button-group>
+                            <b-button type="reset" variant="danger" size="lg">Reset </b-button>
+                            <b-button type="submit" variant="primary" size="lg">Submit</b-button>
+                        </b-button-group>
+                    </div>
+                </b-form>
+            </b-modal>
+            <b-modal id="addFile" title="Add File" aria-labelledby="addTest" aria-hidden="true" :hide-footer="true">
+                <b-form @submit="addFile">
+                    <input name="file" class="d-flex mx-auto my-1" type="file" @change="onFileChange" required/>
                     <div class="d-flex mb-1 justify-content-end">
                         <b-button-group>
                             <b-button type="reset" variant="danger" size="lg">Reset </b-button>
@@ -54,6 +72,10 @@ import useStorage from '@/db/useStorage'
 import { ref } from 'vue'
 
 const props = defineProps({  
+	courseList: {
+		type: Array,
+		required: true
+	},
 	gradeList: {
 		type: Array,
 		required: true
@@ -63,10 +85,12 @@ const props = defineProps({
 		required: true
 	}
 })
+const course = ref('ICSE')
 const grade = ref(10)
 const subject = ref('eng1')
 const topic = ref('')
 const fm = ref(0)
+const date = ref('')
 const file1 = ref(null)
 const onFileChange = (e) => {
     file1.value = e.target.files[0]
@@ -74,7 +98,10 @@ const onFileChange = (e) => {
 
 const tests = ref([])
 const loadData = async () => {
-    let collection = getCollection('test',
+    if(course.value == 'default' || grade.value == 0 || subject.value == 'default') {
+        return
+    }
+    let collection = getCollection('tests', ['course', '==', course.value],
         ['class', '==', grade.value], ['subject', '==', subject.value])
 
 	collection.getDocuments().then((docs) => {
@@ -86,26 +113,45 @@ const loadData = async () => {
 	})
 }
 
-const uploadText = ref('Upload')
 const addTest = async () => {
+    await (await addCollection('tests'))
+    .addDocument('', {
+        course: course.value,
+        class: grade.value,
+        subject: subject.value,
+        topic: topic.value,
+        fm: fm.value,
+        date: date.value,
+        url: '',
+        path: ''
+    }).then(() => {
+        topic.value = ''
+        fm.value = 0
+        date.value = ''
+        loadData()
+    }).catch((err) => {
+        console.log(err)
+    })
+}
+const target = ref(null)
+const uploadText = ref('Upload')
+const addFile = async () => {
+    const btn = event.target.closest('.modal-content')
+                .querySelector('.btn-close')
     let file = file1.value
-    let path = `tests/${grade.value + 'th'}/${subject.value}/${file.name}` 
+    let path = `tests/${target.value.course + '_' + target.value.class}/${target.value.subject}/${file.name}` 
     uploadText.value = 'Uploading...'
 
-    await useStorage().uploadFile(file, path).then(async(res) => {
+    await useStorage().uploadFile(file, path)
+    .then(async(res) => {
         if(res) {
-            await (await addCollection('test')).addDocument('', {
-                class: grade.value,
-                subject: subject.value,
-                topic: topic.value,
-                fm: fm.value,
+            await (await useDocument('tests', target.value.id))
+            .updateDocs({
                 url: res.url,
-                path: res.snapshot.metadata.fullPath,
-                date: res.snapshot.metadata.timeCreated
+                path: res.snapshot.metadata.fullPath
             }).then(() => {
-                topic.value = ''
-                fm.value = 0
                 file1.value = null
+                btn.click()
                 loadData()
             }).catch((err) => {
                 console.log(err)
@@ -121,7 +167,7 @@ const addTest = async () => {
 const downloadText = ref('Download')
 const download = async (test) => {
     const url = test.url
-    const name = test.class + 'th_' + test.subject + '_' + test.topic
+    const name = test.course + '_' + test.class + '_' + test.subject + '_' + test.topic
     downloadText.value = 'Downloading...'
 
     useStorage().downloadFile(url, name).then(() => {
@@ -131,22 +177,26 @@ const download = async (test) => {
     })
 }
 
+const delDoc = async (test) => {
+    await (await useDocument('tests', test.id))
+    .delDoc().then(() => {
+        loadData()
+    }).catch((err) => {
+        console.log(err)
+    })
+}
 const delTest = async (test) => {
-    await useStorage().deleteFile(test.path).then(async(res) => {
-        if(res) {
-            await (await useDocument('test', test.id)).delDoc()
-            .then(() => {
-                loadData()
-            }).catch((err) => {
-                console.log(err)
-            })
-        }
+    await useStorage().deleteFile(test.path)
+    .then(async(res) => {
+        if(res) 
+            delDoc(test)
         else
             console.log('File not found')
     }).catch((err) => {
         console.log(err)
     })
 }
+
 loadData()
 </script>
 

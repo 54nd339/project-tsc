@@ -4,9 +4,7 @@ import { storage } from "@/db/config"
 const storageRef = ref(storage)
 const useStorage = () => {
     const uploadFile = async(file, filePath) => {
-        const fileRef = ref(storageRef, filePath)
-        
-        // Upload the file
+        const fileRef = ref(storageRef, filePath) 
         return uploadBytes(fileRef, file).then(async(snapshot) => {
             return getDownloadURL(snapshot.ref).then((url) => {
                 return { snapshot, url }
@@ -20,8 +18,6 @@ const useStorage = () => {
   
     const deleteFile = async(filePath) => {
         const fileRef = ref(storageRef, filePath)
-    
-        // Delete the file
         return deleteObject(fileRef).then(() => {
             return true
         }).catch((error) => {
@@ -34,14 +30,10 @@ const useStorage = () => {
         xhr.responseType = 'blob'
         xhr.onload = (event) => {
             const blob = xhr.response
-
-            // Create a link to download the file
             const link = document.createElement('a')
             link.href = window.URL.createObjectURL(blob)
             link.download = name
             link.click()
-
-            // Delete the link when done
             link.remove()
 
         }
@@ -50,5 +42,4 @@ const useStorage = () => {
     }
     return { uploadFile, deleteFile, downloadFile }
 }
-
 export default useStorage

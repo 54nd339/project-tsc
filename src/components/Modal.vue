@@ -15,30 +15,26 @@
 				<div id="warn" class="m-1 text-danger" v-if="warnmsg"><strong>{{ warnmsg }}</strong></div>
 			</div>
 			<b-button id="loginpg" variant="success d-flex mx-auto mt-2" size="lg" type="button" @click="handleLogin()"
-				v-model="loginpg" :disabled=isLoginPending>{{ LoginText }}</b-button>
+				v-model="loginpg">{{ LoginText }}</b-button>
 		</b-form>
 	</b-modal>
 	<b-modal id="logoutConfirm" title="Logout" aria-labelledby="logoutConfirm" aria-hidden="true" :hide-footer="true">
 		<b-form @submit="handleLogout">
 			<p class="justify-content-center align-items-center" id="logoutText">Confirm Logout?</p>
 			<b-button id="logoutpg" type="submit" variant="success" class="d-flex mx-auto mb-1" size="lg"
-				v-model="logoutpg" :disabled=isLogoutPending>{{ LogoutText }}</b-button>
+				v-model="logoutpg">{{ LogoutText }}</b-button>
 		</b-form>
 	</b-modal>
 </template>
 
 <script setup>
-import useLogin from '@/db/login'
-import useLogout from '@/db/logout'
+import useAuth from '@/db/useAuth'
 import { db } from '@/db/config'
 import { doc, getDoc } from 'firebase/firestore'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const { loginErr, login, isLoginPending } = useLogin()
-const { logoutErr, logout, isLogoutPending } = useLogout()
-
 const email = ref('')
 const password = ref('')
 const selected = ref('')
@@ -50,18 +46,17 @@ const options = [
 	]
 const loginpg = ref(false)
 const LoginText = ref('Login')
+
 const handleLogin = async() => {
 	const pathName = selected.value
 	LoginText.value = 'Logging in...'
 	loginpg.value = true
 
-	await login(email.value, password.value).then(async(res) => {
+	await useAuth().login(email.value, password.value).then(async(res) => {
 		LoginText.value = 'Login'
 		loginpg.value = false
 		if(res) {
-			// console.log('Login Success')
-			const docRef = doc(db, pathName, res.uid)
-			// console.log(db, pathName, res.uid)
+			const docRef = doc(db, pathName + 's', res.uid)
 			await getDoc(docRef).then((doc) => {
 				if(doc.exists()) {
 					document.querySelector('.btn-close').click()
@@ -75,7 +70,7 @@ const handleLogin = async() => {
 		}
 		else {
 			// loginErr Not showing for invalid credentials
-			warnmsg.value = loginErr
+			warnmsg.value = 'User not found!'
 		}
 	})
 }
@@ -88,7 +83,7 @@ const handleLogout = async() => {
 	LogoutText.value = 'Logging out...'
 	logoutpg.value = true
 
-	await logout().then(async() => {
+	await useAuth().logout().then(async() => {
 		LogoutText.value = 'Logout'
 		logoutpg.value = false
 		btn.click()

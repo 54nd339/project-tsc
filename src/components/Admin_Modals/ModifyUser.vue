@@ -17,7 +17,6 @@
 
 <script setup>
 import useDocument from '@/db/useDocument'
-import getDocument from '@/db/getDocument'
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -27,15 +26,14 @@ const props = defineProps({
 const emit = defineEmits(['submitClick'])
 const titleName = 'Modify ' + props.title
 const modalId = 'modify' + props.title
-const collectionId = props.title.toLowerCase()
+const collectionId = props.title.toLowerCase() + 's'
 
 const name = ref('')
 const phone = ref('')
 
 const loadData = async () => {
-	let doc = getDocument(collectionId, props.id)
-	// console.log(doc, collectionId, props.id)
-	doc.getDetail().then((doc) => {
+	let doc = (await useDocument(collectionId, props.id))
+	.getDetail().then((doc) => {
 		name.value = doc.name
 		phone.value = doc.phone
 	}).catch((err) => {
@@ -49,8 +47,8 @@ defineExpose({
 const onSubmit = async() => {
 	const btn = event.target.closest('.modal-content')
                             .querySelector('.btn-close')
-
-	await (await useDocument(collectionId, props.id)).updateDocs({
+	await (await useDocument(collectionId, props.id))
+	.updateDocs({
 		name: name.value,
 		phone: phone.value
 	}).then(() => {

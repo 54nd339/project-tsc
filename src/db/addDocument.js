@@ -32,5 +32,4 @@ const addCollection = async (collectionId) => {
     }
     return { error, addDocument, isPending }
 }
-
 export default addCollection

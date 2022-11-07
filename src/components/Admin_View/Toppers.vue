@@ -8,20 +8,18 @@
 				<th scope="col">Name</th>
 				<th scope="col">Course</th>
 				<th scope="col">Score</th>
-				<th scope="col">View</th>
-				<th scope="col">Delete</th>
+				<th scope="col">View/Delete</th>
 			</tr></thead>
 			<tbody ref="rows" id="rows">
 				<tr v-for="topper in toppers" :key="topper">
 					<td>{{ topper.name }}</td>
 					<td>{{ topper.course }}</td>
 					<td>{{ topper.score }}</td>
-					<td><b-button @click="download(topper)" :disabled="downloadText != 'Download'">
-						{{ downloadText }}
-					</b-button></td>
-					<td><b-button variant="outline-danger" size="sm" class="m-1" @click="delTopper(topper)">
-						<font-awesome-icon icon="fa-solid fa-trash" size="1x" />
-					</b-button></td>
+					<td><b-button @click="target = topper" v-b-modal.Topper>View</b-button>
+                        <b-button variant="outline-danger" size="sm" class="m-1" @click="delTopper(topper)">
+                            <font-awesome-icon icon="fa-solid fa-trash" size="1x" />
+                        </b-button>
+                    </td>
 				</tr>
 			</tbody>
 		</table>
@@ -40,10 +38,13 @@
 				</div>
 			</b-form>
 		</b-modal>
+		<ViewImage name="Topper" :title="target.title" :src="target.url" />
 	</section>
 </template>
 
 <script setup>
+import ViewImage from '@/components/Admin_Modals/ViewImage.vue'
+
 import getCollection from '@/db/getCollection'
 import addCollection from '@/db/addDocument'
 import useDocument from '@/db/useDocument'
@@ -57,20 +58,17 @@ const file1 = ref(null)
 const onFileChange = (e) => {
     file1.value = e.target.files[0]
 }
-
+const target = ref({})
 const toppers = ref([])
 const loadData = async () => {
-    let collection = getCollection('toppers', '', '')
+    let collection = getCollection('toppers', '', '', '')
 
 	collection.getDocuments().then((docs) => {
 		toppers.value = docs
-        uploadText.value = 'Upload'
-        downloadText.value = 'Download'
 	}).catch((err) => {
 		console.log(err)
 	})
 }
-
 const uploadText = ref('Upload')
 const addTopper = async () => {
     let file = file1.value
@@ -102,7 +100,6 @@ const addTopper = async () => {
         console.log(err)
     })
 }
-
 const delTopper = async (topper) => {
     await useStorage().deleteFile(topper.path).then(async(res) => {
         if(res) {
@@ -115,19 +112,6 @@ const delTopper = async (topper) => {
         }
         else
             console.log('File not found')
-    }).catch((err) => {
-        console.log(err)
-    })
-}
-
-const downloadText = ref('Download')
-const download = async (topper) => {
-    const url = topper.url
-    const name = topper.name + '_' + topper.course
-    downloadText.value = 'Downloading...'
-
-    useStorage().downloadFile(url, name).then(() => {
-        downloadText.value = 'Download'
     }).catch((err) => {
         console.log(err)
     })

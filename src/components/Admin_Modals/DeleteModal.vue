@@ -17,7 +17,7 @@ const props = defineProps({
 const emit = defineEmits(['submitClick'])
 const titleName = 'Delete ' + props.title
 const modalId = 'delete' + props.title
-const collectionId = props.title.toLowerCase()
+const collectionId = props.title.toLowerCase() + 's'
 
 const onSubmit = async() => {
 	event.target.closest('.modal-content')
@@ -26,7 +26,7 @@ const onSubmit = async() => {
 	props.ids.forEach(async (docId) => {
 		await (await useDocument(collectionId, docId))
 		.delDoc().then(() => {
-			// console.log('deleted')
+			console.log('deleted')
 		}).catch((err) => {
 			console.log(err)
 		})

@@ -4,7 +4,7 @@
         <div class="col-lg-12">
             <h2 class="shadow m-md-1 py-3 d-flex justify-content-center heading">Let's Get in Touch</h2>
         </div>
-        <b-form class="p-1 p-md-3 rounded" @submit="onSubmit" style="background-color: #57cc99;">
+        <b-form class="p-1 p-md-3 rounded" @submit="onSubmit" style="background-color: #57cc99; height: 59vh;">
             <b-form-select v-model="course" :options="courseList" size="lg" class="d-flex mx-auto m-2" />
             <b-form-select v-model="grade" :options="gradeList" size="lg" class="d-flex mx-auto m-2" />
             <b-form-input v-model="name" type="text" class="d-flex mx-auto m-2"

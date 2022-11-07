@@ -1,16 +1,16 @@
 <template>
   	<main role="main" id="content" class="tab-content mt-3 mb-5" style="min-height: 85vh;">
 		<div id="home" class="tab-pane fade show active tab-content" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
-			<Suspense><Home :grades="gradeList" :subjects="subjectList" /></Suspense>
+			<Home :courses="courseList" :grades="gradeList" :subjects="subjectList" />
 		</div>
 		<div id="students" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-courses-tab" tabindex="0">
-			<Suspense><Students :grades="gradeList" :subjects="subjectList" /></Suspense>
+			<Students :courses="courseList" :grades="gradeList" :subjects="subjectList" />
 		</div>
 		<div id="teachers" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-success-tab" tabindex="0">
-            <Suspense><Teachers :grades="gradeList" :subjects="subjectList" /></Suspense>
+            <Teachers :courses="courseList" :grades="gradeList" :subjects="subjectList" />
 		</div>
         <div id="site" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-about-tab" tabindex="0">
-            <Suspense><Site /></Suspense>
+            <Site />
 		</div>
 	</main>
 </template>
@@ -47,6 +47,13 @@ const subjectList = [
 	{ value: 'sst', text: 'Social Science'},
 	{ value: 'hist', text: 'History'},
 	{ value: 'geo', text: 'Geography'}
+]
+const courseList = [
+	{ value: 'default', text: 'Select Course'},
+	{ value: 'ICSE', text: 'ICSE' },
+	{ value: 'CBSE', text: 'CBSE' },
+	{ value: 'CHSE', text: 'CHSE' },
+	{ value: 'JEE_NEET', text: 'JEE/NEET' }
 ]
 </script>
 

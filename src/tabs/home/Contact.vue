@@ -62,11 +62,19 @@
 </template>
 
 <script setup>
-const faqs = [
-	{ question: 'Question #1', answer: 'Answer #1' },
-	{ question: 'Question #2', answer: 'Answer #2' },
-	{ question: 'Question #3', answer: 'Answer #3' }
-]
+import getCollection from '@/db/getCollection'
+import { ref } from 'vue'
+
+const faqs = ref([])
+const loadData = async() => {
+    await(getCollection('faqs', '', '', ''))
+    .getDocuments().then((docs) => {
+        faqs.value = docs
+    }).catch((err) => {
+        console.log(err)
+    })
+}
+loadData()
 </script>
 
 <style>

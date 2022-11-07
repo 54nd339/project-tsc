@@ -12,29 +12,9 @@
 			</button>
 
 			<div class="collapse navbar-collapse justify-content-center" id="navbarCollapse">
-				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-if="userType === 'Guest'">
-					<button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
-					<button class="nav-link" id="pills-course-tab" data-bs-toggle="pill" data-bs-target="#courses" type="button" role="tab" aria-controls="courses" aria-selected="false">Courses</button>
-					<button class="nav-link" id="pills-success-tab" data-bs-toggle="pill" data-bs-target="#success" type="button" role="tab" aria-controls="success" aria-selected="false">Our Success</button>
-					<button class="nav-link" id="pills-about-tab" data-bs-toggle="pill" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="false">About Us</button>
-					<button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact Us</button> 
-				</div>
-				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-else-if="userType === 'Student'">
-					<button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
-					<button class="nav-link" id="pills-course-tab" data-bs-toggle="pill" data-bs-target="#download" type="button" role="tab" aria-controls="courses" aria-selected="false">Download</button>
-					<button class="nav-link" id="pills-success-tab" data-bs-toggle="pill" data-bs-target="#exam" type="button" role="tab" aria-controls="success" aria-selected="false">Exam</button>
-					<button class="nav-link" id="pills-about-tab" data-bs-toggle="pill" data-bs-target="#feedback" type="button" role="tab" aria-controls="about" aria-selected="false">Feedback</button>      
-				</div>
-				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-else-if="userType === 'Teacher'">
-					<button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
-					<button class="nav-link" id="pills-course-tab" data-bs-toggle="pill" data-bs-target="#download" type="button" role="tab" aria-controls="courses" aria-selected="false">Download</button>
-					<button class="nav-link" id="pills-success-tab" data-bs-toggle="pill" data-bs-target="#exam" type="button" role="tab" aria-controls="success" aria-selected="false">Exam</button>   
-				</div>
-				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0" v-else-if="userType === 'Admin'">
-					<button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Home</button>
-					<button class="nav-link" id="pills-course-tab" data-bs-toggle="pill" data-bs-target="#students" type="button" role="tab" aria-controls="courses" aria-selected="false">Students</button>
-					<button class="nav-link" id="pills-success-tab" data-bs-toggle="pill" data-bs-target="#teachers" type="button" role="tab" aria-controls="success" aria-selected="false">Teachers</button>
-					<button class="nav-link" id="pills-about-tab" data-bs-toggle="pill" data-bs-target="#site" type="button" role="tab" aria-controls="about" aria-selected="false">Site</button>      
+				<div class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+					<button class="nav-link" :class="{active: !index}" v-for="(tab, index) in tabs[userType]" :key="tab" 
+						data-bs-toggle="pill" :data-bs-target="'#' + tab.id">{{ tab.name }}</button>
 				</div>
 				<div class="col-md-3 text-end" v-if="userType === 'Guest'">
 					<button type="button" id="login" class="btn btn-outline-success mx-md-2" v-b-modal.loginForm>Login</button>
@@ -59,6 +39,33 @@ const router = useRouter()
 const name = ref('Talent Sprint Classes')
 const userType = ref('Guest')
 
+const tabs = {
+	Guest: [
+		{ id: 'home', name: 'Home' },
+		{ id: 'courses', name: 'Courses' },
+		{ id: 'success', name: 'Our Success' },
+		{ id: 'about', name: 'About Us' },
+		{ id: 'contact', name: 'Contact Us' },
+	],
+	Student: [
+		{ id: 'home', name: 'Home' },
+		{ id: 'download', name: 'Download' },
+		{ id: 'exam', name: 'Exam' },
+		{ id: 'feedback', name: 'Feedback' },
+	],
+	Teacher: [
+		{ id: 'home', name: 'Home' },
+		{ id: 'download', name: 'Download' },
+		{ id: 'exam', name: 'Exam' },
+	],
+	Admin: [
+		{ id: 'home', name: 'Home' },
+		{ id: 'students', name: 'Students' },
+		{ id: 'teachers', name: 'Teachers' },
+		{ id: 'site', name: 'Site' },
+	],
+}
+
 const routeName = route.name
 if(routeName == 'Student')
 	userType.value = 'Student'
@@ -71,15 +78,13 @@ else
 
 const userName = ref('User')
 if(userType.value != 'Guest') { 
-	const docName = routeName.toString().toLowerCase()
+	const docName = routeName.toString().toLowerCase() + 's'
 	const docRef = doc(db, docName, route.params.id)
 	// console.log(db, docName, route.params.id)
 	await getDoc(docRef).then((doc) => {
 		if (doc.exists()) {
-			// console.log("Document data:", doc.data())
 			userName.value = doc.data().name
 		} else {
-			// doc.data() will be undefined in this case
 			console.log("No User Found!")
 		}
 	}).catch((error) => {

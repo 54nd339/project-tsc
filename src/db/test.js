@@ -1,25 +1,20 @@
-import useDocument from "./useDocument"
-import getDocument from "./getDocument"
+import addDocument from "./addDocument"
 import { ref } from "vue"
+
 export default async function test() {
-    getDocument('schedule', 'class_10').getDetail().then(async (doc) => {
+    const course = ['ICSE', 'CBSE', 'CHSE']
+
+    course.forEach(async (item) => {
         for(let i = 5; i <= 12; i++) {
-            if(i != 10) {
-                let docId = 'class_' + i
-                console.log(doc)
-                await (await useDocument('schedule', docId)).updateDocs({
-                    mon: doc.mon,
-                    tue: doc.tue,
-                    wed: doc.wed,
-                    thu: doc.thu,
-                    fri: doc.fri,
-                    sat: doc.sat,
-                }).then(() => {
-                    console.log('done')
-                }).catch((err) => {
-                    console.log(err)
-                })            
-            }
+            (await addDocument('schedule'))
+            .addDocument(item+'_'+i, {
+                mon: ['default', 'default', 'default'],
+                tue: ['default', 'default', 'default'],
+                wed: ['default', 'default', 'default'],
+                thu: ['default', 'default', 'default'],
+                fri: ['default', 'default', 'default'],
+                sat: ['default', 'default', 'default'],
+            })
         }
     })
 }

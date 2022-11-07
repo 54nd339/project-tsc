@@ -40,13 +40,11 @@
 	box-shadow: inset 0 0 5px grey;
 	border-radius: 10px;
 }
-
 /* Handle */
 ::-webkit-scrollbar-thumb {
 	background: #38A3A5;
 	border-radius: 10px;
 }
-
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
 	background: #22577A;

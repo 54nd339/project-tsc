@@ -3,7 +3,7 @@
 		<b-button-group class="my-1">
 			<b-button variant="success" v-b-modal.addTeacher>Add</b-button>
 			<b-button variant="secondary" v-b-modal.resetRate>Reset Ratings</b-button>
-			<b-button variant="secondary" v-b-modal.resetTeacher>reset Attendance</b-button>
+			<b-button variant="secondary" v-b-modal.resetTeacher>Reset Attendance</b-button>
 			<b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteTeacher>Delete</b-button>
 			<b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyTeacher @click="$refs.modUser.loadData">Modify</b-button>
 		</b-button-group>
@@ -27,7 +27,7 @@
 					<td>{{ teacher.rating }}</td>
 					<td>{{ teacher.phone }}</td>
 					<td>{{ teacher.email }}</td>
-					<td><table>
+					<td><div>
 						<tr>
 							<td v-if="noAttEdit || teacher.id != target">{{ teacher.attendance }}/ 30</td>
 							<td v-else>
@@ -47,22 +47,24 @@
 								<font-awesome-icon icon="fa-solid fa-plus" />
 							  </b-button></td>
 						</tr>
-					</table></td>
+					</div></td>
 					<td><div>
 						<tr v-for="(subs, grade) in teacher.classes" :key="grade">
-							<div v-if="subs.length > 0"><td>{{ grade }}</td>
-							<td v-for="(sub, index) in subs" :key="sub">
-								<b-input-group :prepend="sub" size="sm">
-									<b-button variant="outline-danger" @click="delSub(teacher.id, teacher.classes, grade, index)">
-										<font-awesome-icon icon="fa-solid fa-trash" size="1x" />
-									</b-button>
-								</b-input-group>
-							</td></div>
+							<b-input-group v-if="subs.length > 0" :prepend="grade">
+								<td v-for="(sub, index) in subs" :key="sub">
+									<b-input-group :prepend="sub" size="sm"><b-input-group-append>
+										<b-button variant="outline-danger" @click="delSub(teacher.id, teacher.classes, grade, index)">
+											<font-awesome-icon icon="fa-solid fa-trash" size="1x" />
+										</b-button>
+									</b-input-group-append></b-input-group>
+								</td>
+							</b-input-group>
 						</tr>
 					</div></td>
 					<td>
 						<b-input-group>
 							<b-input-group-prepend>
+								<b-form-select v-model="course" :options="courses" />
 								<b-form-select v-model="grade" :options="grades" />
 								<b-form-select v-model="subject" :options="subjects" />
 							</b-input-group-prepend>
@@ -100,6 +102,10 @@ import useDocument from '@/db/useDocument'
 import { ref } from 'vue'
 
 const props = defineProps({
+	courses: {
+		type: Array,
+		required: true
+	},
 	grades: {
 		type: Array,
 		required: true
@@ -113,7 +119,7 @@ const teachers = ref([])
 const target = ref(null)
 
 const loadData = async () => {
-	let collection = getCollection('teacher', '', '')
+	let collection = getCollection('teachers', '', '', '')
 	collection.getDocuments().then((docs) => {
 		teachers.value = docs
 		selected.value = []
@@ -122,7 +128,6 @@ const loadData = async () => {
 		console.log(err)
 	})
 }
-
 const selected = ref([])
 const docID = ref('default')
 const updateSelected = () => {
@@ -137,7 +142,7 @@ const updateSelected = () => {
 
 const noAttEdit = ref(true)
 const modA = async(teacher) => {
-	await (await useDocument('teacher', teacher.id))
+	await (await useDocument('teachers', teacher.id))
 	.updateDocs({attendance: teacher.attendance}).then(() => {
 		loadData()
 		// console.log('updated')
@@ -147,7 +152,7 @@ const modA = async(teacher) => {
 }
 
 const updateSub = async(id, classes) => {
-	await (await useDocument('teacher', id))
+	await (await useDocument('teachers', id))
 	.updateDocs({classes: classes}).then(() => {
 		loadData()
 		// console.log('updated')
@@ -155,11 +160,21 @@ const updateSub = async(id, classes) => {
 		console.log(err)
 	})
 }
+const course = ref('default')
 const grade = ref(0)
 const subject = ref('default')
 const addSub = async(id, classes) => {
-	classes[grade.value].push(subject.value)
+	if (course.value == 'default' || grade.value == 0 || subject.value == 'default') {
+		return
+	}
+	let clas = course.value + '_' + grade.value
+	if (classes[clas].includes(subject.value)) {
+		return
+	}
+
+	classes[clas].push(subject.value)
 	updateSub(id, classes).then(() => {
+		course.value = 'default'
 		grade.value = 0
 		subject.value = 'default'
 		loadData()
@@ -182,7 +197,7 @@ const resetRate = async() => {
 	event.target.closest('.modal-content')
 				.querySelector('.btn-close').click()
 	teachers.value.forEach(async(teacher) => {
-		await (await useDocument('teacher', teacher.id))
+		await (await useDocument('teachers', teacher.id))
 		.updateDocs({rating: 0}).then(() => {
 			// console.log('updated')
 			loadData()
