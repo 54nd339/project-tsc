@@ -51,7 +51,6 @@
 
 <script setup>
 import DeleteModal from '@/components/Admin_Modals/DeleteModal.vue'
-
 import addCollection from '@/db/addDocument'
 import getCollection from '@/db/getCollection'
 import useDocument from '@/db/useDocument'
@@ -59,7 +58,7 @@ import { ref } from 'vue'
 
 const faqs = ref([])
 const loadData = async () => {
-	let collection = getCollection('faqs', '', '', '')
+	let collection = getCollection('faqs', '', '', '', '')
 	collection.getDocuments().then((docs) => {
 		faqs.value = docs
 		selected.value = []

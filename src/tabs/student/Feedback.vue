@@ -1,46 +1,42 @@
 <template>
-    <div id="content" class="container-fluid">
-        <div id="Enquiry" class="rounded justify-content-center" style="background-color: #57cc99;">
-            <form>
-                <h3><u>FEEDBACK FORM !!</u></h3>
-                <b-form-select v-model="subject" :options="subjectList" />
-                <div class="form-group" v-for="question in questions" :key="question">
-                    <label class="col-md-7 px-4 mx-3">{{ question }}</label>
-                    <b-form-radio-group v-model="selected" :options="options" class="my-1" value-field="item"
-                    text-field="name"></b-form-radio-group>
-                </div>
-            </form>
+    <div class="rounded-3 m-3" style="background-color:#57CC99; min-height: 45vh">
+        <div class="shadow m-3 py-1 rounded-3 p-md-2" style="background-color:#80ED99">
+            <h3 class="text-center" style>Feedback Form</h3>
         </div>
+        <div class="d-flex mb-1 justify-content-center">
+			<b-form @submit="onSubmit">
+                <b-form-select mx-5 px-5 v-model="teacherId" :options="teachers" />
+                <b-form-group v-for="(question, index) in questions" :key="question"
+                    content-cols="6" :label="question">
+                    <b-form-radio-group v-model="selects[index]" :options="options" class="my-1" value-field="item"
+                    text-field="name"></b-form-radio-group>
+                </b-form-group>
+                <div class="d-flex mb-1 justify-content-end">
+                    <b-button-group>
+                        <b-button type="reset" variant="danger" size="lg">Reset </b-button>
+                        <b-button type="submit" variant="primary" size="lg" :disabled="teacherId == 'default'">Submit</b-button>
+                    </b-button-group>
+                </div>
+            </b-form>
+		</div>
     </div>
 </template>
 
 <script setup>
+import getCollection from '@/db/getCollection'
+import useDocument from '@/db/useDocument'
 import { ref } from 'vue'
 
+const teachers = ref([{
+    value: 'default',
+    text: 'Select Teacher'
+}])
 const options = [
     { name: 'Strongly Disagree', item: 1 },
     { name: 'Disagree', item: 2 },
     { name: 'Neutral', item: 3 },
     { name: 'Agree', item: 4 },
     { name: 'Strongly Agree', item: 5 }
-]
-const selected = ref(0)
-const subject = ref('default')
-const subjectList = [
-	{ value: 'default', text: 'Select Subject'},
-	{ value: 'eng1', text: 'English 1'},
-	{ value: 'eng2', text: 'English 2'},
-	{ value: 'odia', text: 'Odia'},
-	{ value: 'hindi', text: 'Hindi'},
-	{ value: 'math', text: 'Mathematics'},
-	{ value: 'comp', text: 'Computers'},
-	{ value: 'sci', text: 'Science'},
-	{ value: 'phys', text: 'Physics'},
-	{ value: 'chem', text: 'Chemistry'},
-	{ value: 'bio', text: 'Biology'},
-	{ value: 'sst', text: 'Social Science'},
-	{ value: 'hist', text: 'History'},
-	{ value: 'geo', text: 'Geography'}
 ]
 const questions = [
     "Q1. The teacher covers the whole syllabus :",
@@ -54,7 +50,49 @@ const questions = [
     "Q9. The teacher provides guidance counselling in academic and non-academic matters in/out side the class :"
 ]
 
-const value = ref(0)
+const selects = Array.from({ length: questions.length }, () => ref(0))
+const teacherId = ref('default')
+await getCollection('teachers', '', '', '', '')
+.getDocuments().then((data) => {
+    if(data) {
+        data.forEach((doc) => {
+            teachers.value.push({
+                value: doc.id,
+                text: doc.name
+            })
+        })
+    }
+}).catch((err) => {
+    console.log(err)
+})
+
+const onSubmit = async() => {
+    const btn = event.target.querySelector('button[type="reset"]')
+
+    await (await useDocument('teachers', teacherId.value))
+    .getDetail().then(async (data) => {
+        if(data) {
+            const currRating = data.rating
+            currRating.count = Number(currRating.count) + 1
+
+            selects.forEach((val, index) => {
+                currRating.vals[index] = Number(currRating.vals[index]) + Number(val)
+            })
+            currRating.val = currRating.vals.reduce((a, b) => a + b, 0) / currRating.vals.length
+            currRating.val = currRating.val.toFixed(2)
+
+            await (await useDocument('teachers', teacherId.value))
+            .updateDocs({rating: currRating}).then(() => {
+                btn.click()
+                teacherId.value = 'default'
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+    }).catch((err) => {
+        console.log(err)
+    })
+}
 </script>
 
 <style>

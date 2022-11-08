@@ -71,7 +71,7 @@ import { ref } from 'vue'
 
 const batches = ref([])
 const loadData = async () => {
-	let collection = getCollection('batches', '', '', '')
+	let collection = getCollection('batches', '', '', '', '')
 	collection.getDocuments().then((docs) => {
 		batches.value = docs
 		selected.value = []

@@ -29,7 +29,7 @@ const banUrls = ref([])
 const banCaptions = ref([])
 const banTexts = ref([])
 const loadData = async() => {
-    await(getCollection('gallery', ['role', '==', 'banners'], '', ''))
+    await(getCollection('gallery', ['role', '==', 'banners'], '', '', ''))
     .getDocuments().then((docs) => {
 		if(docs) {
 			docs.forEach((doc) => {

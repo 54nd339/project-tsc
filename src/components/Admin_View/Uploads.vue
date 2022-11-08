@@ -20,7 +20,7 @@
                 <tbody ref="rows" id="rows">
                     <tr v-for="note in notes" :key="note">
                         <td>{{ note.topic }}</td>
-                        <td>{{ note.date }}</td>
+                        <td>{{ note.date.slice(0, 10) }}</td>
                         <td><b-button @click="openUrl(note.url)">View</b-button>
                             <b-button variant="outline-danger" size="sm" class="m-1" @click="delNote(note)">
                             <font-awesome-icon icon="fa-solid fa-trash" size="1x" />
@@ -85,7 +85,7 @@ const loadData = async () => {
         return
     }
     let collection = getCollection('notes', ['course', '==', course.value],
-        ['class', '==', grade.value], ['subject', '==', subject.value])
+        ['class', '==', grade.value], ['subject', '==', subject.value], '')
 
 	collection.getDocuments().then((docs) => {
 		notes.value = docs

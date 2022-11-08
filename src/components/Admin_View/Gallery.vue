@@ -46,7 +46,6 @@
 
 <script setup>
 import ViewImage from '@/components/Admin_Modals/ViewImage.vue'
-
 import getCollection from '@/db/getCollection'
 import addCollection from '@/db/addDocument'
 import useDocument from '@/db/useDocument'
@@ -70,8 +69,8 @@ const onFileChange = (e) => {
 const target = ref({})
 const pics = ref([])
 const loadData = async () => {
-    let collection = role.value == 'default' ? getCollection('gallery', '', '', '') :
-					getCollection('gallery', ['role', '==', role.value], '', '')
+    let collection = role.value == 'default' ? getCollection('gallery', '', '', '', '') :
+					getCollection('gallery', ['role', '==', role.value], '', '', '')
 
 	collection.getDocuments().then((docs) => {
 		pics.value = docs
@@ -80,6 +79,7 @@ const loadData = async () => {
 		console.log(err)
 	})
 }
+
 const uploadText = ref('Upload')
 const addPic = async () => {
     let file = file1.value

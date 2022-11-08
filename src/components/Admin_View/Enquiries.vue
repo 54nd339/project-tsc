@@ -37,7 +37,7 @@ import { ref } from 'vue'
 
 const enquiries = ref([])
 const loadData = async () => {
-	let collection = getCollection('enquiry', '', '', '')
+	let collection = getCollection('enquiry', '', '', '', '')
 	collection.getDocuments().then((docs) => {
 		enquiries.value = docs
 		selected.value = []

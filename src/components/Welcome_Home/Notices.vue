@@ -20,7 +20,7 @@ import { ref } from 'vue'
 
 const notices = ref([])
 const loadData = async() => {
-    await(getCollection('notices', '', '', ''))
+    await(getCollection('notices', '', '', '', ''))
     .getDocuments().then((docs) => {
         notices.value = docs
     }).catch((err) => {

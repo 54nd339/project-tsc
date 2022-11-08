@@ -44,7 +44,6 @@
 
 <script setup>
 import ViewImage from '@/components/Admin_Modals/ViewImage.vue'
-
 import getCollection from '@/db/getCollection'
 import addCollection from '@/db/addDocument'
 import useDocument from '@/db/useDocument'
@@ -61,7 +60,7 @@ const onFileChange = (e) => {
 const target = ref({})
 const toppers = ref([])
 const loadData = async () => {
-    let collection = getCollection('toppers', '', '', '')
+    let collection = getCollection('toppers', '', '', '', '')
 
 	collection.getDocuments().then((docs) => {
 		toppers.value = docs
@@ -69,6 +68,7 @@ const loadData = async () => {
 		console.log(err)
 	})
 }
+
 const uploadText = ref('Upload')
 const addTopper = async () => {
     let file = file1.value

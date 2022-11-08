@@ -55,7 +55,7 @@ const tabs = {
 	],
 	Teacher: [
 		{ id: 'home', name: 'Home' },
-		{ id: 'download', name: 'Download' },
+		{ id: 'upload', name: 'Upload' },
 		{ id: 'exam', name: 'Exam' },
 	],
 	Admin: [

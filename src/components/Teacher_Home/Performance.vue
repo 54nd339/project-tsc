@@ -1,15 +1,19 @@
 <template>
-<div class="col-md-5 rounded-3 m-3" style="background-color:#57CC99; min-height: 45vh">
-    <div class="shadow m-3 py-1 rounded-3 p-md-2" style="background-color:#80ED99">
+    <div class="col-md-5 rounded-3 m-3" style="background-color:#57CC99; min-height: 45vh">
+        <div class="shadow m-3 py-1 rounded-3 p-md-2" style="background-color:#80ED99">
             <h3 class="text-center" style>Performance Analytics</h3>
         </div>
+        <p>{{cls}}</p>
     </div>
 </template>
 
-<script>
-export default {
-
-}
+<script setup>
+const props = defineProps({
+    cls: {
+        type: String,
+        required: true
+    }
+})
 </script>
 
 <style>

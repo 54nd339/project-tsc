@@ -26,7 +26,7 @@ const onSubmit = async() => {
 	props.ids.forEach(async (docId) => {
 		await (await useDocument(collectionId, docId))
 		.delDoc().then(() => {
-			console.log('deleted')
+			// console.log('deleted')
 		}).catch((err) => {
 			console.log(err)
 		})

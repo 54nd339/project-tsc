@@ -16,6 +16,7 @@
                     <th scope="col">Topic</th>
                     <th scope="col">FM</th>
                     <th scope="col">Date</th>
+                    <th scope="col">isMarked</th>
                     <th scope="col">View</th>
                     <th scope="col">Delete</th>
                 </tr></thead>
@@ -24,8 +25,10 @@
                         <td>{{ test.topic }}</td>
                         <td>{{ test.fm }}</td>
                         <td>{{ test.date }}</td>
-                        <td><b-button v-if="test.url" @click="download(test)"
-                            :disabled="downloadText != 'Download'">{{ downloadText }}</b-button>
+                        <td><b-button @click="updateMarked(test)">
+                            {{ test.marked ? 'Marked' : 'Unmarked' }}
+                        </b-button></td>
+                        <td><b-button v-if="test.url" @click="openUrl(test.url)">View</b-button>
                             <b-button v-else v-b-modal.addFile @click="target = test">Upload File</b-button>
                         </td>
                         <td><b-button variant="outline-danger" size="sm" class="m-1"
@@ -95,19 +98,20 @@ const file1 = ref(null)
 const onFileChange = (e) => {
     file1.value = e.target.files[0]
 }
-
+const openUrl = (url) => {
+    window.open(url)
+}
 const tests = ref([])
 const loadData = async () => {
     if(course.value == 'default' || grade.value == 0 || subject.value == 'default') {
         return
     }
     let collection = getCollection('tests', ['course', '==', course.value],
-        ['class', '==', grade.value], ['subject', '==', subject.value])
+        ['class', '==', grade.value], ['subject', '==', subject.value], ['date', 'desc'])
 
 	collection.getDocuments().then((docs) => {
 		tests.value = docs
         uploadText.value = 'Upload'
-        downloadText.value = 'Download'
 	}).catch((err) => {
 		console.log(err)
 	})
@@ -122,13 +126,30 @@ const addTest = async () => {
         topic: topic.value,
         fm: fm.value,
         date: date.value,
-        url: '',
-        path: ''
-    }).then(() => {
-        topic.value = ''
-        fm.value = 0
-        date.value = ''
-        loadData()
+        marked: false,
+        url: '', path: ''
+    }).then(async() => {
+        await (getCollection('students', ['course', '==', course.value],
+        ['class', '==', grade.value], '', '')).getDocuments()
+        .then((docs) => {
+            if(docs)
+                docs.forEach(async(doc) => {
+                    doc.subjects[subject.value].push({
+                        date: date.value, marked: false,
+                        topic: topic.value,
+                        marks: 0, fm: fm.value
+                    })
+                    await updateStudent(doc).then(() => {
+                        topic.value = ''
+                        fm.value = 0
+                        date.value = ''
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                })
+        }).catch((err) => {
+            console.log(err)
+        })
     }).catch((err) => {
         console.log(err)
     })
@@ -164,23 +185,24 @@ const addFile = async () => {
     })
 }
 
-const downloadText = ref('Download')
-const download = async (test) => {
-    const url = test.url
-    const name = test.course + '_' + test.class + '_' + test.subject + '_' + test.topic
-    downloadText.value = 'Downloading...'
-
-    useStorage().downloadFile(url, name).then(() => {
-        downloadText.value = 'Download'
-    }).catch((err) => {
-        console.log(err)
-    })
-}
-
 const delDoc = async (test) => {
     await (await useDocument('tests', test.id))
-    .delDoc().then(() => {
-        loadData()
+    .delDoc().then(async() => {
+        await (getCollection('students', ['course', '==', test.course],
+        ['class', '==', test.class], '', '')).getDocuments()
+        .then((docs) => {
+            if(docs)
+                docs.forEach(async(doc) => {
+                    doc.subjects[test.subject].forEach((sub, index) => {
+                        if(sub.date == test.date && sub.topic == test.topic && sub.fm == test.fm) {
+                            doc.subjects[test.subject].splice(index, 1)
+                        }
+                    })
+                    await updateStudent(doc)
+                })
+        }).catch((err) => {
+            console.log(err)
+        })
     }).catch((err) => {
         console.log(err)
     })
@@ -192,6 +214,44 @@ const delTest = async (test) => {
             delDoc(test)
         else
             console.log('File not found')
+    }).catch((err) => {
+        console.log(err)
+    })
+}
+
+const updateStudent = async (doc) => {
+    await (await useDocument('students', doc.id))
+    .updateDocs({
+        subjects: doc.subjects
+    }).then(() => {
+        // console.log(doc.subjects[subject.value])
+        loadData()
+    }).catch((err) => {
+        console.log(err)
+    })
+}
+const updateMarked = async (test) => {
+    await (await useDocument('tests', test.id))
+    .updateDocs({
+        marked: !test.marked
+    }).then(async () => {
+        await (getCollection('students', ['course', '==', course.value],
+        ['class', '==', grade.value], '', ''))
+        .getDocuments().then((docs) => {
+            if(docs)
+                docs.forEach(async(doc) => {
+                    const obArray = doc.subjects[subject.value]
+                    const index = obArray.findIndex((ob) => {
+                        return ob.date == test.date && ob.topic == test.topic && ob.fm == test.fm
+                    })
+                    if(index != -1) {
+                        obArray[index].marked = !obArray[index].marked
+                        await updateStudent(doc)
+                    }
+                })
+        }).catch((err) => {
+            console.log(err)
+        })
     }).catch((err) => {
         console.log(err)
     })

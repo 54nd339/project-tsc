@@ -1,11 +1,14 @@
 <template>
   	<div id="content" class="row justify-content-center">
-		<div class="col-md-4" v-for="card in cards" :key="card">
+		<b-form-select mx-5 px-5 v-model="subject" :options="props.subjects" @update:model-value="loadData" />
+		<div class="col-md-3 m-3" v-for="note in notes" :key="note">
 			<div class="card" style="width: 18rem;">
 				<div class="card-body">
-					<h5 class="card-title">{{ card.title }}</h5>
-					<p class="card-text">{{ card.content }}</p>
-					<a href="#" class="btn btn-primary">Download</a>
+					<h5 class="card-title">{{ note.topic }}</h5>
+					<!-- <p class="card-text">{{ download.content }}</p> -->
+					<b-button @click="download(note)" :disabled="downloadText != 'Download'">
+						{{ downloadText }}
+					</b-button>
 				</div>
 			</div>
 		</div>
@@ -13,18 +16,44 @@
 </template>
 
 <script setup>
-const cards = [
-	{ title: 'English 1', content: 'TCS BOARD REVISION CAPSULE FOR CLASS 10TH' },
-	{ title: 'English 2', content: 'TCS BOARD REVISION CAPSULE FOR CLASS 10TH' },
-	{ title: 'Odia/Hindi', content: 'TCS BOARD REVISION CAPSULE FOR CLASS 10TH' },
-	{ title: 'Mathematics', content: 'TCS BOARD REVISION CAPSULE FOR CLASS 10TH' },
-	{ title: 'Geography', content: 'TCS BOARD REVISION CAPSULE FOR CLASS 10TH' },
-	{ title: 'History', content: 'TCS BOARD REVISION CAPSULE FOR CLASS 10TH' },
-	{ title: 'Physics', content: 'TCS BOARD REVISION CAPSULE FOR CLASS 10TH' },
-	{ title: 'Chemistry', content: 'TCS BOARD REVISION CAPSULE FOR CLASS 10TH' },
-	{ title: 'Biology', content: 'TCS BOARD REVISION CAPSULE FOR CLASS 10TH' },
-	{ title: 'Computer', content: 'TCS BOARD REVISION CAPSULE FOR CLASS 10TH' },
-]
+import getCollection from '@/db/getCollection'
+import useStorage from '@/db/useStorage'
+import { ref } from 'vue'
+
+const props = defineProps({
+	subjects: {
+		type: Array,
+		required: true
+	},
+	user: {
+		type: Object,
+		required: true
+	}
+})
+const subject = ref('default')
+const notes = ref([])
+const loadData = async() => {
+	await getCollection('notes', ['course', '==', props.user.course],
+		['class', '==', props.user.class], ['subject', '==', subject.value], '')
+		.getDocuments().then((docs) => {
+			notes.value = docs
+		}).catch((err) => {
+			console.log(err)
+		})
+}
+const downloadText = ref('Download')
+const download = async (note) => {
+    const url = note.url
+    const name = note.course + '_' + note.class + '_' + note.subject + '_' + note.topic
+    downloadText.value = 'Downloading...'
+
+    useStorage().downloadFile(url, name).then(() => {
+        downloadText.value = 'Download'
+    }).catch((err) => {
+        console.log(err)
+    })
+}
+loadData()
 </script>
 
 <style>

@@ -43,7 +43,6 @@
 
 <script setup>
 import Slides from '@/components/Slides.vue'
-
 import getCollection from '@/db/getCollection'
 import { ref } from 'vue'
 
@@ -57,7 +56,7 @@ const galUrls = ref([])
 const galCaptions = ref([])
 const galTexts = ref([])
 const loadData = async() => {
-    await(getCollection('gallery', ['role', '==', 'photos'], '', ''))
+    await(getCollection('gallery', ['role', '==', 'photos'], '', '', ''))
     .getDocuments().then((docs) => {
 		if(docs)
 			docs.forEach((doc) => {
@@ -69,7 +68,7 @@ const loadData = async() => {
 		console.log(err)
 	})
 
-	await(getCollection('gallery', ['role', '==', 'activities'], '', ''))
+	await(getCollection('gallery', ['role', '==', 'activities'], '', '', ''))
     .getDocuments().then((docs) => {
 		if(docs)
 			docs.forEach((doc) => {
@@ -81,7 +80,7 @@ const loadData = async() => {
 		console.log(err)
 	})
 
-	await(getCollection('gallery', ['role', '==', 'awards'], '', ''))
+	await(getCollection('gallery', ['role', '==', 'awards'], '', '', ''))
 	.getDocuments().then((docs) => {
 		if(docs)
 			docs.forEach((doc) => {

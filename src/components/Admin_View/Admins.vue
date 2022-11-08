@@ -44,7 +44,7 @@ import { ref } from 'vue'
 
 const admins = ref([])
 const loadData = async () => {
-	let collection = getCollection('admins', '', '', '')
+	let collection = getCollection('admins', '', '', '', '')
 	collection.getDocuments().then((docs) => {
 		admins.value = docs
         selected.value = []

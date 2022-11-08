@@ -1,22 +1,23 @@
 import { ref } from 'vue'
 import { db } from '@/db/config'
-import { collection, query, where, getDocs } from 'firebase/firestore'
+import { collection, query, where, orderBy, getDocs } from 'firebase/firestore'
 
-const getCollection = (collectionId, queries1, queries2, queries3) => {
+const getCollection = (collectionId, queries1, queries2, queries3, order) => {
     const error = ref(null)
     let collectionRef = collection(db, collectionId)
 
     if (queries1) {
-        if(queries2) {
-            if(queries3)
-                collectionRef = query(collectionRef, where(...queries1), where(...queries2), where(...queries3))
-            else
-                collectionRef = query(collectionRef, where(...queries1), where(...queries2))
-        }
-        else
-            collectionRef = query(collectionRef, where(...queries1))
+        collectionRef = query(collectionRef, where(...queries1))
     }
-
+    if (queries2) {
+        collectionRef = query(collectionRef, where(...queries2))
+    }
+    if (queries3) {
+        collectionRef = query(collectionRef, where(...queries3))
+    }
+    if (order) {
+        collectionRef = query(collectionRef, orderBy(...order))
+    }
     const getDocuments = async () => {
         return await getDocs(collectionRef).then((querySnapshot) => {
             let results = []
@@ -29,7 +30,6 @@ const getCollection = (collectionId, queries1, queries2, queries3) => {
             error.value = 'Could not fetch data'
         })
     }
-
     return { getDocuments, error }
 }
 export default getCollection

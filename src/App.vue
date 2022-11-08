@@ -3,7 +3,7 @@
 		<Navbar :key="$route.fullPath" v-if="$route.name != 'NotFound'"/>
 	</Suspense>
 	<Modal />
-	<router-view />
+	<Suspense><router-view /></Suspense>
 	<Footer v-if="$route.name != 'NotFound'"/>
 </template>
 

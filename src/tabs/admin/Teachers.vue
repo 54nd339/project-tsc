@@ -20,16 +20,16 @@
 			</tr></thead>
 			<tbody ref="rows" id="rows">
 				<tr v-for="teacher in teachers" :key="teacher">
-					<td>
-						<b-form-checkbox :value="teacher.id" @click="updateSelected" /><!-- {{ teacher.id }} -->
-					</td>
+					<td><b-form-checkbox :value="teacher.id" @click="updateSelected" /></td>
 					<td>{{ teacher.name }}</td>
-					<td>{{ teacher.rating }}</td>
+					<td><b-input-group :prepend="(teacher.rating.val/teacher.rating.count).toFixed(2)">
+							<b-button variant="outline-primary" v-b-modal.viewStat @click="target = teacher">View</b-button>
+						</b-input-group></td>
 					<td>{{ teacher.phone }}</td>
 					<td>{{ teacher.email }}</td>
 					<td><div>
 						<tr>
-							<td v-if="noAttEdit || teacher.id != target">{{ teacher.attendance }}/ 30</td>
+							<td v-if="noAttEdit || teacher.id != Attarget.id">{{ teacher.attendance }}/ 30</td>
 							<td v-else>
 								<b-input-group :prepend="teacher.attendance">
 									<b-form-input type="number" v-model="teacher.attendance" />
@@ -40,7 +40,7 @@
 									</b-input-group-append>
 								</b-input-group>
 							</td>
-							<td><b-button variant="outline-primary" size="sm" class="mx-1" @click="noAttEdit = !noAttEdit; target = teacher.id">
+							<td><b-button variant="outline-primary" size="sm" class="mx-1" @click="noAttEdit = !noAttEdit; Attarget = teacher">
 								<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
 							</b-button></td>
 							<td><b-button variant="outline-secondary" size="sm" class="mx-1" @click="teacher.attendance++; modA(teacher)">
@@ -69,7 +69,8 @@
 								<b-form-select v-model="subject" :options="subjects" />
 							</b-input-group-prepend>
 							<b-input-group-append>
-								<b-button variant="outline-success" @click="addSub(teacher.id, teacher.classes)">
+								<b-button variant="outline-success" @click="addSub(teacher.id, teacher.classes)"
+									:disabled="course == 'default' || grade == 0 || subject == 'default'">
 									<font-awesome-icon icon="fa-solid fa-plus" size="1x" />
 								</b-button>
 							</b-input-group-append>
@@ -87,6 +88,13 @@
 				<p class="justify-content-center align-items-center" id="resetText">Confirm Reset?</p>
 				<b-button type="submit" variant="danger d-flex mx-auto mt-2" size="lg">Reset</b-button>
 			</b-form>
+		</b-modal>
+		<b-modal size="lg" id="viewStat" title="Teacher Ratings" aria-labelledby="viewRate" aria-hidden="true" :hide-footer="true">
+			<div class="d-flex mb-1 justify-content-center">
+				<b-form><b-form-group v-for="(question, index) in questions" :key="question"
+					content-cols="2" :label="question"> {{ getRating(target.rating, index) }} / 5 </b-form-group>
+				</b-form>
+			</div>
 		</b-modal>
 	</div>
 </template>
@@ -115,11 +123,23 @@ const props = defineProps({
 		required: true
 	}
 })
+const questions = [
+    "Q1. The teacher covers the whole syllabus :",
+    "Q2. The teacher discusses syllabus in detail :",
+    "Q3. The teacher possesses deep knowledege of the subject taught :",
+    "Q4. The teacher communicates clearly :",
+    "Q5. The teacher inspires me by his/her knowledege in the subject :",
+    "Q6. The teacher is punctual to the class :",
+    "Q7. The teacher engages the class for the full duration and completes the course in time :",
+    "Q8. The teacher comes fully prepared for the class :",
+    "Q9. The teacher provides guidance counselling in academic and non-academic matters in/out side the class :"
+]
 const teachers = ref([])
-const target = ref(null)
+const target = ref({})
+const Attarget = ref({})
 
 const loadData = async () => {
-	let collection = getCollection('teachers', '', '', '')
+	let collection = getCollection('teachers', '', '', '', '')
 	collection.getDocuments().then((docs) => {
 		teachers.value = docs
 		selected.value = []
@@ -145,7 +165,6 @@ const modA = async(teacher) => {
 	await (await useDocument('teachers', teacher.id))
 	.updateDocs({attendance: teacher.attendance}).then(() => {
 		loadData()
-		// console.log('updated')
 	}).catch((err) => {
 		console.log(err)
 	})
@@ -155,7 +174,6 @@ const updateSub = async(id, classes) => {
 	await (await useDocument('teachers', id))
 	.updateDocs({classes: classes}).then(() => {
 		loadData()
-		// console.log('updated')
 	}).catch((err) => {
 		console.log(err)
 	})
@@ -171,7 +189,7 @@ const addSub = async(id, classes) => {
 	if (classes[clas].includes(subject.value)) {
 		return
 	}
-
+	// Fix Dropdowns
 	classes[clas].push(subject.value)
 	updateSub(id, classes).then(() => {
 		course.value = 'default'
@@ -193,12 +211,24 @@ const delSub = async(id, classes, grad, index) => {
 	})
 }
 
+const getRating = (rating, ind) => {
+	if(rating == undefined) {
+		return 0
+	}
+	return (rating.vals[ind] / rating.count).toFixed(2)
+}
 const resetRate = async() => {
 	event.target.closest('.modal-content')
 				.querySelector('.btn-close').click()
+
 	teachers.value.forEach(async(teacher) => {
 		await (await useDocument('teachers', teacher.id))
-		.updateDocs({rating: 0}).then(() => {
+		.updateDocs({
+			rating: {
+				count: 0, val: 0,
+				vals: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+			}
+		}).then(() => {
 			// console.log('updated')
 			loadData()
 		}).catch((err) => {
@@ -206,7 +236,7 @@ const resetRate = async() => {
 		})
 	})
 }
-// Fix dropdown
+
 loadData()
 </script>
 

@@ -67,7 +67,7 @@ import { ref } from 'vue'
 
 const faqs = ref([])
 const loadData = async() => {
-    await(getCollection('faqs', '', '', ''))
+    await(getCollection('faqs', '', '', '', ''))
     .getDocuments().then((docs) => {
         faqs.value = docs
     }).catch((err) => {

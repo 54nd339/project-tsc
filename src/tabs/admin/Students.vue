@@ -24,9 +24,7 @@
 			</thead>
 			<tbody ref="rows" id="rows">
 				<tr v-for="student in students" :key="student">
-					<td>
-						<b-form-checkbox :value="student.id" @click="updateSelected" /><!-- {{ student.id }} -->
-					</td>
+					<td><b-form-checkbox :value="student.id" @click="updateSelected" /></td>
 					<td>{{ student.name }}</td>
 					<td v-if="course == 'default'"><table>
 						<tr>
@@ -35,7 +33,7 @@
 								<b-input-group :prepend="student.course">
 									<b-form-select v-model="student.course" :options="courses" />
 									<b-input-group-append>
-									<b-button variant="outline-success" size="sm" @click="modC(student)">
+									<b-button variant="outline-success" size="sm" @click="modifyCourse(student)">
 										<font-awesome-icon icon="fa-solid fa-check" size="1x" />
 									</b-button>
 									</b-input-group-append>
@@ -53,7 +51,7 @@
 								<b-input-group :prepend="student.class">
 									<b-form-select v-model="student.class" :options="grades" />
 									<b-input-group-append>
-									<b-button variant="outline-success" size="sm" @click="modG(student)">
+									<b-button variant="outline-success" size="sm" @click="modifyGrade(student)">
 										<font-awesome-icon icon="fa-solid fa-check" size="1x" />
 									</b-button>
 									</b-input-group-append>
@@ -73,7 +71,7 @@
 								<b-input-group :prepend="student.attendance">
 									<b-form-input type="number" v-model="student.attendance" />
 									<b-input-group-append>
-									<b-button variant="outline-success" size="sm" @click="noAttEdit = !noAttEdit; modA(student)">
+									<b-button variant="outline-success" size="sm" @click="noAttEdit = !noAttEdit; modifyAtt(student)">
 										<font-awesome-icon icon="fa-solid fa-check" size="1x" />
 									</b-button>
 									</b-input-group-append>
@@ -82,36 +80,31 @@
 							<td><b-button variant="outline-primary" size="sm" class="mx-1" @click="noAttEdit = !noAttEdit; target = student.id">
 								<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
 							</b-button></td>
-							<td><b-button variant="outline-secondary" size="sm" class="mx-1" @click="student.attendance++; modA(student)">
+							<td><b-button variant="outline-secondary" size="sm" class="mx-1" @click="student.attendance++; modifyAtt(student)">
 								<font-awesome-icon icon="fa-solid fa-plus" />
 							</b-button></td>
 						</tr>
 					</div></td>
 					<td>
 						<div v-if="subject != 'default'">
-							<tr>
-								<td><b-form-input type="number" placeholder="Enter Mark" /></td>
-								<td><b-button variant="outline-success" class="mx-1" @click="add(student.id, student.subjects)">
-									<font-awesome-icon icon="fa-solid fa-plus" />
-								</b-button></td>
-							</tr>
 							<tr v-for="(mark, index) in student.subjects[subject]" :key="mark">
-								<td v-if="noMarkEdit || student.id != target">{{ mark }}</td>
+								<td class="mx-2">{{ mark.topic }} ({{ mark.date }})</td>
+								<td v-if="noMarkEdit || student.id != target || index != targetMark">
+									<tr>{{ mark.mark ? mark.mark : 0 }}/{{ mark.fm }}</tr>
+								</td>
 								<td v-else>
-									<b-input-group :prepend="mark">
-										<b-form-input type="number" />
+									<b-input-group :prepend="mark.mark" :append="mark.fm">
+										<b-form-input type="number" min="0" :max="mark.fm" />
 										<b-input-group-append>
-										<b-button variant="outline-success" size="sm" @click="mod(student.id, student.subjects, index)">
+										<b-button variant="outline-success" size="sm" @click="modifyMark(student, index)">
 											<font-awesome-icon icon="fa-solid fa-check" size="1x" />
 										</b-button>
 										</b-input-group-append>
 									</b-input-group>
 								</td>
-								<td><b-button variant="outline-primary" size="sm" class="m-1" @click="noMarkEdit = !noMarkEdit; target = student.id">
+								<td><b-button variant="outline-primary" size="sm" class="m-1"
+									@click="noMarkEdit = !noMarkEdit; target = student.id; targetMark = index">
 									<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
-								</b-button></td>
-								<td><b-button variant="outline-danger" size="sm" class="m-1" @click="del(student.id, student.subjects, index)">
-									<font-awesome-icon icon="fa-solid fa-trash" size="1x" />
 								</b-button></td>
 							</tr>
 						</div>
@@ -160,19 +153,21 @@ const course = ref('default')
 const grade = ref(0)
 const subject = ref('default')
 const students = ref([])
+
 const target = ref(null)
+const targetMark = ref(null)
 const selected = ref([])
 const docID = ref('default')
 
 const loadData = async () => {let collection
 	if (grade.value == 0 && course.value == 'default') 
-		collection = getCollection('students', '', '', '')
+		collection = getCollection('students', '', '', '', '')
 	else if (grade.value == 0 && course.value != 'default')
-		collection = getCollection('students', ['course', '==', course.value], '', '')
+		collection = getCollection('students', ['course', '==', course.value], '', '', '')
 	else if (grade.value != 0 && course.value == 'default')
-		collection = getCollection('students', ['class', '==', grade.value], '', '')
+		collection = getCollection('students', ['class', '==', grade.value], '', '', '')
 	else
-		collection = getCollection('students', ['class', '==', grade.value], ['course', '==', course.value], '')
+		collection = getCollection('students', ['class', '==', grade.value], ['course', '==', course.value], '', '')
 
 	collection.getDocuments().then((docs) => {
 		students.value = docs
@@ -192,56 +187,26 @@ const updateSelected = () => {
 	docID.value = ids[0]
 }
 
-const updateMarks = async (id, marks) => {
-	await (await useDocument('students', id))
-	.updateDocs({subjects: marks}).then(() => {
-		loadData()
-		// console.log('updated')
-	}).catch((err) => {
-		console.log(err)
-	})
-}
-const add = (id, subs) => {
-	const textBody = event.target.closest('tr').querySelector('input[type=number]')
-	const val = textBody.value
-	if(val != '') {
-		subs[subject.value].push(val)
-		updateMarks(id, subs).then(() => {
-			textBody.value = ''
-			// console.log('added')
-		}).catch((err) => {
-			console.log(err)
-		})
-	}
-}
-const del = (id, subs, ind) => {
-	// remove the element at index ind
-	subs[subject.value].splice(ind, 1)
-	updateMarks(id, subs).then(() => {
-		// console.log('deleted')
-	}).catch((err) => {
-		console.log(err)
-	})
-}
-
 const noMarkEdit = ref(true)
-const mod = (id, subs, ind) => {
+const modifyMark = async(student, ind) => {
 	noMarkEdit.value = !noMarkEdit.value
-	const textBody = event.target.closest('.input-group').children[1]
-	const val = textBody.value
-	// console.log(textBody)
+	const textBody = event.target.closest('.input-group').querySelector('input[type=number]')
+	const val = Number(textBody.value)
+	// console.log(textBody, val)
 	if(val != '') {
-		subs[subject.value][ind] = val
-		updateMarks(id, subs).then(() => {
-			textBody.value = ''
-			// console.log('modified')
+		const mark = student.subjects[subject.value][ind]
+		mark.mark = val
+		await (await useDocument('students', student.id)).updateDocs({
+			subjects: student.subjects
+		}).then(() => {
+			loadData()
 		}).catch((err) => {
 			console.log(err)
 		})
 	}
 }
 const noGradeEdit = ref(true)
-const modG = async(student) => {
+const modifyGrade = async(student) => {
 	noGradeEdit.value = !noGradeEdit.value
 	await (await useDocument('students', student.id))
 	.updateDocs({class: student.class}).then(() => {
@@ -252,7 +217,7 @@ const modG = async(student) => {
 	})
 }
 const noCourseEdit = ref(true)
-const modC = async(student) => {
+const modifyCourse = async(student) => {
 	noCourseEdit.value = !noCourseEdit.value
 	await (await useDocument('students', student.id))
 	.updateDocs({course: student.course}).then(() => {
@@ -262,8 +227,9 @@ const modC = async(student) => {
 		console.log(err)
 	})
 }
+
 const noAttEdit = ref(true)
-const modA = async(student) => {
+const modifyAtt = async(student) => {
 	await (await useDocument('students', student.id))
 	.updateDocs({attendance: student.attendance}).then(() => {
 		// console.log('updated')
@@ -272,7 +238,6 @@ const modA = async(student) => {
 		console.log(err)
 	})
 }
-
 const promoteAll = async() => {
 	event.target.closest('.modal-content')
 				.querySelector('.btn-close').click()
