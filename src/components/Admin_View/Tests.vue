@@ -146,7 +146,7 @@ const addTest = async () => {
                         marks: 0, fm: fm.value
                     })
                     await updateStudent(doc).then(() => {
-                        loadData()
+                        // loadData()
                     }).catch((err) => {
                         console.log(err)
                     })

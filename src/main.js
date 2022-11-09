@@ -23,3 +23,8 @@ const app = createApp(App)
     .component('font-awesome-icon', FontAwesomeIcon)
     
 app.mount('#app')
+
+router.beforeEach((to, from, next) => {
+    document.title = to.meta.title || 'Talent Sprint Classes'
+    next()
+})

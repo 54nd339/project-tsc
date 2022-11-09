@@ -17,30 +17,35 @@ const router = createRouter({
         {
             path: '/',
             name: 'Welcome',
-            component: Welcome
+            component: Welcome,
+            meta: { title: 'Talent Sprint Classes' }
         },
         {
             path: '/admin/:id',
             name: 'Admin',
             component: () => import('../views/Admin.vue'),
+            meta: { title: 'TSC - Admin' },
             beforeEnter: requireAuth
         },
         {
             path: '/student/:id',
             name: 'Student',
             component: () => import('../views/Student.vue'),
+            meta: { title: 'TSC - Student' },
             beforeEnter: requireAuth
         },
         {
             path: '/teacher/:id',
             name: 'Teacher',
             component: () => import('../views/Teacher.vue'),
+            meta: { title: 'TSC - Student' },
             beforeEnter: requireAuth
         },
         {
             path: '/:pathMatch(.*)*', // '/:catchAll(.*)'
             name: 'NotFound',
-            component: () => import('../views/NotFound.vue')
+            component: () => import('../views/NotFound.vue'),
+            meta: { title: '404 - Not Found' },
         }
     ]
 })

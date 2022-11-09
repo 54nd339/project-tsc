@@ -135,6 +135,7 @@ const addTestFile = async () => {
             }).then(() => {
                 file1.value = null
                 btn.click()
+				uploadText.value = 'Upload'
                 loadData()
             }).catch((err) => {
                 console.log(err)
@@ -146,7 +147,6 @@ const addTestFile = async () => {
         console.log(err)
     })
 }
-
 loadData()
 </script>
 

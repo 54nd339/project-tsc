@@ -88,6 +88,7 @@ const addTopper = async () => {
                 name.value = ''
 				course.value = ''
                 score.value = ''
+                uploadText.value = 'Upload'
                 file1.value = null
                 loadData()
             }).catch((err) => {
