@@ -25,7 +25,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
 const router = useRouter()
-
 setTimeout(() => {
 	const lastStyle = document.styleSheets[document.styleSheets.length - 1]
 	lastStyle.disabled = true

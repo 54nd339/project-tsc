@@ -1,8 +1,8 @@
 <template>
 	<section class="container-fluid">
-		<b-button-group class="my-1">
+		<b-button-group class="my-1 d-flex">
 			<b-form-select v-model="role" :options="roles" @update:modelValue="loadData" />
-			<b-button variant="success" v-if="role != 'default'" v-b-modal.addPic>Add</b-button>
+			<b-button variant="success" :disabled="role == 'default'" v-b-modal.addPic>Add</b-button>
 		</b-button-group>
 		<table class="table table-hover table-responsive">
 			<thead><tr>

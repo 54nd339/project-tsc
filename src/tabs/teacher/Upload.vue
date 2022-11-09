@@ -1,8 +1,8 @@
 <template>
 	<div id="content" class="row justify-content-center">
-		<b-form-select mx-5 p-5 v-model="clas" :options="props.classes" @update:model-value="loadData" />
 		<b-button-group class="my-1 d-flex mx-6">
-			<b-button v-if="clas != 'default'" v-b-modal.addNote>Add</b-button>
+			<b-form-select mx-5 p-5 v-model="clas" :options="props.classes" @update:model-value="loadData" />
+			<b-button :disabled="clas == 'default'" v-b-modal.addNote>Add</b-button>
 		</b-button-group>
 		<div class="col-md-3 m-3" v-for="note in notes" :key="note">
 			<div class="card" style="width: 18rem;">
@@ -45,6 +45,7 @@ const props = defineProps({
 		required: true
 	}
 })
+
 const course = ref('default')
 const grade = ref(0)
 const subject = ref('default')

@@ -4,7 +4,7 @@
 		<div id="details" class="nav m-1 justify-content-center">
 			<p>&copy; 2017–2022 <b>Talent Sprint Classes</b></p>
 			<p>&middot; All Rights Reserved</p>
-			<p>&middot; Made with 💖 & 🍕 by <b>4rt3mi5</b></p>
+			<p>&middot; Made with 💖 by <b>4rt3mi5</b></p>
 		</div>
 	</footer> 
 </template>

@@ -4,7 +4,7 @@
             <h3 class="text-center" style>Schedule Test</h3>
         </div>
         <div id="content" class="container-fluid">
-            <b-button-group class="my-1">
+            <b-button-group class="my-1 d-flex">
                 <b-form-select v-model="course" :options="courseList" @update:modelValue="loadData" />
                 <b-form-select v-model="grade" :options="gradeList" @update:modelValue="loadData" />
                 <b-form-select v-model="subject" :options="subjectList" @update:modelValue="loadData" />
@@ -112,6 +112,9 @@ const loadData = async () => {
 	collection.getDocuments().then((docs) => {
 		tests.value = docs
         uploadText.value = 'Upload'
+        topic.value = ''
+        fm.value = 0
+        date.value = ''
 	}).catch((err) => {
 		console.log(err)
 	})
@@ -134,18 +137,20 @@ const addTest = async () => {
         .then((docs) => {
             if(docs)
                 docs.forEach(async(doc) => {
+                    if(!doc.subjects.hasOwnProperty(subject.value))
+                        doc.subjects[subject.value] = []
+
                     doc.subjects[subject.value].push({
                         date: date.value, marked: false,
                         topic: topic.value,
                         marks: 0, fm: fm.value
                     })
                     await updateStudent(doc).then(() => {
-                        topic.value = ''
-                        fm.value = 0
-                        date.value = ''
+                        loadData()
                     }).catch((err) => {
                         console.log(err)
                     })
+                    // console.log(typeof doc.subjects)
                 })
         }).catch((err) => {
             console.log(err)

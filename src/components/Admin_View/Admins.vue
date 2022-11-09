@@ -4,7 +4,7 @@
             <h3 class="text-center" style>Admins</h3>
         </div>
         <div id="content" class="container-fluid">
-            <b-button-group class="my-1">
+            <b-button-group class="my-1 d-flex">
                 <b-button variant="success" v-b-modal.addAdmin>Add</b-button>
                 <b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteAdmin>Delete</b-button>
                 <b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyAdmin @click="$refs.modUser.loadData">Modify</b-button>
@@ -27,9 +27,9 @@
                     </tr>
                 </tbody>
             </table>
-            <AddUser title="Admin" v-on:submitClick="loadData"/>
-            <ModifyUser title="Admin" :id="docID" ref="modUser" v-on:submitClick="loadData"/>
-            <DeleteModal title="Admin" :ids="selected" v-on:submitClick="loadData"/>
+            <AddUser title="Admin" @submitClick="loadData"/>
+            <ModifyUser title="Admin" :id="docID" ref="modUser" @submitClick="loadData"/>
+            <DeleteModal title="Admin" :ids="selected" @submitClick="loadData"/>
         </div> 
     </div>
 </template>

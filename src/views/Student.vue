@@ -10,7 +10,12 @@
 			<Exam :subjects="subjectList" :user="student" />     
 		</div>
 		<div id="feedback" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-about-tab" tabindex="0">
-			<Feedback />
+			<Feedback :user="student" v-if="student.feedback != 'default'" @submitClick="refresh" :key="student.feedback" />
+			<div v-else class="blank">
+				<div class="blank-icon">⚠</div>
+				<div class="blank-title">The form is not available at the moment</div>
+				<div class="blank-desc">Contact admins for further queries</div>
+			</div>
 		</div>
 	</main>
 </template>
@@ -50,11 +55,36 @@ await(await useDocument('students', id))
 }).catch((err) => {
 	console.log(err)
 })
+
+const refresh = async() => {
+	await(await useDocument('students', id))
+	.getDetail().then((data) => {
+		student.value = data
+	}).catch((err) => {
+		console.log(err)
+	})
+}
+
 </script>
 
 <style>
 .body {
 	margin-top: 5vh;
 	margin-bottom: 5vh;
+}
+
+.blank {
+  text-align: center;
+}
+.blank-icon {
+  color: gray;
+  font-size: 4rem;
+}
+.blank-title {
+  font-size: 1.6rem;
+}
+.blank-desc {
+  font-size: 1rem;
+  color: gray;
 }
 </style>

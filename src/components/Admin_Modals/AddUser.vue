@@ -47,7 +47,8 @@ const name = ref('')
 const phone = ref('')
 
 const onSubmit = async() => {
-	await useAuth().signup(email.value, password.value, name.value).then(async(res) => {
+	await useAuth().signup(email.value, password.value, name.value)
+	.then(async(res) => {
 		if(res) {
 			(await addCollection(collectionId))
 			.addDocument(res.uid, {
@@ -55,17 +56,16 @@ const onSubmit = async() => {
 				phone: phone.value,
 				email: email.value,
 			}).then(async() => {
-				if(collectionId == 'admins') emit('submitClick')
+				if(collectionId == 'admins')
+					emit('submitClick')
 				if(collectionId == 'students') {
-					(await useDocument('students', res.uid)).updateDocs({
-						course: props.crs,
-						class: props.cls,
+					(await useDocument('students', res.uid))
+					.updateDocs({
 						attendance: 0,
-						subjects: {
-							eng1: [], eng2: [], odia: [], hind: [],
-							math: [], sst: [], hist: [], geo: [],
-							sci: [], phys: [], chem: [], bio: [], comp: []
-						}
+						class: props.cls,
+						course: props.crs,
+						feedback: 'default',
+						subjects: {}
 					}).then(() => {
 						emit('submitClick')
 					}).catch((err) => {
@@ -75,17 +75,12 @@ const onSubmit = async() => {
 				if(collectionId == 'teachers') {
 					(await useDocument('teachers', res.uid))
 					.updateDocs({
+						attendance: 0,
+						classes: {},
 						rating: {
 							count: 0,
 							val: 0,
 							vals: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-						},
-						attendance: 0,
-						classes: {
-							ICSE_12: [], ICSE_11: [], ICSE_10: [], ICSE_9: [], ICSE_8: [], ICSE_7: [], ICSE_6: [], ICSE_5: [],
-							CBSE_12: [], CBSE_11: [], CBSE_10: [], CBSE_9: [], CBSE_8: [], CBSE_7: [], CBSE_6: [], CBSE_5: [],
-							CHSE_12: [], CHSE_11: [], CHSE_10: [], CHSE_9: [], CHSE_8: [], CHSE_7: [], CHSE_6: [], CHSE_5: [],
-							JEE_NEET_12: [], JEE_NEET_11: [], JEE_NEET_10: [], JEE_NEET_9: [], JEE_NEET_8: [], JEE_NEET_7: []
 						},
 						todo: []
 					}).then(() => {

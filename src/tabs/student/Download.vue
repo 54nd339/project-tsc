@@ -5,7 +5,6 @@
 			<div class="card" style="width: 18rem;">
 				<div class="card-body">
 					<h5 class="card-title">{{ note.topic }}</h5>
-					<!-- <p class="card-text">{{ download.content }}</p> -->
 					<b-button @click="download(note)" :disabled="downloadText != 'Download'">
 						{{ downloadText }}
 					</b-button>

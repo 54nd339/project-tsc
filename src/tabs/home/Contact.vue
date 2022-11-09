@@ -50,9 +50,7 @@
 							</button>
 						</h2>
 						<div :id="'collapse' + index" class="accordion-collapse collapse" data-bs-parent="#qna">
-							<div class="accordion-body">
-								{{ faq.answer }}
-							</div>
+							<div class="accordion-body"> {{ faq.answer }} </div>
 						</div>
 					</div>
 				</div>

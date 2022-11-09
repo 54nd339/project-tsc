@@ -45,7 +45,7 @@
                 </div>
             </b-form>
         </b-modal>
-		<DeleteModal title="Notice" :ids="selected" v-on:submitClick="loadData"/>
+		<DeleteModal title="Notice" :ids="selected" @submitClick="loadData"/>
 	</section>
 </template>
 

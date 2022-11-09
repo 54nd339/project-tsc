@@ -1,5 +1,5 @@
 <template>
-    <div class="col-md-5 rounded-3 m-3" style="background-color:#80ED99; min-height: 45vh">
+    <div class="col-md-5 rounded-3 m-2" style="background-color:#80ED99; min-height: 50vh; max-height: 70vh; overflow-y: auto;">
         <div class="shadow m-3 p-1 rounded-3" style="background-color:#57CC99">
             <h3 class="text-center" style>{{ student.name }}</h3>
         </div>
@@ -40,13 +40,13 @@ const props = defineProps({
 	}
 })
 const emit = defineEmits(['subChanged'])
-const subject = ref('default')
+const subject = ref('eng1')
 const selected = ref([])
 const loadData = async() => {
     if(subject.value === 'default') {
-        selected.value = []
         return
     }
+
     selected.value = []
     emit('subChanged', subject.value)
 	const marks = props.student.subjects[subject.value]

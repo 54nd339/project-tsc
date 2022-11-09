@@ -18,17 +18,14 @@
 	</main>
 </template>
 
-<script>
-	import Home from '@/tabs/home/Home.vue'
-	import Courses from '@/tabs/home/Courses.vue'
-	import Success from '@/tabs/home/Success.vue'
-	import About from '@/tabs/home/About.vue'
-	import Contact from '@/tabs/home/Contact.vue'
-	export default {
-		components: {
-			Home, Courses, Success, About, Contact
-		}
-	}
+<script setup>
+import Home from '@/tabs/home/Home.vue'
+import Courses from '@/tabs/home/Courses.vue'
+import Success from '@/tabs/home/Success.vue'
+import About from '@/tabs/home/About.vue'
+import Contact from '@/tabs/home/Contact.vue'
+	
+	// do Something
 </script>
 
 <style>

@@ -1,30 +1,36 @@
 <template>
 	<div id="content" class="container-fluid">
-		<b-button-group class="my-1">
+		<b-button-group class="my-1 d-flex">
 			<b-form-select v-model="course" :options="courses" @update:modelValue="loadData" />
 			<b-form-select v-model="grade" :options="grades" @update:modelValue="loadData" />
+			<b-form-select v-model="subject" :options="subjects" />
+		</b-button-group>
+		<b-button-group class="my-1 d-flex">
+			<b-button v-b-modal.promoteAll>Promote All</b-button>
+			<b-button v-b-modal.resetStudent>Reset Attendance</b-button>
+			<b-button v-b-modal.closeFeedback v-if="course != 'default' && grade != 0 && subject != 'default' && openfb">Close Feedback</b-button>
+			<b-button v-if="course != 'default' && grade != 0 && subject != 'default' && !openfb" @click="openFeedback">Open Feedback</b-button>
+			<b-button @click="editMode = !editMode">{{ editMode ? 'Turn Edit Off' : 'Turn Edit On' }}</b-button>
+		</b-button-group>
+		<b-button-group class="my-1">
 			<b-button v-if="grade != 0 && course != 'default'" variant="success" v-b-modal.addStudent>Add</b-button>
-			<b-button v-else variant="secondary" v-b-modal.promoteAll>Promote All</b-button>
-			<b-button variant="secondary" v-b-modal.resetStudent>Reset Attendance</b-button>
 			<b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteStudent>Delete</b-button>
 			<b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyStudent @click="$refs.modUser.loadData">Modify</b-button>
 		</b-button-group>
 		<table class="table table-hover table-responsive">
-			<thead>
-			<tr>
-				<th scope="col">#</th>
+			<thead><tr>
+				<th scope="col" v-if="editMode">#</th>
 				<th scope="col">Name</th>
 				<th scope="col" v-if="course == 'default'">Course</th>
 				<th scope="col" v-if="grade == 0">Class</th>
 				<th scope="col">Phone</th>
 				<th scope="col">Email</th>
 				<th scope="col">Attendance</th>
-				<th scope="col"><b-form-select v-model="subject" :options="subjects" /></th>
-			</tr>
-			</thead>
+				<th scope="col" v-if="subject != 'default'">Marks</th>
+			</tr></thead>
 			<tbody ref="rows" id="rows">
 				<tr v-for="student in students" :key="student">
-					<td><b-form-checkbox :value="student.id" @click="updateSelected" /></td>
+					<td v-if="editMode"><b-form-checkbox :value="student.id" @click="updateSelected" /></td>
 					<td>{{ student.name }}</td>
 					<td v-if="course == 'default'"><table>
 						<tr>
@@ -39,9 +45,11 @@
 									</b-input-group-append>
 								</b-input-group>
 							</td>
-							<td><b-button variant="outline-primary" size="sm" class="mx-1" @click="noCourseEdit = !noCourseEdit; target = student.id">
-								<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
-							</b-button></td>
+							<td v-if="editMode">
+								<b-button variant="outline-primary" size="sm" class="mx-1" @click="noCourseEdit = !noCourseEdit; target = student.id">
+									<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
+								</b-button>
+							</td>
 						</tr>
 					</table></td>
 					<td v-if="grade == 0"><table>
@@ -57,9 +65,11 @@
 									</b-input-group-append>
 								</b-input-group>
 							</td>
-							<td><b-button variant="outline-primary" size="sm" class="mx-1" @click="noGradeEdit = !noGradeEdit; target = student.id">
-								<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
-							</b-button></td>
+							<td v-if="editMode">
+								<b-button variant="outline-primary" size="sm" class="mx-1" @click="noGradeEdit = !noGradeEdit; target = student.id">
+									<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
+								</b-button>
+							</td>
 						</tr>
 					</table></td>
 					<td>{{ student.phone }}</td>
@@ -77,16 +87,19 @@
 									</b-input-group-append>
 								</b-input-group>
 							</td>
-							<td><b-button variant="outline-primary" size="sm" class="mx-1" @click="noAttEdit = !noAttEdit; target = student.id">
-								<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
-							</b-button></td>
-							<td><b-button variant="outline-secondary" size="sm" class="mx-1" @click="student.attendance++; modifyAtt(student)">
-								<font-awesome-icon icon="fa-solid fa-plus" />
-							</b-button></td>
+							<td v-if="editMode">
+								<b-button variant="outline-primary" size="sm" class="mx-1" @click="noAttEdit = !noAttEdit; target = student.id">
+									<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
+								</b-button>
+								<b-button variant="outline-secondary" size="sm" class="mx-1" @click="student.attendance++; modifyAtt(student)">
+									<font-awesome-icon icon="fa-solid fa-plus" />
+								</b-button>
+							</td>
 						</tr>
 					</div></td>
-					<td>
-						<div v-if="subject != 'default'">
+					<td v-if="subject != 'default'">
+						<b-button v-if="!editMode" variant="primary" v-b-modal.viewStudentChart @click="target = student">View</b-button>
+						<div v-else>
 							<tr v-for="(mark, index) in student.subjects[subject]" :key="mark">
 								<td class="mx-2">{{ mark.topic }} ({{ mark.date }})</td>
 								<td v-if="noMarkEdit || student.id != target || index != targetMark">
@@ -112,15 +125,25 @@
 				</tr>
 			</tbody>
 		</table>
-		<AddUser title="Student" :cls="grade" :crs="course" v-on:submitClick="loadData"/>
-		<ModifyUser title="Student" :id="docID" ref="modUser" v-on:submitClick="loadData"/>
-		<DeleteModal title="Student" :ids="selected" v-on:submitClick="loadData"/>
-		<ResetUser title="Student" :ids="students" v-on:submitClick="loadData"/>
+		<AddUser title="Student" :cls="grade" :crs="course" @submitClick="loadData"/>
+		<ModifyUser title="Student" :id="docID" ref="modUser" @submitClick="loadData"/>
+		<DeleteModal title="Student" :ids="selected" @submitClick="loadData"/>
+		<ResetUser title="Student" :ids="students" @submitClick="loadData"/>
 		<b-modal id="promoteAll" title="Promote" aria-labelledby="promoteAll" aria-hidden="true" :hide-footer="true">
 			<b-form @submit="promoteAll">
 				<p class="justify-content-center align-items-center" id="promoteText">Confirm Promote?</p>
 				<b-button type="submit" variant="success d-flex mx-auto mt-2" size="lg">Promote</b-button>
 			</b-form>
+		</b-modal>
+		<b-modal id="closeFeedback" title="Close Feedback" aria-labelledby="close Feedback" aria-hidden="true" :hide-footer="true">
+			<b-form @submit="closeFeedback">
+				<p class="justify-content-center align-items-center" id="promoteText">Confirm Close?</p>
+				<b-button type="Close" variant="danger d-flex mx-auto mt-2" size="lg">Close</b-button>
+			</b-form>
+		</b-modal>
+		<b-modal size="lg" id="viewStudentChart" title="Performance" aria-labelledby="ViewChart" aria-hidden="true" :hide-footer="true">
+			<ViewChart chartId="studentPerformModal" :scores="target.subjects[subject]"
+				:course="target.course" :grade="target.class" :sub="subject" :key="JSON.stringify(target) + subject" />
 		</b-modal>
 	</div>
 </template>
@@ -130,6 +153,7 @@ import AddUser from '@/components/Admin_Modals/AddUser.vue'
 import DeleteModal from '@/components/Admin_Modals/DeleteModal.vue'
 import ModifyUser from '@/components/Admin_Modals/ModifyUser.vue'
 import ResetUser from '@/components/Admin_Modals/ResetUser.vue'
+import ViewChart from '@/components/ViewChart.vue'
 
 import getCollection from '@/db/getCollection'
 import useDocument from '@/db/useDocument'
@@ -153,8 +177,12 @@ const course = ref('default')
 const grade = ref(0)
 const subject = ref('default')
 const students = ref([])
-
-const target = ref(null)
+const editMode = ref(false)
+const target = ref({
+	subjects: {},
+	course: '',
+	class: 0
+})
 const targetMark = ref(null)
 const selected = ref([])
 const docID = ref('default')
@@ -246,6 +274,33 @@ const promoteAll = async() => {
 		.updateDocs({class: student.class + 1}).then(() => {
 			// console.log('promoted')
 			loadData()
+		}).catch((err) => {
+			console.log(err)
+		})
+	})
+}
+
+const openfb = ref(false)
+const openFeedback = async() => {
+	students.value.forEach(async (student) => {
+		await (await useDocument('students', student.id))
+		.updateDocs({feedback: subject.value})
+		.then(() => {
+			// console.log('updated')
+			openfb.value = true
+		}).catch((err) => {
+			console.log(err)
+		})
+	})
+}
+const closeFeedback = async() => {
+	event.target.closest('.modal-content').querySelector('.btn-close').click()
+	students.value.forEach(async (student) => {
+		await (await useDocument('students', student.id))
+		.updateDocs({feedback: 'default'})
+		.then(() => {
+			// console.log('updated')
+			openfb.value = false
 		}).catch((err) => {
 			console.log(err)
 		})

@@ -70,7 +70,6 @@ const schedule = ref({
     fri: ['default', 'default', 'default'],
     sat: ['default', 'default', 'default']
 })
-
 const loadData = async () => {
     let res = []
     props.classList.forEach((cls) => {
@@ -86,7 +85,6 @@ const loadData = async () => {
             sub: subject
         })
     })
-
     res.forEach(async (cls) => {
         (await useDocument('schedule', cls.classId))
         .getDetail().then((doc) => {

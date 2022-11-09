@@ -1,7 +1,7 @@
 <template>
 	<section class="container-fluid">
 		<b-button-group class="my-1">
-			<b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteEnquiry>Delete</b-button>
+			<b-button :disabled="selected.length == 0" variant="danger" v-b-modal.deleteEnquiry>Delete</b-button>
 		</b-button-group>
 		<table class="table table-hover table-responsive">
 			<thead><tr>
@@ -26,7 +26,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<DeleteModal title="Enquiry" :ids="selected" v-on:submitClick="loadData"/>
+		<DeleteModal title="Enquiry" :ids="selected" @submitClick="loadData"/>
 	</section>
 </template>
 

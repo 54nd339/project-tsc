@@ -1,26 +1,29 @@
 <template>
 	<div id="content" class="container-fluid">
-		<b-button-group class="my-1">
-			<b-button variant="success" v-b-modal.addTeacher>Add</b-button>
+		<b-button-group class="my-1 d-flex">
 			<b-button variant="secondary" v-b-modal.resetRate>Reset Ratings</b-button>
 			<b-button variant="secondary" v-b-modal.resetTeacher>Reset Attendance</b-button>
+			<b-button @click="editMode = !editMode">{{ editMode ? 'Turn Edit Off' : 'Turn Edit On' }}</b-button>
+		</b-button-group>
+		<b-button-group class="my-1">
+			<b-button variant="success" v-b-modal.addTeacher>Add</b-button>
 			<b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteTeacher>Delete</b-button>
 			<b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyTeacher @click="$refs.modUser.loadData">Modify</b-button>
 		</b-button-group>
 		<table class="table table-hover table-responsive">
 			<thead><tr>
-				<th scope="col">#</th>
+				<th scope="col" v-if="editMode">#</th>
 				<th scope="col">Name</th>
 				<th scope="col">Rating</th>
 				<th scope="col">Phone</th>
 				<th scope="col">Email</th>
 				<th scope="col">Attendance</th>
 				<th scope="col">Classes</th>
-				<th scope="col">Add Class</th>
+				<th scope="col" v-if="editMode">Add Class</th>
 			</tr></thead>
 			<tbody ref="rows" id="rows">
 				<tr v-for="teacher in teachers" :key="teacher">
-					<td><b-form-checkbox :value="teacher.id" @click="updateSelected" /></td>
+					<td v-if="editMode"><b-form-checkbox :value="teacher.id" @click="updateSelected" /></td>
 					<td>{{ teacher.name }}</td>
 					<td><b-input-group :prepend="(teacher.rating.val/teacher.rating.count).toFixed(2)">
 							<b-button variant="outline-primary" v-b-modal.viewStat @click="target = teacher">View</b-button>
@@ -40,19 +43,21 @@
 									</b-input-group-append>
 								</b-input-group>
 							</td>
-							<td><b-button variant="outline-primary" size="sm" class="mx-1" @click="noAttEdit = !noAttEdit; Attarget = teacher">
-								<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
-							</b-button></td>
-							<td><b-button variant="outline-secondary" size="sm" class="mx-1" @click="teacher.attendance++; modA(teacher)">
-								<font-awesome-icon icon="fa-solid fa-plus" />
-							  </b-button></td>
+							<td v-if="editMode">
+								<b-button variant="outline-primary" size="sm" class="mx-1" @click="noAttEdit = !noAttEdit; Attarget = teacher">
+									<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
+								</b-button>
+								<b-button variant="outline-secondary" size="sm" class="mx-1" @click="teacher.attendance++; modA(teacher)">
+									<font-awesome-icon icon="fa-solid fa-plus" />
+								</b-button>
+							</td>
 						</tr>
 					</div></td>
 					<td><div>
 						<tr v-for="(subs, grade) in teacher.classes" :key="grade">
 							<b-input-group v-if="subs.length > 0" :prepend="grade">
 								<td v-for="(sub, index) in subs" :key="sub">
-									<b-input-group :prepend="sub" size="sm"><b-input-group-append>
+									<b-input-group :prepend="sub" size="sm"><b-input-group-append v-if="editMode">
 										<b-button variant="outline-danger" @click="delSub(teacher.id, teacher.classes, grade, index)">
 											<font-awesome-icon icon="fa-solid fa-trash" size="1x" />
 										</b-button>
@@ -61,7 +66,7 @@
 							</b-input-group>
 						</tr>
 					</div></td>
-					<td>
+					<td v-if="editMode">
 						<b-input-group>
 							<b-input-group-prepend>
 								<b-form-select v-model="course" :options="courses" />
@@ -69,7 +74,7 @@
 								<b-form-select v-model="subject" :options="subjects" />
 							</b-input-group-prepend>
 							<b-input-group-append>
-								<b-button variant="outline-success" @click="addSub(teacher.id, teacher.classes)"
+								<b-button variant="outline-success" @click="addSub(teacher)"
 									:disabled="course == 'default' || grade == 0 || subject == 'default'">
 									<font-awesome-icon icon="fa-solid fa-plus" size="1x" />
 								</b-button>
@@ -79,10 +84,10 @@
 				</tr>
 			</tbody>
 		</table>
-		<AddUser title="Teacher" v-on:submitClick="loadData"/>
-		<ModifyUser title="Teacher" :id="docID" ref="modUser" v-on:submitClick="loadData"/>
-		<DeleteModal title="Teacher" :ids="selected" v-on:submitClick="loadData"/>
-		<ResetUser title="Teacher" :ids="teachers" v-on:submitClick="loadData"/>
+		<AddUser title="Teacher" @submitClick="loadData"/>
+		<ModifyUser title="Teacher" :id="docID" ref="modUser" @submitClick="loadData"/>
+		<DeleteModal title="Teacher" :ids="selected" @submitClick="loadData"/>
+		<ResetUser title="Teacher" :ids="teachers" @submitClick="loadData"/>
 		<b-modal id="resetRate" title="Reset Teacher Ratings" aria-labelledby="resetRate" aria-hidden="true" :hide-footer="true">
 			<b-form @submit="resetRate">
 				<p class="justify-content-center align-items-center" id="resetText">Confirm Reset?</p>
@@ -137,7 +142,7 @@ const questions = [
 const teachers = ref([])
 const target = ref({})
 const Attarget = ref({})
-
+const editMode = ref(false)
 const loadData = async () => {
 	let collection = getCollection('teachers', '', '', '', '')
 	collection.getDocuments().then((docs) => {
@@ -181,17 +186,22 @@ const updateSub = async(id, classes) => {
 const course = ref('default')
 const grade = ref(0)
 const subject = ref('default')
-const addSub = async(id, classes) => {
+const addSub = async(teacher) => {
 	if (course.value == 'default' || grade.value == 0 || subject.value == 'default') {
 		return
 	}
+
 	let clas = course.value + '_' + grade.value
-	if (classes[clas].includes(subject.value)) {
+	if(!teacher.classes.hasOwnProperty(clas)) {
+        teacher.classes[clas] = []
+	}
+						
+	if (teacher.classes[clas].includes(subject.value)) {
 		return
 	}
 	// Fix Dropdowns
-	classes[clas].push(subject.value)
-	updateSub(id, classes).then(() => {
+	teacher.classes[clas].push(subject.value)
+	updateSub(teacher.id, teacher.classes).then(() => {
 		course.value = 'default'
 		grade.value = 0
 		subject.value = 'default'

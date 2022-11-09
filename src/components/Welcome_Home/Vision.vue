@@ -25,10 +25,9 @@
 
 </template>
 
-<script>
-export default {
+<script setup>
+// do something
 
-}
 </script>
 
 <style>

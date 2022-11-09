@@ -4,7 +4,7 @@
             <h3 class="text-center" style>Time Table</h3>
         </div>
         <div id="content" class="container-fluid">
-            <b-button-group class="my-1">
+            <b-button-group class="my-1 d-flex">
                 <b-form-select v-model="course" :options="courseList" @update:modelValue="loadData" />
                 <b-form-select v-model="grade" :options="gradeList" @update:modelValue="loadData" />
                 <b-button v-if="modify" variant="success" v-b-modal.confirm>Done</b-button>
