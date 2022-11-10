@@ -47,8 +47,12 @@ const props = defineProps({
 const subject = ref('default')
 const prevTests = ref([])
 const tests = ref([])
+
 const loadData = async() => {
 	const today = new Date().toJSON().slice(0, 10)
+	prevTests.value = []
+	tests.value = []
+
 	await getCollection('tests', ['course', '==', props.user.course],
 		['class', '==', props.user.class], ['subject', '==', subject.value], '')
 		.getDocuments().then((docs) => {
@@ -77,6 +81,7 @@ const download = async (test) => {
 		console.log(err)
 	})
 }
+
 loadData()
 </script>
 

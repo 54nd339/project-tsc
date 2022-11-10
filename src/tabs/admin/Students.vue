@@ -16,10 +16,15 @@
 			<b-button v-if="grade != 0 && course != 'default'" variant="success" v-b-modal.addStudent>Add</b-button>
 			<b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteStudent>Delete</b-button>
 			<b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyStudent @click="$refs.modUser.loadData">Modify</b-button>
+			<b-button v-if="selected.length > 0" variant="primary" v-b-modal.saveAttendance>Add attendance</b-button>
 		</b-button-group>
 		<table class="table table-hover table-responsive">
 			<thead><tr>
-				<th scope="col" v-if="editMode">#</th>
+				<th scope="col" v-if="editMode">
+					<b-button variant="outline-success" size="sm" @click="selectAll">
+						<font-awesome-icon icon="fa-solid fa-check" size="1x" />
+					</b-button>
+				</th>
 				<th scope="col">Name</th>
 				<th scope="col" v-if="course == 'default'">Course</th>
 				<th scope="col" v-if="grade == 0">Class</th>
@@ -91,9 +96,6 @@
 								<b-button variant="outline-primary" size="sm" class="mx-1" @click="noAttEdit = !noAttEdit; target = student.id">
 									<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
 								</b-button>
-								<b-button variant="outline-secondary" size="sm" class="mx-1" @click="student.attendance++; modifyAtt(student)">
-									<font-awesome-icon icon="fa-solid fa-plus" />
-								</b-button>
 							</td>
 						</tr>
 					</div></td>
@@ -129,6 +131,12 @@
 		<ModifyUser title="Student" :id="docID" ref="modUser" @submitClick="loadData"/>
 		<DeleteModal title="Student" :ids="selected" @submitClick="loadData"/>
 		<ResetUser title="Student" :ids="students" @submitClick="loadData"/>
+		<b-modal id="saveAttendance" title="Save Attendance" aria-labelledby="saveAtt" aria-hidden="true" :hide-footer="true">
+			<b-form @submit="saveAtt">
+				<p class="justify-content-center align-items-center" id="promoteText">Save Attendance</p>
+				<b-button type="submit" variant="success d-flex mx-auto mt-2" size="lg">Save</b-button>
+			</b-form>
+		</b-modal>
 		<b-modal id="promoteAll" title="Promote" aria-labelledby="promoteAll" aria-hidden="true" :hide-footer="true">
 			<b-form @submit="promoteAll">
 				<p class="justify-content-center align-items-center" id="promoteText">Confirm Promote?</p>
@@ -307,6 +315,26 @@ const closeFeedback = async() => {
 	})
 }
 
+const selectAll = () => {
+	const checkboxes = event.target.closest('table').querySelectorAll('input[type=checkbox]')
+	checkboxes.forEach((checkbox) => {
+		checkbox.checked = true
+	})
+	updateSelected()
+}
+const saveAtt = async() => {
+	event.target.closest('.modal-content')
+				.querySelector('.btn-close').click()
+	selected.value.forEach(async (id) => {
+		await (await useDocument('students', id))
+		.updateDocs({attendance: students.value.find((student) => student.id == id).attendance + 1})
+		.then(() => {
+			loadData()
+		}).catch((err) => {
+			console.log(err)
+		})
+	})
+}
 loadData()
 </script>
 
