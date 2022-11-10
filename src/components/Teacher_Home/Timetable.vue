@@ -1,5 +1,5 @@
 <template>
-	<div class="col-md-5 rounded-3 m-2" style="background-color:#57CC99; min-height: 50vh; max-height: 70vh; overflow-y: auto;">
+	<div class="col-md-5 rounded-3 m-2 order-md-2" style="background-color:#57CC99; min-height: 50vh; max-height: 70vh; overflow-y: auto;">
         <div class="shadow m-3 p-1 rounded-3" style="background-color:#80ED99">
             <h3 class="text-center" style>Time Table</h3>
         </div>

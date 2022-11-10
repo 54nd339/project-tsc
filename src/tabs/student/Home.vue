@@ -6,8 +6,8 @@
 			<Performance :student="user" :subject="sub" :key="sub" />
 		</div>
 		<div class="row justify-content-center">
-			<Timetable :student="user" />
 			<UpcomingTest :student="user" />
+			<Timetable :student="user" />
 		</div>
 	</div>
 </template>

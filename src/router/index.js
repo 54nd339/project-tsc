@@ -38,7 +38,7 @@ const router = createRouter({
             path: '/teacher/:id',
             name: 'Teacher',
             component: () => import('../views/Teacher.vue'),
-            meta: { title: 'TSC - Student' },
+            meta: { title: 'TSC - Teacher' },
             beforeEnter: requireAuth
         },
         {

@@ -1,6 +1,6 @@
 <template>
-    <div class="col-md-5 rounded-3 m-2" style="background-color:#57CC99; min-height: 60vh; max-height: 70vh; overflow-y: auto;">
-        <div class="shadow m-3 py-1 rounded-3 p-md-2" style="background-color:#80ED99">
+    <div class="col-md-5 rounded-3 m-2" style="background-color:#80ED99; min-height: 60vh; max-height: 70vh; overflow-y: auto;">
+        <div class="shadow m-3 py-1 rounded-3 p-md-2" style="background-color:#57CC99">
             <h3 class="text-center" style>Performance Analytics</h3>
         </div>
         <div class="d-flex justify-content-center mx-md-3">

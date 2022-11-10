@@ -9,11 +9,11 @@
 				<input class="form-check-input" type="checkbox" value="" id="remme">
 				<label class="form-check-label" for="remme"> Remember Me</label><br>
 			</div> -->
-			<div>
+			<div class="d-flex justify-content-center">
 				<b-form-radio-group v-model="selected" :options="options" class="my-1" value-field="item" text-field="name" />
-				<div class="m-1" v-if="selected">Login as <strong>{{ selected }}</strong></div>
-				<div id="warn" class="m-1 text-danger" v-if="warnmsg"><strong>{{ warnmsg }}</strong></div>
 			</div>
+			<div class="m-1" v-if="selected">Login as <strong>{{ selected }}</strong></div>
+			<div id="warn" class="m-1 text-danger" v-if="warnmsg"><strong>{{ warnmsg }}</strong></div>
 			<b-button id="loginpg" variant="success d-flex mx-auto mt-2" size="lg" type="button" @click="handleLogin()"
 				v-model="loginpg">{{ LoginText }}</b-button>
 		</b-form>
