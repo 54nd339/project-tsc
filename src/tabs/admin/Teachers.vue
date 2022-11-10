@@ -4,6 +4,7 @@
 			<b-button variant="secondary" v-b-modal.resetRate>Reset Ratings</b-button>
 			<b-button variant="secondary" v-b-modal.resetTeacher>Reset Attendance</b-button>
 			<b-button @click="editMode = !editMode">{{ editMode ? 'Turn Edit Off' : 'Turn Edit On' }}</b-button>
+			<b-button @click="loadData">Refresh</b-button>
 		</b-button-group>
 		<b-button-group class="my-1">
 			<b-button variant="success" v-b-modal.addTeacher>Add</b-button>
@@ -95,6 +96,7 @@
 			</b-form>
 		</b-modal>
 		<b-modal size="lg" id="viewStat" title="Teacher Ratings" aria-labelledby="viewRate" aria-hidden="true" :hide-footer="true">
+			<div class="d-flex justify-content-center"> Total Responses: {{ count }}</div>
 			<div class="d-flex mb-1 justify-content-center">
 				<b-form><b-form-group v-for="(question, index) in questions" :key="question"
 					content-cols="2" :label="question"> {{ getRating(target.rating, index) }} / 5 </b-form-group>
@@ -190,12 +192,10 @@ const addSub = async(teacher) => {
 	if (course.value == 'default' || grade.value == 0 || subject.value == 'default') {
 		return
 	}
-
 	let clas = course.value + '_' + grade.value
 	if(!teacher.classes.hasOwnProperty(clas)) {
         teacher.classes[clas] = []
-	}
-						
+	}					
 	if (teacher.classes[clas].includes(subject.value)) {
 		return
 	}
@@ -221,10 +221,12 @@ const delSub = async(id, classes, grad, index) => {
 	})
 }
 
+const count = ref(0)
 const getRating = (rating, ind) => {
 	if(rating == undefined) {
 		return 0
 	}
+	count.value = rating.count
 	return (rating.vals[ind] / rating.count).toFixed(2)
 }
 const resetRate = async() => {
@@ -246,7 +248,6 @@ const resetRate = async() => {
 		})
 	})
 }
-
 loadData()
 </script>
 
