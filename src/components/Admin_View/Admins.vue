@@ -11,7 +11,11 @@
             </b-button-group>
             <table class="table table-hover table-responsive">
                 <thead><tr>
-                    <th scope="col">#</th>
+                    <th scope="col">
+                        <b-button variant="outline-success" size="sm" @click="selectAll">
+                            <font-awesome-icon icon="fa-solid fa-check" size="1x" />
+                        </b-button>
+                    </th>
                     <th scope="col">Name</th>
                     <th scope="col">Phone</th>
                     <th scope="col">Email</th>
@@ -27,9 +31,9 @@
                     </tr>
                 </tbody>
             </table>
-            <AddUser title="Admin" @submitClick="loadData"/>
-            <ModifyUser title="Admin" :id="docID" ref="modUser" @submitClick="loadData"/>
-            <DeleteModal title="Admin" :ids="selected" @submitClick="loadData"/>
+            <AddUser title="Admin" @submitClick="addAdmin"/>
+            <ModifyUser title="Admin" :id="docID" ref="modUser" @submitClick="modAdmin"/>
+            <DeleteModal title="Admin" :ids="selected" @submitClick="delAdmin"/>
         </div> 
     </div>
 </template>
@@ -43,16 +47,12 @@ import getCollection from '@/db/getCollection'
 import { ref } from 'vue'
 
 const admins = ref([])
-const loadData = async () => {
-	let collection = getCollection('admins', '', '', '', '')
-	collection.getDocuments().then((docs) => {
-		admins.value = docs
-        selected.value = []
-        docID.value = 'default'
-	}).catch((err) => {
-		console.log(err)
-	})
-}
+getCollection('admins', '', '', '', '')
+.getDocuments().then((docs) => {
+    admins.value = docs
+}).catch((err) => {
+    console.log(err)
+})
 
 const selected = ref([])
 const docID = ref('default')
@@ -66,8 +66,38 @@ const updateSelected = () => {
 	selected.value = ids
     docID.value = ids[0]
 }
+const refresh = () => {
+    const rows = document.querySelectorAll('#rows input[type=checkbox]')
+    rows.forEach((row) => {
+        row.checked = false
+    })
+    selected.value = []
+}
+const selectAll = () => {
+	const checkboxes = event.target.closest('table')
+						.querySelectorAll('input[type=checkbox]')
+	checkboxes.forEach((checkbox) => {
+		checkbox.checked = true
+	})
+	updateSelected()
+}
 
-loadData()
+const addAdmin = (user) => {
+	admins.value.push(user)
+    refresh()
+}
+const modAdmin = (id, name, phone) => {
+	const index = admins.value.findIndex((admin) => admin.id == id)
+	admins.value[index].name = name
+	admins.value[index].phone = phone
+    refresh()
+}
+const delAdmin = (ids) => {
+	ids.forEach((id) => {
+		admins.value = admins.value.filter((user) => user.id != id)
+	})
+    refresh()
+}
 </script>
 
 <style>

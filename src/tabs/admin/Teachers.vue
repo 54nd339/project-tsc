@@ -3,24 +3,28 @@
 		<b-button-group class="my-1 d-flex">
 			<b-button variant="secondary" v-b-modal.resetRate>Reset Ratings</b-button>
 			<b-button variant="secondary" v-b-modal.resetTeacher>Reset Attendance</b-button>
-			<b-button @click="editMode = !editMode">{{ editMode ? 'Turn Edit Off' : 'Turn Edit On' }}</b-button>
-			<b-button @click="loadData">Refresh</b-button>
+			<b-button @click="editMode = !editMode; if(!editMode) saveEdits()">{{ editMode ? 'Save Edits' : 'Enter Edit Mode' }}</b-button>
+			<b-button @click="fetchData">Refresh</b-button>
 		</b-button-group>
 		<b-button-group class="my-1">
 			<b-button variant="success" v-b-modal.addTeacher>Add</b-button>
 			<b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteTeacher>Delete</b-button>
 			<b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyTeacher @click="$refs.modUser.loadData">Modify</b-button>
+			<b-button v-if="selected.length > 0" variant="primary" v-b-modal.saveTAttendance>Add attendance</b-button>
 		</b-button-group>
 		<table class="table table-hover table-responsive">
 			<thead><tr>
-				<th scope="col" v-if="editMode">#</th>
+				<th scope="col" v-if="editMode">
+					<b-button variant="outline-success" size="sm" @click="selectAll">
+						<font-awesome-icon icon="fa-solid fa-check" size="1x" />
+					</b-button>
+				</th>
 				<th scope="col">Name</th>
 				<th scope="col">Rating</th>
 				<th scope="col">Phone</th>
 				<th scope="col">Email</th>
 				<th scope="col">Attendance</th>
 				<th scope="col">Classes</th>
-				<th scope="col" v-if="editMode">Add Class</th>
 			</tr></thead>
 			<tbody ref="rows" id="rows">
 				<tr v-for="teacher in teachers" :key="teacher">
@@ -31,67 +35,52 @@
 						</b-input-group></td>
 					<td>{{ teacher.phone }}</td>
 					<td>{{ teacher.email }}</td>
-					<td><div>
-						<tr>
-							<td v-if="noAttEdit || teacher.id != Attarget.id">{{ teacher.attendance }}/ 30</td>
-							<td v-else>
-								<b-input-group :prepend="teacher.attendance">
-									<b-form-input type="number" v-model="teacher.attendance" />
-									<b-input-group-append>
-									<b-button variant="outline-success" @click="noAttEdit = !noAttEdit; modA(teacher)">
-										<font-awesome-icon icon="fa-solid fa-check" size="1x" />
+					<td v-if="!editMode">{{ teacher.attendance }}/ 30</td>
+					<td v-else><b-input-group :prepend="teacher.attendance">
+						<b-form-input type="number" v-model="teacher.attendance" />
+					</b-input-group></td>
+					<td><tr v-if="editMode">
+							<b-input-group>
+								<b-input-group-prepend>
+									<b-form-select v-model="course" :options="courses" />
+									<b-form-select v-model="grade" :options="grades" />
+									<b-form-select v-model="subject" :options="subjects" />
+								</b-input-group-prepend>
+								<b-input-group-append>
+									<b-button variant="outline-success" @click="addSub(teacher)"
+										:disabled="course == 'default' || grade == 0 || subject == 'default'">
+										<font-awesome-icon icon="fa-solid fa-plus" size="1x" />
 									</b-button>
-									</b-input-group-append>
-								</b-input-group>
-							</td>
-							<td v-if="editMode">
-								<b-button variant="outline-primary" size="sm" class="mx-1" @click="noAttEdit = !noAttEdit; Attarget = teacher">
-									<font-awesome-icon icon="fa-regular fa-pen-to-square" size="1x" />
-								</b-button>
-								<b-button variant="outline-secondary" size="sm" class="mx-1" @click="teacher.attendance++; modA(teacher)">
-									<font-awesome-icon icon="fa-solid fa-plus" />
-								</b-button>
-							</td>
-						</tr>
-					</div></td>
-					<td><div>
-						<tr v-for="(subs, grade) in teacher.classes" :key="grade">
-							<b-input-group v-if="subs.length > 0" :prepend="grade">
-								<td v-for="(sub, index) in subs" :key="sub">
-									<b-input-group :prepend="sub" size="sm"><b-input-group-append v-if="editMode">
-										<b-button variant="outline-danger" @click="delSub(teacher.id, teacher.classes, grade, index)">
-											<font-awesome-icon icon="fa-solid fa-trash" size="1x" />
-										</b-button>
-									</b-input-group-append></b-input-group>
-								</td>
+								</b-input-group-append>
 							</b-input-group>
 						</tr>
-					</div></td>
-					<td v-if="editMode">
-						<b-input-group>
-							<b-input-group-prepend>
-								<b-form-select v-model="course" :options="courses" />
-								<b-form-select v-model="grade" :options="grades" />
-								<b-form-select v-model="subject" :options="subjects" />
-							</b-input-group-prepend>
-							<b-input-group-append>
-								<b-button variant="outline-success" @click="addSub(teacher)"
-									:disabled="course == 'default' || grade == 0 || subject == 'default'">
-									<font-awesome-icon icon="fa-solid fa-plus" size="1x" />
-								</b-button>
-							</b-input-group-append>
+						<tr v-for="(subs, grade) in teacher.classes" :key="grade">
+						<b-input-group v-if="subs.length > 0" :prepend="grade">
+							<section v-for="(sub, index) in subs" :key="sub">
+								<b-input-group :prepend="sub" size="sm"><b-input-group-append v-if="editMode">
+									<b-button variant="outline-danger" @click="delSub(teacher.id, teacher.classes, grade, index)">
+										<font-awesome-icon icon="fa-solid fa-trash" size="1x" />
+									</b-button>
+								</b-input-group-append></b-input-group>
+							</section>
 						</b-input-group>
-					</td>
+					</tr></td>
 				</tr>
 			</tbody>
 		</table>
-		<AddUser title="Teacher" @submitClick="loadData"/>
-		<ModifyUser title="Teacher" :id="docID" ref="modUser" @submitClick="loadData"/>
-		<DeleteModal title="Teacher" :ids="selected" @submitClick="loadData"/>
-		<ResetUser title="Teacher" :ids="teachers" @submitClick="loadData"/>
-		<b-modal id="resetRate" title="Reset Teacher Ratings" aria-labelledby="resetRate" aria-hidden="true" :hide-footer="true">
-			<b-form @submit="resetRate">
-				<p class="justify-content-center align-items-center" id="resetText">Confirm Reset?</p>
+		<AddUser title="Teacher" @submitClick="addTeacher"/>
+		<ModifyUser title="Teacher" :id="docID" ref="modUser" @submitClick="modTeacher"/>
+		<DeleteModal title="Teacher" :ids="selected" @submitClick="delTeacher"/>
+		<ResetUser title="Teacher" :ids="teachers" @submitClick="resetAtt"/>
+		<b-modal id="saveTAttendance" title="Save Attendance" aria-labelledby="saveAtt" aria-hidden="true" :hide-footer="true">
+			<b-form @submit="saveAtt">
+				<p class="justify-content-center align-items-center" id="promoteText">Save Attendance</p>
+				<b-button type="submit" variant="success d-flex mx-auto mt-2" size="lg">Save</b-button>
+			</b-form>
+		</b-modal>
+		<b-modal id="resetRate" title="Reset Teacher Ratings" aria-labelledby="ResetRate" aria-hidden="true" :hide-footer="true">
+			<b-form @submit="ResetRate">
+				<p class="justify-content-center align-items-center" id="ResetText">Confirm Reset?</p>
 				<b-button type="submit" variant="danger d-flex mx-auto mt-2" size="lg">Reset</b-button>
 			</b-form>
 		</b-modal>
@@ -141,20 +130,19 @@ const questions = [
     "Q8. The teacher comes fully prepared for the class :",
     "Q9. The teacher provides guidance counselling in academic and non-academic matters in/out side the class :"
 ]
-const teachers = ref([])
+
 const target = ref({})
-const Attarget = ref({})
 const editMode = ref(false)
-const loadData = async () => {
-	let collection = getCollection('teachers', '', '', '', '')
-	collection.getDocuments().then((docs) => {
-		teachers.value = docs
-		selected.value = []
-		docID.value = 'default'
+const teachers = ref([])
+const fetchData = async () => {
+	await getCollection('teachers', '', '', '', '')
+	.getDocuments().then((doc) => {
+		teachers.value = doc
 	}).catch((err) => {
 		console.log(err)
 	})
 }
+
 const selected = ref([])
 const docID = ref('default')
 const updateSelected = () => {
@@ -166,32 +154,32 @@ const updateSelected = () => {
 	selected.value = ids
 	docID.value = ids[0]
 }
+const selectAll = () => {
+	const checkboxes = event.target.closest('table').querySelectorAll('input[type=checkbox]')
+	checkboxes.forEach((checkbox) => {
+		checkbox.checked = true
+	})
+	updateSelected()
+}
 
-const noAttEdit = ref(true)
-const modA = async(teacher) => {
-	await (await useDocument('teachers', teacher.id))
-	.updateDocs({attendance: teacher.attendance}).then(() => {
-		loadData()
-	}).catch((err) => {
-		console.log(err)
+const addTeacher = (user) => {
+	teachers.value.push(user)
+}
+const modTeacher = (id, name, phone) => { 
+	const index = teachers.value.findIndex((teacher) => teacher.id == id)
+	teachers.value[index].name = name
+	teachers.value[index].phone = phone
+}
+const delTeacher = (ids) => {
+	ids.forEach((id) => {
+		teachers.value = teachers.value.filter((user) => user.id != id)
 	})
 }
 
-const updateSub = async(id, classes) => {
-	await (await useDocument('teachers', id))
-	.updateDocs({classes: classes}).then(() => {
-		loadData()
-	}).catch((err) => {
-		console.log(err)
-	})
-}
 const course = ref('default')
 const grade = ref(0)
 const subject = ref('default')
-const addSub = async(teacher) => {
-	if (course.value == 'default' || grade.value == 0 || subject.value == 'default') {
-		return
-	}
+const addSub = (teacher) => {
 	let clas = course.value + '_' + grade.value
 	if(!teacher.classes.hasOwnProperty(clas)) {
         teacher.classes[clas] = []
@@ -201,24 +189,9 @@ const addSub = async(teacher) => {
 	}
 	// Fix Dropdowns
 	teacher.classes[clas].push(subject.value)
-	updateSub(teacher.id, teacher.classes).then(() => {
-		course.value = 'default'
-		grade.value = 0
-		subject.value = 'default'
-		loadData()
-	}).catch((err) => {
-		console.log(err)
-	})
 }
 const delSub = async(id, classes, grad, index) => {
 	classes[grad].splice(index, 1)
-	updateSub(id, classes).then(() => {
-		grade.value = 0
-		subject.value = 'default'
-		loadData()
-	}).catch((err) => {
-		console.log(err)
-	})
 }
 
 const count = ref(0)
@@ -229,7 +202,7 @@ const getRating = (rating, ind) => {
 	count.value = rating.count
 	return (rating.vals[ind] / rating.count).toFixed(2)
 }
-const resetRate = async() => {
+const ResetRate = async() => {
 	event.target.closest('.modal-content')
 				.querySelector('.btn-close').click()
 
@@ -241,14 +214,55 @@ const resetRate = async() => {
 				vals: [0, 0, 0, 0, 0, 0, 0, 0, 0]
 			}
 		}).then(() => {
-			// console.log('updated')
-			loadData()
+			teacher.rating = {
+				count: 0, val: 0,
+				vals: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+			}			
 		}).catch((err) => {
 			console.log(err)
 		})
 	})
 }
-loadData()
+
+const resetAtt = (users) => {
+	users.forEach((user) => {
+		const index = res.value.findIndex((teacher) => teacher.id == user.id)
+		teachers.value[index].attendance = 0 
+	})
+}
+const saveAtt = async() => {
+	event.target.closest('.modal-content')
+				.querySelector('.btn-close').click()
+	selected.value.forEach(async (id) => {
+		await (await useDocument('teachers', id))
+		.updateDocs({
+			attendance: teachers.value.find((teacher) => teacher.id == id).attendance + 1
+		}).then(() => {
+			teachers.value.find((teacher) => teacher.id == id).attendance += 1
+		}).catch((err) => {
+			console.log(err)
+		})
+	})
+}
+const saveEdits = async() => {
+	teachers.value.forEach(async (teacher) => {
+		await (await useDocument('teachers', teacher.id))
+		.updateDocs({
+			attendance: teacher.attendance,
+			classes: teacher.classes,
+			rating: teacher.rating
+		}).then(() => {
+			const index = teachers.value.findIndex((user) => user.id == teacher.id)
+			teachers.value[index].attendance = teacher.attendance
+			teachers.value[index].classes = teacher.classes
+			teachers.value[index].rating = teacher.rating
+		}).catch((err) => {
+			console.log(err)
+		})
+	})
+}
+
+fetchData()
 </script>
 
 <style>

@@ -30,16 +30,14 @@ const props = defineProps({
 	}
 })
 const subject = ref('default')
+const res = ref([])
 const notes = ref([])
-const loadData = async() => {
-	await getCollection('notes', ['course', '==', props.user.course],
-		['class', '==', props.user.class], ['subject', '==', subject.value], '')
-		.getDocuments().then((docs) => {
-			notes.value = docs
-		}).catch((err) => {
-			console.log(err)
-		})
+const loadData = () => {
+	notes.value = res.value.filter((note) => {
+		return note.subject == subject.value && note.course == props.user.course && note.class == props.user.class
+	})
 }
+
 const downloadText = ref('Download')
 const download = async (note) => {
     const url = note.url
@@ -52,7 +50,14 @@ const download = async (note) => {
         console.log(err)
     })
 }
-loadData()
+
+await getCollection('notes', '', '', '', '')
+.getDocuments().then((data) => {
+	res.value = data
+	loadData()
+}).catch((err) => {
+	console.log(err)
+})
 </script>
 
 <style>

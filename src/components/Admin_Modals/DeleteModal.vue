@@ -17,7 +17,7 @@ const props = defineProps({
 const emit = defineEmits(['submitClick'])
 const titleName = 'Delete ' + props.title
 const modalId = 'delete' + props.title
-const collectionId = props.title.toLowerCase() + 's'
+const collectionId = props.title !='Enquiry' ? props.title.toLowerCase() + 's' : 'enquiry'
 
 const onSubmit = async() => {
 	event.target.closest('.modal-content')
@@ -31,7 +31,7 @@ const onSubmit = async() => {
 			console.log(err)
 		})
 	})
-	emit('submitClick')
+	emit('submitClick', props.ids)
 }
 </script>
 

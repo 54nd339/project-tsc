@@ -32,7 +32,7 @@ const name = ref('')
 const phone = ref('')
 
 const loadData = async () => {
-	let doc = (await useDocument(collectionId, props.id))
+	(await useDocument(collectionId, props.id))
 	.getDetail().then((doc) => {
 		name.value = doc.name
 		phone.value = doc.phone
@@ -53,7 +53,7 @@ const onSubmit = async() => {
 		phone: phone.value
 	}).then(() => {
 		btn.click()
-		emit('submitClick')
+		emit('submitClick', props.id, name.value, phone.value)
 	}).catch((err) => {
 		console.log(err)
 	})

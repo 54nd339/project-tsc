@@ -70,16 +70,12 @@ import useStorage from '@/db/useStorage'
 import { ref } from 'vue'
 
 const batches = ref([])
-const loadData = async () => {
-	let collection = getCollection('batches', '', '', '', '')
-	collection.getDocuments().then((docs) => {
-		batches.value = docs
-		selected.value = []
-        uploadText.value = 'Upload'
-	}).catch((err) => {
-		console.log(err)
-	})
-}
+getCollection('batches', '', '', '', '')
+.getDocuments().then((docs) => {
+    batches.value = docs
+}).catch((err) => {
+    console.log(err)
+})
 
 const selected = ref([])
 const target = ref({})
@@ -91,11 +87,16 @@ const updateSelected = () => {
 		ids.push(check.value)
 	})
 	selected.value = ids
-    batches.value.forEach((batch) => {
-        if (batch.id == ids[0]) {
-            target.value = batch
-        }
+    if(selected.value.length > 0) {
+        target.value = batches.value.find((batch) => batch.id == selected.value[0])
+    }
+}
+const refresh = () => {
+    const rows = document.querySelectorAll('#rows input[type=checkbox]')
+    rows.forEach((row) => {
+        row.checked = false
     })
+    selected.value = []
 }
 
 const title = ref('')
@@ -106,6 +107,7 @@ const uploadText = ref('Upload')
 const onFileChange = (e) => {
     file1.value = e.target.files[0]
 }
+
 const addBatch = async() => {
     let file = file1.value
     let path = `gallery/batches/${file.name}` 
@@ -120,12 +122,22 @@ const addBatch = async() => {
                 url: res.url,
                 path: res.snapshot.metadata.fullPath,
                 date: res.snapshot.metadata.timeCreated
-            }).then(() => {
+            }).then((uid) => {
+                batches.value.push({
+                    id: uid,
+                    title: title.value,
+                    subtitle: subtitle.value,
+                    context: context.value,
+                    url: res.url,
+                    path: res.snapshot.metadata.fullPath,
+                    date: res.snapshot.metadata.timeCreated
+                })
                 title.value = ''
                 subtitle.value = ''
                 context.value = ''
                 file1.value = null
-                loadData()
+                uploadText.value = 'Upload'
+                refresh()
             }).catch((err) => {
                 console.log(err)
             })
@@ -136,26 +148,31 @@ const addBatch = async() => {
         console.log(err)
     })
 }
-
 const modBatch = async() => {
     const btn = event.target.closest('.modal-content')
                         .querySelector('.btn-close')
                         
     await(await useDocument('batches', target.value.id))
     .updateDocs(target.value).then(() => {
-        loadData()
         btn.click()
+        batches.value = batches.value.map((batch) => {
+            if(batch.id == target.value.id)
+                return target.value
+            else
+                return batch
+        })
+        refresh()
     }).catch((err) => {
         console.log(err)
     })
 }
-
 const delBatch = async (batch) => {
     await useStorage().deleteFile(batch.path).then(async(res) => {
         if(res) {
             await (await useDocument('batches', batch.id))
             .delDoc().then(() => {
-                loadData()
+                batches.value = batches.value.filter((b) => b.id != batch.id)
+                refresh()
             }).catch((err) => {
                 console.log(err)
             })
@@ -166,8 +183,6 @@ const delBatch = async (batch) => {
         console.log(err)
     })
 }
-
-loadData()
 </script>
 
 <style>

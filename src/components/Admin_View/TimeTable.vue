@@ -72,6 +72,7 @@
 </template>
 
 <script setup>
+import getCollection from '@/db/getCollection'
 import useDocument from '@/db/useDocument'
 // import test from '@/db/test'
 import { ref } from 'vue'
@@ -95,20 +96,23 @@ const course = ref('ICSE')
 const grade = ref(10)
 const schedule = ref({})
 
+const res = ref([])
+await getCollection('schedule').getDocuments()
+.then((data) => {
+    res.value = data
+}).catch((err) => {
+    console.log(err)
+})
+
 const loadData = async () => {
+    modify.value = false
     if(course.value == 'default' || grade.value == 0)
         return
 
     const docId = course.value + '_' + grade.value
-    await (await useDocument('schedule', docId))
-    .getDetail().then((doc) => {
-        schedule.value = doc
-        // console.log(doc)
-        modify.value = false
-    }).catch((err) => {
-        console.log(err)
-    })
+    schedule.value = res.value.find((doc) => doc.id == docId)
 }
+
 const saveData = async () => {
     const btn = event.target.closest('.modal-content')
                     .querySelector('.btn-close')
@@ -122,6 +126,7 @@ const saveData = async () => {
         console.log(err)
     })
 }
+
 loadData()
 </script>
 

@@ -43,6 +43,14 @@ const students = ref([
 ])
 const student = ref(placeholder)
 
+const res = ref([])
+await getCollection('students', '', '', '', '')
+.getDocuments().then((docs) => {
+	res.value = docs
+}).catch((err) => {
+	console.log(err)
+})
+
 const loadData = async() => {
 	if(props.cls == 'default') {
 		return
@@ -54,17 +62,14 @@ const loadData = async() => {
 	else
 		[course.value, grade.value, subject.value] = [arr[0]+'_'+arr[1], Number(arr[2]), arr[3]]
 
-	await getCollection('students', ['course', '==', course.value],
-		['class', '==', grade.value], '', '')
-		.getDocuments().then((docs) => {
-            if(docs) {
-                docs.forEach((doc) => {
-                    students.value.push({ value: doc, text: doc.name })
-                })
-            }
-		}).catch((err) => {
-			console.log(err)
+	const docs = res.value.filter((doc) => {
+		return doc.course == course.value && doc.class == grade.value
+	})
+	if(docs.length > 0) {
+		docs.forEach((doc) => {
+			students.value.push({ value: doc, text: doc.name })
 		})
+	}
 }
 
 loadData()

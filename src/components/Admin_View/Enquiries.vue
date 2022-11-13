@@ -3,7 +3,7 @@
 		<b-button-group class="my-1">
 			<b-button :disabled="selected.length == 0" variant="danger" v-b-modal.deleteEnquiry>Delete</b-button>
 		</b-button-group>
-		<table class="table table-hover table-responsive">
+		<table class="table table-hover table-enquiriesponsive">
 			<thead><tr>
 				<th scope="col">#</th>
 				<th scope="col">Name</th>
@@ -16,7 +16,6 @@
 				<tr v-for="enquiry in enquiries" :key="enquiry">
 					<td>
 						<b-form-checkbox :value="enquiry.id" @click="updateSelected" />
-						<!-- {{ enquiry.id }} -->
 					</td>
 					<td>{{ enquiry.name }}</td>
 					<td>{{ enquiry.course }}</td>
@@ -26,7 +25,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<DeleteModal title="Enquiry" :ids="selected" @submitClick="loadData"/>
+		<DeleteModal title="Enquiry" :ids="selected" @submitClick="delEnq"/>
 	</section>
 </template>
 
@@ -36,15 +35,12 @@ import getCollection from '@/db/getCollection'
 import { ref } from 'vue'
 
 const enquiries = ref([])
-const loadData = async () => {
-	let collection = getCollection('enquiry', '', '', '', '')
-	collection.getDocuments().then((docs) => {
-		enquiries.value = docs
-		selected.value = []
-	}).catch((err) => {
-		console.log(err)
-	})
-}
+let collection = getCollection('enquiry', '', '', '', '')
+collection.getDocuments().then((docs) => {
+	enquiries.value = docs
+}).catch((err) => {
+	console.log(err)
+})
 
 const selected = ref([])
 const updateSelected = () => {
@@ -57,7 +53,16 @@ const updateSelected = () => {
 	selected.value = ids
 }
 
-loadData()
+const delEnq = (ids) => {
+	ids.forEach((id) => {
+		enquiries.value = enquiries.value.filter((enquiry) => enquiry.id != id)
+	})
+    const rows = document.querySelectorAll('#rows input[type=checkbox]')
+    rows.forEach((row) => {
+        row.checked = false
+    })
+	selected.value = []
+}
 </script>
 
 <style>

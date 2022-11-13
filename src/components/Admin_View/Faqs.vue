@@ -45,7 +45,7 @@
                 </div>
             </b-form>
         </b-modal>
-		<DeleteModal title="Faq" :ids="selected" @submitClick="loadData"/>
+		<DeleteModal title="Faq" :ids="selected" @submitClick="delFaq"/>
 	</section>
 </template>
 
@@ -57,15 +57,12 @@ import useDocument from '@/db/useDocument'
 import { ref } from 'vue'
 
 const faqs = ref([])
-const loadData = async () => {
-	let collection = getCollection('faqs', '', '', '', '')
-	collection.getDocuments().then((docs) => {
-		faqs.value = docs
-		selected.value = []
-	}).catch((err) => {
-		console.log(err)
-	})
-}
+let collection = getCollection('faqs', '', '', '', '')
+collection.getDocuments().then((docs) => {
+    faqs.value = docs
+}).catch((err) => {
+    console.log(err)
+})
 
 const selected = ref([])
 const target = ref({})
@@ -77,11 +74,16 @@ const updateSelected = () => {
 		ids.push(check.value)
 	})
 	selected.value = ids
-    faqs.value.forEach((faq) => {
-        if (faq.id == ids[0]) {
-            target.value = faq
-        }
+    if (ids.length > 0) {
+        target.value = faqs.value.find((faq) => faq.id == ids[0])
+    }
+}
+const refresh = () => {
+    const rows = document.querySelectorAll('#rows input[type=checkbox]')
+    rows.forEach((row) => {
+        row.checked = false
     })
+    selected.value = []
 }
 
 const question = ref('')
@@ -91,28 +93,44 @@ const addFaq = async() => {
     .addDocument('', {
         question: question.value,
         answer: answer.value
-    }).then(() => {
+    }).then((uid) => {
+        faqs.value.push({
+            id: uid,
+            question: question.value,
+            answer: answer.value
+        })
         question.value = ''
         answer.value = ''
-        loadData()
+        refresh()
     }).catch((err) => {
         console.log(err)
     }) 
 }
-
 const modFaq = async() => {
     const btn = event.target.closest('.modal-content')
                         .querySelector('.btn-close')
     await(await useDocument('faqs', target.value.id))
     .updateDocs(target.value).then(() => {
-        loadData()
+        faqs.value = faqs.value.map((faq) => {
+            if(faq.id == target.value.id) {
+                faq.question = target.value.question
+                faq.answer = target.value.answer
+            }
+            return faq
+        })
         btn.click()
+        refresh()
     }).catch((err) => {
         console.log(err)
     })
 }
+const delFaq = (ids) => {
+	ids.forEach((id) => {
+		faqs.value = faqs.value.filter((faq) => faq.id != id)
+	})
+    refresh()
+}
 
-loadData()
 </script>
 
 <style>

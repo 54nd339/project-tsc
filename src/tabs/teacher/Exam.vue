@@ -72,6 +72,7 @@ const props = defineProps({
 	}
 })
 const clas = ref('default')
+const res = ref([])
 const prevTests = ref([])
 const tests = ref([])
 const nextTests = ref([])
@@ -87,26 +88,20 @@ const loadData = async() => {
 	else
 		[course, grade, subject] = [arr[0]+'_'+arr[1], Number(arr[2]), arr[3]]
 
-	await getCollection('tests', ['course', '==', course],
-		['class', '==', grade], ['subject', '==', subject], '')
-		.getDocuments().then((docs) => {
-			prevTests.value = []
-			tests.value = []
-			nextTests.value = []
-			docs.forEach((doc) => {
-				if (doc.date < today) {
-					prevTests.value.push(doc)
-				}
-				else if (doc.date == today) {
-					tests.value.push(doc)
-				}
-				else {
-					nextTests.value.push(doc)
-				}
-			})
-		}).catch((err) => {
-			console.log(err)
-		})
+	const docs = res.value.filter(doc => {
+		return doc.course == course && doc.class == grade && doc.subject == subject
+	})
+	docs.forEach((doc) => {
+		if (doc.date < today) {
+			prevTests.value.push(doc)
+		}
+		else if (doc.date == today) {
+			tests.value.push(doc)
+		}
+		else {
+			nextTests.value.push(doc)
+		}
+	})
 }
 
 const file1 = ref(null)
@@ -126,13 +121,17 @@ const addTestFile = async () => {
     uploadText.value = 'Uploading...'
 
     await useStorage().uploadFile(file, path)
-    .then(async(res) => {
-        if(res) {
+    .then(async(fileRef) => {
+        if(fileRef) {
             await (await useDocument('tests', target.value.id))
             .updateDocs({
-                url: res.url,
-                path: res.snapshot.metadata.fullPath
+                url: fileRef.url,
+                path: fileRef.snapshot.metadata.fullPath
             }).then(() => {
+				// update the test in the array
+				const index = res.value.findIndex(test => test.id == target.value.id)
+				res.value[index].url = fileRef.url
+				res.value[index].path = fileRef.snapshot.metadata.fullPath
                 file1.value = null
                 btn.click()
 				uploadText.value = 'Upload'
@@ -147,7 +146,13 @@ const addTestFile = async () => {
         console.log(err)
     })
 }
-loadData()
+await getCollection('tests', '', '', '', '')
+.getDocuments().then((data) => {
+	res.value = data
+	loadData()
+}).catch((err) => {
+	console.log(err)
+})
 </script>
 
 <style>

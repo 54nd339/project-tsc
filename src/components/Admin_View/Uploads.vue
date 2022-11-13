@@ -79,20 +79,22 @@ const openUrl = (url) => {
     window.open(url)
 }
 
+const res = ref([])
+await getCollection('notes', '', '', '', '')
+.getDocuments().then((docs) => {
+    res.value = docs
+}).catch((err) => {
+    console.log(err)
+})
 const notes = ref([])
 const loadData = async () => {
     if(course.value == 'default' || grade.value == 0 || subject.value == 'default') {
         return
     }
-    let collection = getCollection('notes', ['course', '==', course.value],
-        ['class', '==', grade.value], ['subject', '==', subject.value], '')
-
-	collection.getDocuments().then((docs) => {
-		notes.value = docs
-        uploadText.value = 'Upload'
-	}).catch((err) => {
-		console.log(err)
-	})
+    
+    notes.value = res.value.filter((note) => {
+        return note.course == course.value && note.class == grade.value && note.subject == subject.value
+    })
 }
 
 const uploadText = ref('Upload')
@@ -101,19 +103,30 @@ const addNote = async () => {
     let path = `notes/${course.value + '_' + grade.value}/${subject.value}/${file.name}` 
     uploadText.value = 'Uploading...'
 
-    await useStorage().uploadFile(file, path).then(async(res) => {
-        if(res) {
+    await useStorage().uploadFile(file, path).then(async(fileRef) => {
+        if(fileRef) {
             await (await addCollection('notes')).addDocument('', {
                 course: course.value,
                 class: grade.value,
                 subject: subject.value,
                 topic: topic.value,
-                url: res.url,
-                path: res.snapshot.metadata.fullPath,
-                date: res.snapshot.metadata.timeCreated
-            }).then(() => {
+                url: fileRef.url,
+                path: fileRef.snapshot.metadata.fullPath,
+                date: fileRef.snapshot.metadata.timeCreated
+            }).then((uid) => {
+                res.value.push({
+                    id: uid,
+                    course: course.value,
+                    class: grade.value,
+                    subject: subject.value,
+                    topic: topic.value,
+                    url: fileRef.url,
+                    path: fileRef.snapshot.metadata.fullPath,
+                    date: fileRef.snapshot.metadata.timeCreated
+                })
                 topic.value = ''
                 file1.value = null
+                uploadText.value = 'Upload'
                 loadData()
             }).catch((err) => {
                 console.log(err)
@@ -127,10 +140,11 @@ const addNote = async () => {
 }
 
 const delNote = async (note) => {
-    await useStorage().deleteFile(note.path).then(async(res) => {
-        if(res) {
+    await useStorage().deleteFile(note.path).then(async(fileRef) => {
+        if(fileRef) {
             await (await useDocument('notes', note.id))
             .delDoc().then(() => {
+                res.value = res.value.filter((note1) => note1.id != note.id)
                 loadData()
             }).catch((err) => {
                 console.log(err)
@@ -142,6 +156,7 @@ const delNote = async (note) => {
         console.log(err)
     })
 }
+
 loadData()
 </script>
 

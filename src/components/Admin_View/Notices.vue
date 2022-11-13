@@ -45,7 +45,7 @@
                 </div>
             </b-form>
         </b-modal>
-		<DeleteModal title="Notice" :ids="selected" @submitClick="loadData"/>
+		<DeleteModal title="Notice" :ids="selected" @submitClick="delNotice"/>
 	</section>
 </template>
 
@@ -57,15 +57,12 @@ import useDocument from '@/db/useDocument'
 import { ref } from 'vue'
 
 const notices = ref([])
-const loadData = async () => {
-	let collection = getCollection('notices', '', '', '', '')
-	collection.getDocuments().then((docs) => {
-		notices.value = docs
-		selected.value = []
-	}).catch((err) => {
-		console.log(err)
-	})
-}
+let collection = getCollection('notices', '', '', '', '')
+collection.getDocuments().then((docs) => {
+    notices.value = docs
+}).catch((err) => {
+    console.log(err)
+})
 
 const selected = ref([])
 const target = ref({})
@@ -77,11 +74,16 @@ const updateSelected = () => {
 		ids.push(check.value)
 	})
 	selected.value = ids
-    notices.value.forEach((notice) => {
-        if (notice.id == ids[0]) {
-            target.value = notice
-        }
+    if(ids.length > 0) {
+        target.value = notices.value.find((notice) => notice.id == ids[0])
+    }
+}
+const refresh = () => {
+    const rows = document.querySelectorAll('#rows input[type=checkbox]')
+    rows.forEach((row) => {
+        row.checked = false
     })
+    selected.value = []
 }
 
 const title = ref('')
@@ -91,28 +93,39 @@ const addNotice = async() => {
     .addDocument('', {
         title: title.value,
         context: context.value
-    }).then(() => {
+    }).then((uid) => {
+        notices.value.push({
+            id: uid,
+            title: title.value,
+            context: context.value
+        })
         title.value = ''
         context.value = ''
-        loadData()
     }).catch((err) => {
         console.log(err)
     }) 
 }
-
 const modNotice = async() => {
     const btn = event.target.closest('.modal-content')
                         .querySelector('.btn-close')
     await(await useDocument('notices', target.value.id))
     .updateDocs(target.value).then(() => {
-        loadData()
+        notices.value.forEach((notice) => {
+            if (notice.id == target.value.id) {
+                notice.title = target.value.title
+                notice.context = target.value.context
+            }
+        })
         btn.click()
     }).catch((err) => {
         console.log(err)
     })
 }
-
-loadData()
+const delNotice = (ids) => {
+	ids.forEach((id) => {
+		notices.value = notices.value.filter((notice) => notice.id != id)
+	})
+}
 </script>
 
 <style>

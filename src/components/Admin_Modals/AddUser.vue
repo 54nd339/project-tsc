@@ -12,7 +12,7 @@
 			<div class="d-flex mb-1 justify-content-end">
 				<b-button-group>
 					<b-button type="reset" variant="danger" size="lg">Reset </b-button>
-					<b-button type="submit" variant="primary" size="lg">Submit</b-button>
+					<b-button type="submit" variant="primary" size="lg" :disabled="addText == 'Submitting...'">{{ addText }}</b-button>
 				</b-button-group>
 			</div>
 		</b-form>
@@ -45,8 +45,10 @@ const email = ref('')
 const password = ref('')
 const name = ref('')
 const phone = ref('')
+const addText = ref('Submit')
 
 const onSubmit = async() => {
+	addText.value = 'Submitting...'
 	await useAuth().signup(email.value, password.value, name.value)
 	.then(async(res) => {
 		if(res) {
@@ -56,8 +58,14 @@ const onSubmit = async() => {
 				phone: phone.value,
 				email: email.value,
 			}).then(async() => {
+				addText.value = 'Submit'
 				if(collectionId == 'admins')
-					emit('submitClick')
+					emit('submitClick', {
+						id: res.uid,
+						name: name.value,
+						phone: phone.value,
+						email: email.value
+					})
 				if(collectionId == 'students') {
 					(await useDocument('students', res.uid))
 					.updateDocs({
@@ -67,7 +75,17 @@ const onSubmit = async() => {
 						feedback: 'default',
 						subjects: {}
 					}).then(() => {
-						emit('submitClick')
+						emit('submitClick', {
+							id: res.uid,
+							name: name.value,
+							phone: phone.value,
+							email: email.value,
+							attendance: 0,
+							class: props.cls,
+							course: props.crs,
+							feedback: 'default',
+							subjects: {}
+						})
 					}).catch((err) => {
 						console.log(err)
 					})
@@ -84,7 +102,19 @@ const onSubmit = async() => {
 						},
 						todo: []
 					}).then(() => {
-						emit('submitClick')
+						emit('submitClick', {
+							id: res.uid,
+							name: name.value,
+							phone: phone.value,
+							email: email.value,
+							attendance: 0,
+							classes: {},
+							rating: {
+								count: 0,
+								val: 0,
+								vals: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+							},
+						})
 					}).catch((err) => {
 						console.log(err)
 					})

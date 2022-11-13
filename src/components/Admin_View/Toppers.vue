@@ -59,15 +59,12 @@ const onFileChange = (e) => {
 }
 const target = ref({})
 const toppers = ref([])
-const loadData = async () => {
-    let collection = getCollection('toppers', '', '', '', '')
-
-	collection.getDocuments().then((docs) => {
-		toppers.value = docs
-	}).catch((err) => {
-		console.log(err)
-	})
-}
+getCollection('toppers', '', '', '', '')
+.getDocuments().then((docs) => {
+    toppers.value = docs
+}).catch((err) => {
+    console.log(err)
+})
 
 const uploadText = ref('Upload')
 const addTopper = async () => {
@@ -84,13 +81,21 @@ const addTopper = async () => {
                 url: res.url,
                 path: res.snapshot.metadata.fullPath,
                 date: res.snapshot.metadata.timeCreated
-            }).then(() => {
+            }).then((uid) => {
+                toppers.value.push({
+                    id: uid,
+                    name: name.value,
+                    course: course.value,
+                    score: score.value,
+                    url: res.url,
+                    path: res.snapshot.metadata.fullPath,
+                    date: res.snapshot.metadata.timeCreated
+                })
                 name.value = ''
 				course.value = ''
                 score.value = ''
                 uploadText.value = 'Upload'
                 file1.value = null
-                loadData()
             }).catch((err) => {
                 console.log(err)
             })
@@ -106,7 +111,7 @@ const delTopper = async (topper) => {
         if(res) {
             await (await useDocument('toppers', topper.id)).delDoc()
 			.then(() => {
-                loadData()
+                toppers.value = toppers.value.filter((item) => item.id != topper.id)
             }).catch((err) => {
                 console.log(err)
             })
@@ -118,7 +123,6 @@ const delTopper = async (topper) => {
     })
 }
 
-loadData()
 </script>
 
 <style>

@@ -45,6 +45,7 @@ const props = defineProps({
 	}
 })
 const subject = ref('default')
+const res = ref([])
 const prevTests = ref([])
 const tests = ref([])
 
@@ -53,20 +54,17 @@ const loadData = async() => {
 	prevTests.value = []
 	tests.value = []
 
-	await getCollection('tests', ['course', '==', props.user.course],
-		['class', '==', props.user.class], ['subject', '==', subject.value], '')
-		.getDocuments().then((docs) => {
-			docs.forEach((doc) => {
-				if (doc.date < today) {
-					prevTests.value.push(doc)
-				}
-				else if (doc.date == today) {
-					tests.value.push(doc)
-				}
-			})
-		}).catch((err) => {
-			console.log(err)
-		})
+	const docs = res.value.filter((test) => {
+		return test.subject == subject.value && test.course == props.user.course && test.class == props.user.class
+	})
+	docs.forEach((doc) => {
+		if (doc.date < today) {
+			prevTests.value.push(doc)
+		}
+		else if (doc.date == today) {
+			tests.value.push(doc)
+		}
+	})
 }
 
 const downloadText = ref('Download')
@@ -82,7 +80,14 @@ const download = async (test) => {
 	})
 }
 
-loadData()
+await getCollection('tests', '', '', '', '')
+.getDocuments().then((data) => {
+	res.value = data
+	loadData()
+}).catch((err) => {
+	console.log(err)
+})
+
 </script>
 
 <style>

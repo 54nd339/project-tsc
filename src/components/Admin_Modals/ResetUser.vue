@@ -31,7 +31,7 @@ const onSubmit = async() => {
 			console.log(err)
 		})
 	})
-    emit('submitClick')
+    emit('submitClick', props.ids)
 }
 </script>
 
