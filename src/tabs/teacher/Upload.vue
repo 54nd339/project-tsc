@@ -116,7 +116,7 @@ const addNote = async () => {
     })
 }
 
-await getCollection('notes', '', '', '', '')
+await getCollection('notes')
 .getDocuments().then((data) => {
 	res.value = data
 	loadData()

@@ -135,7 +135,7 @@ const target = ref({})
 const editMode = ref(false)
 const teachers = ref([])
 const fetchData = async () => {
-	await getCollection('teachers', '', '', '', '')
+	await getCollection('teachers')
 	.getDocuments().then((doc) => {
 		teachers.value = doc
 	}).catch((err) => {

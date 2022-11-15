@@ -36,7 +36,7 @@ const props = defineProps({
 const tests = ref([])
 const today = new Date().toJSON().slice(0, 10)
 await getCollection('tests', ['course', '==', props.student.course],
-    ['class', '==', props.student.class], '', '')
+    ['class', '==', props.student.class])
     .getDocuments().then((docs) => {
         docs.forEach((doc) => {
             if (doc.date > today) {

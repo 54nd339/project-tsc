@@ -47,7 +47,7 @@ import getCollection from '@/db/getCollection'
 import { ref } from 'vue'
 
 const admins = ref([])
-getCollection('admins', '', '', '', '')
+getCollection('admins')
 .getDocuments().then((docs) => {
     admins.value = docs
 }).catch((err) => {

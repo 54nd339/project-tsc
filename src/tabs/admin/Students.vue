@@ -144,7 +144,7 @@ const target = ref({
 
 const res = ref([])
 const fetchData = async () => { 
-	await getCollection('students', '', '', '', '')
+	await getCollection('students')
 	.getDocuments().then((docs) => {
 		res.value = docs
 		loadData()

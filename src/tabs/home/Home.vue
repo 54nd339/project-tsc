@@ -1,5 +1,5 @@
 <template>
-	<div  class="shadow mb-4">
+	<div class="shadow mb-4">
 		<Slides title="Banners" :urls="banUrls" :captions="banCaptions" :texts="banTexts" />
 	</div>
 	<div id="content" class="container-fluid">
@@ -29,7 +29,7 @@ const banUrls = ref([])
 const banCaptions = ref([])
 const banTexts = ref([])
 const loadData = async() => {
-    await(getCollection('gallery', ['role', '==', 'banners'], '', '', ''))
+    await(getCollection('gallery', ['role', '==', 'banners']))
     .getDocuments().then((docs) => {
 		if(docs) {
 			docs.forEach((doc) => {

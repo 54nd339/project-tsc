@@ -70,7 +70,7 @@ import useStorage from '@/db/useStorage'
 import { ref } from 'vue'
 
 const batches = ref([])
-getCollection('batches', '', '', '', '')
+getCollection('batches')
 .getDocuments().then((docs) => {
     batches.value = docs
 }).catch((err) => {

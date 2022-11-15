@@ -44,7 +44,7 @@ const students = ref([
 const student = ref(placeholder)
 
 const res = ref([])
-await getCollection('students', '', '', '', '')
+await getCollection('students')
 .getDocuments().then((docs) => {
 	res.value = docs
 }).catch((err) => {

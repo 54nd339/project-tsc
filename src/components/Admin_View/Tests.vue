@@ -70,7 +70,7 @@
                                     <section><Suspense>
                                         <xlsx-workbook>
                                             <xlsx-sheet :collection="sheet.data" v-for="sheet in sheets" :key="sheet.name" :sheet-name="sheet.name" />
-                                            <b-button-group><xlsx-download><b-button>Download</b-button></xlsx-download></b-button-group>
+                                            <b-button-group><xlsx-download><b-button size="lg">Download</b-button></xlsx-download></b-button-group>
                                         </xlsx-workbook>
                                     </Suspense></section>
                             </b-button-group>
@@ -139,7 +139,7 @@ const loadData = async () => {
 }
 
 const students = ref([])
-await getCollection('students', '', '', '', '')
+await getCollection('students')
 .getDocuments().then((doc) => {
     students.value = doc
 }).catch((err) => {
@@ -336,7 +336,7 @@ const updateMarks = async() => {
     })
 }
 
-await getCollection('tests', '', '', '', '')
+await getCollection('tests', '', '', ['date', 'desc'])
 .getDocuments().then((doc) => {
     res.value = doc
     loadData()

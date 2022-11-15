@@ -146,7 +146,7 @@ const addTestFile = async () => {
         console.log(err)
     })
 }
-await getCollection('tests', '', '', '', '')
+await getCollection('tests')
 .getDocuments().then((data) => {
 	res.value = data
 	loadData()

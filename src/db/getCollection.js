@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { db } from '@/db/config'
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore'
 
-const getCollection = (collectionId, queries1, queries2, queries3, order) => {
+const getCollection = (collectionId, queries1, queries2, order) => {
     const error = ref(null)
     let collectionRef = collection(db, collectionId)
 
@@ -11,9 +11,6 @@ const getCollection = (collectionId, queries1, queries2, queries3, order) => {
     }
     if (queries2) {
         collectionRef = query(collectionRef, where(...queries2))
-    }
-    if (queries3) {
-        collectionRef = query(collectionRef, where(...queries3))
     }
     if (order) {
         collectionRef = query(collectionRef, orderBy(...order))

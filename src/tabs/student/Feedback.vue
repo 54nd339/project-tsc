@@ -60,7 +60,7 @@ const onSubmit = async() => {
     const btn = event.target.querySelector('button[type="reset"]')
     const key = 'classes.' + props.user.course + '_' + props.user.class
 
-    await getCollection('teachers', [key, 'array-contains', props.user.feedback], '', '', '')
+    await getCollection('teachers', [key, 'array-contains', props.user.feedback])
     .getDocuments().then(async (data) => {
         if(data) {
             teacherId.value = data[0].id

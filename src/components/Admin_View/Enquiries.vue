@@ -35,7 +35,7 @@ import getCollection from '@/db/getCollection'
 import { ref } from 'vue'
 
 const enquiries = ref([])
-let collection = getCollection('enquiry', '', '', '', '')
+let collection = getCollection('enquiry')
 collection.getDocuments().then((docs) => {
 	enquiries.value = docs
 }).catch((err) => {

@@ -59,7 +59,7 @@ const onFileChange = (e) => {
 }
 const target = ref({})
 const toppers = ref([])
-getCollection('toppers', '', '', '', '')
+getCollection('toppers')
 .getDocuments().then((docs) => {
     toppers.value = docs
 }).catch((err) => {

@@ -20,7 +20,7 @@ import { ref } from 'vue'
 
 const toppers = ref([])
 const loadData = async() => {
-    await(getCollection('toppers', '', '', '', ''))
+    await(getCollection('toppers'))
     .getDocuments().then((docs) => {
         toppers.value = docs
     }).catch((err) => {

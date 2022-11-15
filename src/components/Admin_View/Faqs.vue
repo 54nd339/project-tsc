@@ -57,7 +57,7 @@ import useDocument from '@/db/useDocument'
 import { ref } from 'vue'
 
 const faqs = ref([])
-let collection = getCollection('faqs', '', '', '', '')
+let collection = getCollection('faqs')
 collection.getDocuments().then((docs) => {
     faqs.value = docs
 }).catch((err) => {

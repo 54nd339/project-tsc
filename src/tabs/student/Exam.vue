@@ -80,7 +80,7 @@ const download = async (test) => {
 	})
 }
 
-await getCollection('tests', '', '', '', '')
+await getCollection('tests')
 .getDocuments().then((data) => {
 	res.value = data
 	loadData()
