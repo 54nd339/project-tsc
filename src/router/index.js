@@ -41,10 +41,10 @@ const router = createRouter({
             meta: { title: 'TSC - Teacher' },
             beforeEnter: requireAuth
         },
-        {
-            path: '/:catchAll(.*)',
-            redirect: { name: 'Welcome' }
-        }
+        // {
+        //     path: '/:catchAll(.*)',
+        //     redirect: { name: 'Welcome' }
+        // }
     ]
 })
 
