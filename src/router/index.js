@@ -42,10 +42,8 @@ const router = createRouter({
             beforeEnter: requireAuth
         },
         {
-            path: '/:pathMatch(.*)*', // '/:catchAll(.*)'
-            name: 'NotFound',
-            component: () => import('../views/NotFound.vue'),
-            meta: { title: '404 - Not Found' },
+            path: '/:catchAll(.*)',
+            redirect: { name: 'Welcome' }
         }
     ]
 })
