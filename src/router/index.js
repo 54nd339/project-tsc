@@ -25,7 +25,7 @@ const router = createRouter({
             name: 'Admin',
             component: () => import('../views/Admin.vue'),
             meta: { title: 'TSC - Admin' },
-            beforeEnter: requireAuth
+            // beforeEnter: requireAuth
         },
         {
             path: '/student/:id',

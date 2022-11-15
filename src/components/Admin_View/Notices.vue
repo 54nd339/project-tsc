@@ -101,6 +101,7 @@ const addNotice = async() => {
         })
         title.value = ''
         context.value = ''
+        refresh()
     }).catch((err) => {
         console.log(err)
     }) 
@@ -117,6 +118,7 @@ const modNotice = async() => {
             }
         })
         btn.click()
+        refresh()
     }).catch((err) => {
         console.log(err)
     })
