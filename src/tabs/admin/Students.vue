@@ -255,7 +255,7 @@ const promoteAll = async() => {
 }
 
 const openfb = ref(false)
-const openFeedback = (async() => {
+const openFeedback = () => (async() => {
 	students.value.forEach(async (student) => {
 		await (await useDocument('students', student.id))
 		.updateDocs({feedback: subject.value}).then(() => {
@@ -269,7 +269,7 @@ const openFeedback = (async() => {
 }).catch((err) => {
 	console.log(err)
 })
-const closeFeedback = (async() => {
+const closeFeedback = () => (async() => {
 	event.target.closest('.modal-content')
 				.querySelector('.btn-close').click()
 	students.value.forEach(async (student) => {
