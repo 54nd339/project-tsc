@@ -138,6 +138,7 @@ const fetchData = async () => {
 	await getCollection('teachers')
 	.getDocuments().then((doc) => {
 		teachers.value = doc
+		refresh()
 	}).catch((err) => {
 		console.log(err)
 	})
@@ -161,6 +162,10 @@ const selectAll = () => {
 	})
 	updateSelected()
 }
+const refresh = () => {
+	selected.value = []
+	docID.value = 'default'
+}
 
 const addTeacher = (user) => {
 	teachers.value.push(user)
@@ -169,11 +174,13 @@ const modTeacher = (id, name, phone) => {
 	const index = teachers.value.findIndex((teacher) => teacher.id == id)
 	teachers.value[index].name = name
 	teachers.value[index].phone = phone
+	refresh()
 }
 const delTeacher = (ids) => {
 	ids.forEach((id) => {
 		teachers.value = teachers.value.filter((user) => user.id != id)
 	})
+	refresh()
 }
 
 const course = ref('default')
@@ -239,11 +246,13 @@ const saveAtt = async() => {
 			attendance: teachers.value.find((teacher) => teacher.id == id).attendance + 1
 		}).then(() => {
 			teachers.value.find((teacher) => teacher.id == id).attendance += 1
+			refresh()
 		}).catch((err) => {
 			console.log(err)
 		})
 	})
 }
+
 const saveEdits = async() => {
 	teachers.value.forEach(async (teacher) => {
 		await (await useDocument('teachers', teacher.id))
@@ -256,6 +265,7 @@ const saveEdits = async() => {
 			teachers.value[index].attendance = teacher.attendance
 			teachers.value[index].classes = teacher.classes
 			teachers.value[index].rating = teacher.rating
+			refresh()
 		}).catch((err) => {
 			console.log(err)
 		})
