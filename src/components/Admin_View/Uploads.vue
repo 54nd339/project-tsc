@@ -80,7 +80,7 @@ const openUrl = (url) => {
 }
 
 const res = ref([])
-await getCollection('notes')
+await (getCollection('notes'))
 .getDocuments().then((docs) => {
     res.value = docs
 }).catch((err) => {

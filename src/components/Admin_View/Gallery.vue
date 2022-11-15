@@ -136,7 +136,7 @@ const delPic = async (pic) => {
     })
 }
 
-getCollection('gallery')
+await(getCollection('gallery'))
 .getDocuments().then((docs) => {
     res.value = docs
     loadData()

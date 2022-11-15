@@ -91,6 +91,11 @@ const loadData = async() => {
 	const docs = res.value.filter(doc => {
 		return doc.course == course && doc.class == grade && doc.subject == subject
 	})
+
+	prevTests.value = []
+	tests.value = []
+	nextTests.value = []
+
 	docs.forEach((doc) => {
 		if (doc.date < today) {
 			prevTests.value.push(doc)

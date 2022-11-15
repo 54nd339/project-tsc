@@ -97,8 +97,8 @@ const grade = ref(10)
 const schedule = ref({})
 
 const res = ref([])
-await getCollection('schedule').getDocuments()
-.then((data) => {
+await getCollection('schedule')
+.getDocuments().then((data) => {
     res.value = data
 }).catch((err) => {
     console.log(err)

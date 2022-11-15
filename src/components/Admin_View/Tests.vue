@@ -139,7 +139,7 @@ const loadData = async () => {
 }
 
 const students = ref([])
-await getCollection('students')
+await(getCollection('students'))
 .getDocuments().then((doc) => {
     students.value = doc
 }).catch((err) => {

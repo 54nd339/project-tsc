@@ -55,43 +55,33 @@ const actTexts = ref([])
 const galUrls = ref([])
 const galCaptions = ref([])
 const galTexts = ref([])
+
 const loadData = async() => {
-    await(getCollection('gallery', ['role', '==', 'photos']))
+    await(getCollection('gallery'))
     .getDocuments().then((docs) => {
 		if(docs)
 			docs.forEach((doc) => {
-				galUrls.value.push(doc.url)
-				galCaptions.value.push(doc.title)
-				galTexts.value.push(doc.context)
-			})
-	}).catch((err) => {
-		console.log(err)
-	})
-
-	await(getCollection('gallery', ['role', '==', 'activities']))
-    .getDocuments().then((docs) => {
-		if(docs)
-			docs.forEach((doc) => {
-				actUrls.value.push(doc.url)
-				actCaptions.value.push(doc.title)
-				actTexts.value.push(doc.context)
-			})
-	}).catch((err) => {
-		console.log(err)
-	})
-
-	await(getCollection('gallery', ['role', '==', 'awards']))
-	.getDocuments().then((docs) => {
-		if(docs)
-			docs.forEach((doc) => {
-				awardUrls.value.push(doc.url)
-				awardCaptions.value.push(doc.title)
-				awardTexts.value.push(doc.context)
+				if(doc.role == 'award') {
+					awardUrls.value.push(doc.url)
+					awardCaptions.value.push(doc.caption)
+					awardTexts.value.push(doc.text)
+				}
+				else if(doc.role == 'activity') {
+					actUrls.value.push(doc.url)
+					actCaptions.value.push(doc.caption)
+					actTexts.value.push(doc.text)
+				}
+				else if(doc.role == 'gallery') {
+					galUrls.value.push(doc.url)
+					galCaptions.value.push(doc.caption)
+					galTexts.value.push(doc.text)
+				}
 			})
 	}).catch((err) => {
 		console.log(err)
 	})
 }
+
 loadData()
 </script>
 
