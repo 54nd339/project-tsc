@@ -9,7 +9,8 @@
 		<b-button-group class="my-1">
 			<b-button variant="success" v-b-modal.addTeacher>Add</b-button>
 			<b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteTeacher>Delete</b-button>
-			<b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyTeacher @click="$refs.modUser.loadData">Modify</b-button>
+			<b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyTeacher
+				@click="$refs.modUser.loadData">Modify</b-button>
 			<b-button v-if="selected.length > 0" variant="primary" v-b-modal.saveTAttendance>Add attendance</b-button>
 		</b-button-group>
 		<table class="table table-hover table-responsive">
@@ -163,6 +164,10 @@ const selectAll = () => {
 	updateSelected()
 }
 const refresh = () => {
+    const rows = document.querySelectorAll('#rows input[type=checkbox]')
+    rows.forEach((row) => {
+        row.checked = false
+    })
 	selected.value = []
 	docID.value = 'default'
 }
