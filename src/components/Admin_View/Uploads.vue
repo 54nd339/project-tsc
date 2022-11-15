@@ -11,7 +11,7 @@
                 <b-button v-if="course != 'default' && grade != 0 && subject != 'default'"
                     variant="success" v-b-modal.addNote>Add</b-button>
             </b-button-group>
-            <table class="table table-hover table-responsive">
+            <div style="overflow-x:auto"><table class="table table-hover table-responsive">
                 <thead><tr>
                     <th scope="col">Topic</th>
                     <th scope="col">Date</th>
@@ -27,7 +27,7 @@
                         </b-button></td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
             <b-modal id="addNote" title="Add Note" aria-labelledby="addNote" aria-hidden="true" :hide-footer="true">
                 <b-form @submit="addNote">
                     <b-form-input v-model="topic" class="d-flex mx-auto my-1"

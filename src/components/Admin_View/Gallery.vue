@@ -4,7 +4,7 @@
 			<b-form-select v-model="role" :options="roles" @update:modelValue="loadData" />
 			<b-button variant="success" :disabled="role == 'default'" v-b-modal.addPic>Add</b-button>
 		</b-button-group>
-		<table class="table table-hover table-responsive">
+		<div style="overflow-x:auto"><table class="table table-hover table-responsive">
 			<thead><tr>
 				<th scope="col">Title</th>
 				<th scope="col">Context</th>
@@ -25,7 +25,7 @@
                     </td>
 				</tr>
 			</tbody>
-		</table>
+		</table></div>
 		<b-modal id="addPic" title="Add Pic" aria-labelledby="addPic" aria-hidden="true" :hide-footer="true">
 			<b-form @submit="addPic">
 				<b-form-input v-model="title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />

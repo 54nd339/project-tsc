@@ -3,7 +3,7 @@
 		<b-button-group class="my-1">
 			<b-button variant="success" v-b-modal.addTopper>Add</b-button>
 		</b-button-group>
-		<table class="table table-hover table-responsive">
+		<div style="overflow-x:auto"><table class="table table-hover table-responsive">
 			<thead><tr>
 				<th scope="col">Name</th>
 				<th scope="col">Course</th>
@@ -22,7 +22,7 @@
                     </td>
 				</tr>
 			</tbody>
-		</table>
+		</table></div>
 		<b-modal id="addTopper" title="Add Topper" aria-labelledby="addTopper" aria-hidden="true" :hide-footer="true">
 			<b-form @submit="addTopper">
 				<b-form-input v-model="name" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Name" required />

@@ -15,6 +15,7 @@ const getCollection = (collectionId, queries1, queries2, order) => {
     if (order) {
         collectionRef = query(collectionRef, orderBy(...order))
     }
+
     const getDocuments = async () => {
         return await getDocs(collectionRef).then((querySnapshot) => {
             let results = []
@@ -27,6 +28,8 @@ const getCollection = (collectionId, queries1, queries2, order) => {
             error.value = 'Could not fetch data'
         })
     }
+
     return { getDocuments, error }
 }
+
 export default getCollection

@@ -31,6 +31,8 @@ const props = defineProps({
 		required: true
 	}
 })
+
+// Do something
 </script>
 
 <style>

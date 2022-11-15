@@ -72,6 +72,7 @@ await (await useDocument('schedule', docId))
 }).catch((err) => {
     console.log(err)
 })
+
 </script>
 
 <style>

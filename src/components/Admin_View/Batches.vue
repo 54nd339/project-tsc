@@ -5,7 +5,7 @@
             <b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteBatch>Delete</b-button>
             <b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyBatch>Modify</b-button>
         </b-button-group>
-		<table class="table table-hover table-responsive">
+		<div style="overflow-x:auto"><table class="table table-hover table-responsive">
 			<thead><tr>
 				<th scope="col">#</th>
 				<th scope="col">Title</th>
@@ -25,7 +25,7 @@
                     </td>
 				</tr>
 			</tbody>
-		</table>
+		</table></div>
         <b-modal id="addBatch" title="Add Batch" aria-labelledby="addBatch" aria-hidden="true" :hide-footer="true">
             <b-form @submit="addBatch">
                 <b-form-input v-model="title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />

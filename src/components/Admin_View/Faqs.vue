@@ -5,7 +5,7 @@
             <b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteFaq>Delete</b-button>
             <b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyFaq>Modify</b-button>
         </b-button-group>
-		<table class="table table-hover table-responsive">
+		<div style="overflow-x:auto"><table class="table table-hover table-responsive">
 			<thead><tr>
 				<th scope="col">#</th>
 				<th scope="col">Question</th>
@@ -18,7 +18,7 @@
 					<td>{{ faq.answer }}</td>
 				</tr>
 			</tbody>
-		</table>
+		</table></div>
         <b-modal id="addFaq" title="Add Faq" aria-labelledby="addFaq" aria-hidden="true" :hide-footer="true">
             <b-form @submit="addFaq">
                 <b-form-input v-model="question" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Question" required />
@@ -106,6 +106,7 @@ const addFaq = async() => {
         console.log(err)
     }) 
 }
+
 const modFaq = async() => {
     const btn = event.target.closest('.modal-content')
                         .querySelector('.btn-close')
@@ -131,6 +132,7 @@ const delFaq = (ids) => {
     refresh()
 }
 
+// Do somthing
 </script>
 
 <style>

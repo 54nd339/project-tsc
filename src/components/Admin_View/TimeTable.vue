@@ -10,7 +10,7 @@
                 <b-button v-if="modify" variant="success" v-b-modal.confirm>Done</b-button>
                 <b-button v-else variant="primary" @click="modify = !modify">Modify</b-button>
             </b-button-group>
-            <table class="table table-hover table-responsive">
+            <div style="overflow-x:auto"><table class="table table-hover table-responsive">
                 <thead><tr>
                     <th scope="col">Days</th>
                     <th scope="col" v-for="col in 3" :key="col">Period {{col}}</th>
@@ -59,7 +59,7 @@
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
             <!-- <b-button @click="test">Click Me Honey!</b-button> -->
         </div> 
         <b-modal id="confirm" title="Confirm Changes" :hide-footer="true">

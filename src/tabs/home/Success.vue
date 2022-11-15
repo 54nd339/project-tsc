@@ -61,17 +61,17 @@ const loadData = async() => {
     .getDocuments().then((docs) => {
 		if(docs)
 			docs.forEach((doc) => {
-				if(doc.role == 'award') {
+				if(doc.role == 'awards') {
 					awardUrls.value.push(doc.url)
 					awardCaptions.value.push(doc.caption)
 					awardTexts.value.push(doc.text)
 				}
-				else if(doc.role == 'activity') {
+				else if(doc.role == 'activities') {
 					actUrls.value.push(doc.url)
 					actCaptions.value.push(doc.caption)
 					actTexts.value.push(doc.text)
 				}
-				else if(doc.role == 'gallery') {
+				else if(doc.role == 'photos') {
 					galUrls.value.push(doc.url)
 					galCaptions.value.push(doc.caption)
 					galTexts.value.push(doc.text)

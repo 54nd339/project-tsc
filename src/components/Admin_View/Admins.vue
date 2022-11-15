@@ -1,5 +1,5 @@
 <template>
-	<div class="col-md-5 rounded-3 m-2 order-md-1" style="background-color:#80ED99; min-height: 50vh; max-height: 70vh; overflow-y: auto;">
+	<div class="col-md-5 rounded-3 m-2 order-md-1" style="background-color:#80ED99; min-height: 50vh; max-height: 70vh;">
         <div class="shadow m-3 p-1 rounded-3" style="background-color:#57CC99">
             <h3 class="text-center" style>Admins</h3>
         </div>
@@ -9,7 +9,7 @@
                 <b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteAdmin>Delete</b-button>
                 <b-button v-if="selected.length == 1" variant="primary" v-b-modal.modifyAdmin @click="$refs.modUser.loadData">Modify</b-button>
             </b-button-group>
-            <table class="table table-hover table-responsive">
+            <div style="overflow:auto"><table class="table table-hover table-responsive">
                 <thead><tr>
                     <th scope="col">
                         <b-button variant="outline-success" size="sm" @click="selectAll">
@@ -30,7 +30,7 @@
                         <td>{{ admin.email }}</td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
             <AddUser title="Admin" @submitClick="addAdmin"/>
             <ModifyUser title="Admin" :id="docID" ref="modUser" @submitClick="modAdmin"/>
             <DeleteModal title="Admin" :ids="selected" @submitClick="delAdmin"/>

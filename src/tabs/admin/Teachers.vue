@@ -13,7 +13,7 @@
 				@click="$refs.modUser.loadData">Modify</b-button>
 			<b-button v-if="selected.length > 0" variant="primary" v-b-modal.saveTAttendance>Add attendance</b-button>
 		</b-button-group>
-		<table class="table table-hover table-responsive">
+		<div style="overflow-x:auto"><table class="table table-hover table-responsive">
 			<thead><tr>
 				<th scope="col" v-if="editMode">
 					<b-button variant="outline-success" size="sm" @click="selectAll">
@@ -68,7 +68,7 @@
 					</tr></td>
 				</tr>
 			</tbody>
-		</table>
+		</table></div>
 		<AddUser title="Teacher" @submitClick="addTeacher"/>
 		<ModifyUser title="Teacher" :id="docID" ref="modUser" @submitClick="modTeacher"/>
 		<DeleteModal title="Teacher" :ids="selected" @submitClick="delTeacher"/>
@@ -281,5 +281,5 @@ fetchData()
 </script>
 
 <style>
-
+/* body { overflow: auto; } */
 </style>

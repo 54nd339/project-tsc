@@ -46,6 +46,8 @@ await getCollection('tests', ['course', '==', props.student.course],
     }).catch((err) => {
         console.log(err)
     })
+
+// Do something
 </script>
 
 <style>

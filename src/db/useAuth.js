@@ -22,6 +22,7 @@ const useAuth = () => {
             isPending.value = false
         })
     }
+
     const login = async (email, password) => {
         isPending.value = true
 
@@ -35,16 +36,7 @@ const useAuth = () => {
             isPending.value = false
         }) 
     }
-    const getUser = () => {
-        const user = ref(auth.currentUser)
-    
-        onAuthStateChanged(auth, _user => {
-            console.log('User state change. Current user is: ', _user)
-            user.value = _user
-        })
-    
-        return user
-    }
+
     const logout = async () => {
         isPending.value = true
 
@@ -56,6 +48,8 @@ const useAuth = () => {
             isPending.value = false
         })
     }
-    return { error, signup, login, getUser, logout, isPending }
+
+    return { error, signup, login, logout, isPending }
 }
+
 export default useAuth

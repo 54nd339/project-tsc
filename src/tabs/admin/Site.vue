@@ -59,5 +59,7 @@ import Batches from '@/components/Admin_View/Batches.vue'
 </script>
 
 <style>
-
+/* body {
+	overflow: auto;
+} */
 </style>

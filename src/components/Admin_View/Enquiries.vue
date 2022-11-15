@@ -3,7 +3,7 @@
 		<b-button-group class="my-1">
 			<b-button :disabled="selected.length == 0" variant="danger" v-b-modal.deleteEnquiry>Delete</b-button>
 		</b-button-group>
-		<table class="table table-hover table-enquiriesponsive">
+		<div style="overflow-x:auto"><table class="table table-hover table-enquiriesponsive">
 			<thead><tr>
 				<th scope="col">#</th>
 				<th scope="col">Name</th>
@@ -24,7 +24,7 @@
 					<td>{{ enquiry.message }}</td>
 				</tr>
 			</tbody>
-		</table>
+		</table></div>
 		<DeleteModal title="Enquiry" :ids="selected" @submitClick="delEnq"/>
 	</section>
 </template>

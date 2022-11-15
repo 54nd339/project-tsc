@@ -35,11 +35,11 @@ const useStorage = () => {
             link.download = name
             link.click()
             link.remove()
-
         }
         xhr.open('GET', url)
         xhr.send()
     }
     return { uploadFile, deleteFile, downloadFile }
 }
+
 export default useStorage
