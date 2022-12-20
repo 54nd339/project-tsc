@@ -2,8 +2,8 @@
 	<header>
 	<nav class="navbar navbar-expand-md sticky-top border-bottom bg-light shadow bg-body">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#" style="max-width: 6%;" @click="home()">
-				<img src="../assets/logo.png" class="img-fluid">
+			<a class="navbar-brand" href="#" style="max-width: 2.5%;" @click="home()">
+				<img src="@/assets/logos/logo_coloured.png" class="img-fluid">
 			</a>
 			<h1 class="navbar-brand d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-2 mb-1 text-primary" v-if="userType === 'Guest'">{{ name }}</h1>
 			<h3 class="navbar-brand d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-2 mb-1 text-success" v-else>{{ greeting }}, {{ userName }}!</h3>

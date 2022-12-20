@@ -16,6 +16,7 @@
 			<Contact />
 		</div>
 	</main>
+	<SiteLinks />
 </template>
 
 <script setup>
@@ -24,8 +25,7 @@ import Courses from '@/tabs/home/Courses.vue'
 import Success from '@/tabs/home/Success.vue'
 import About from '@/tabs/home/About.vue'
 import Contact from '@/tabs/home/Contact.vue'
-	
-	// do Something
+import SiteLinks from '@/components/Welcome_Home/SiteLinks.vue'
 </script>
 
 <style>

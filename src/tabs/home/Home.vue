@@ -10,7 +10,6 @@
 			<Enquiry /><Notices /><Faqs />
 		</b-row>
 	</div>
-	<SiteLinks />
 </template>
 
 <script setup>
@@ -21,7 +20,7 @@ import Toppers from '@/components/Welcome_Home/Toppers.vue'
 import Enquiry from '@/components/Welcome_Home/Enquiry.vue'
 import Notices from '@/components/Welcome_Home/Notices.vue'
 import Faqs from '@/components/Welcome_Home/Faqs.vue'
-import SiteLinks from '@/components/Welcome_Home/SiteLinks.vue'
+
 import getCollection from '@/db/getCollection'
 import { ref } from 'vue'
 
@@ -42,6 +41,7 @@ const loadData = async() => {
 		console.log(err)
 	})
 }
+
 loadData()
 </script>
 

@@ -3,24 +3,30 @@
         <b-row class="mx-3 my-1 mx-md-5 my-md-1">
             <b-col md="4" class="p-md-3">
                 <b-row class="p-md-2">
-                    <b-col md="4" class="justify-content-center">
+                    <b-row class="justify-content-center">
                         <a class="navbar-brand" href="#">
-                            <img src="@/assets/logo.png" class="img-fluid">
+                            <img src="@/assets/logos/TSC_Wide_Banner.png" class="img-fluid">
                         </a>
-                    </b-col>
-                    <b-col md="8" class="align-items-center">
+                    </b-row>
+                    <b-row align-h="end" class="mx-auto mt-2 d-flex justify-content-center">
                         <ul style="list-style-type:none; padding-left: 10px;">
-                            <li><b-link class="social-link youtube" href="https://www.youtube.com/@bidwanclassesberhampur">
-                                <font-awesome-icon icon="fa-brands fa-youtube" size="lg" /> @bidwanclassesberhampur
-                            </b-link></li>
-                            <li><b-link class="social-link instagram" href="https://www.instagram.com/bidwan_classes_berhampur/">
-                                <font-awesome-icon icon="fa-brands fa-instagram" size="lg" /> @bidwan_classes_berhampur
-                            </b-link></li>
-                            <li><b-link class="social-link facebook" href="https://www.facebook.com/bidwan.classes">
-                                <font-awesome-icon icon="fa-brands fa-facebook" size="lg" /> @bidwan.classes
-                            </b-link></li>
+                            <li style="float: left" class="mx-5">
+                                <b-link class="social-link youtube" href="https://www.youtube.com/@bidwanclassesberhampur">
+                                    <font-awesome-icon icon="fa-brands fa-youtube" size="xl" /> <!--@bidwanclassesberhampur-->
+                                </b-link>
+                            </li>
+                            <li style="float: left" class="mx-5">
+                                <b-link class="social-link instagram" href="https://www.instagram.com/bidwan_classes_berhampur/">
+                                    <font-awesome-icon icon="fa-brands fa-instagram" size="xl" /> <!--@bidwan_classes_berhampur-->
+                                </b-link>
+                            </li>
+                            <li style="float: left" class="mx-5">
+                                <b-link class="social-link facebook" href="https://www.facebook.com/bidwan.classes">
+                                    <font-awesome-icon icon="fa-brands fa-facebook" size="xl" /> <!--@bidwan.classes-->
+                                </b-link>
+                            </li>
                         </ul>
-                    </b-col>
+                    </b-row>
                 </b-row>
                 <b-row>
                     <b-col md="6" class="p-md-2">
