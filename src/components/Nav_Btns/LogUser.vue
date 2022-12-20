@@ -1,5 +1,5 @@
 <template>
-	<b-modal id="loginForm" title="Login" aria-labelledby="loginForm" aria-hidden="true" :hide-footer="true">
+	<b-modal v-if="user === 'Guest'" id="loginForm" title="Login" aria-labelledby="loginForm" aria-hidden="true" :hide-footer="true">
 		<b-form>
 			<b-form-input id="email" type="email" v-model="email" class="d-flex mx-auto my-1"
 				size="lg" placeholder="Enter Email" required trim />
@@ -18,7 +18,7 @@
 				v-model="loginpg">{{ LoginText }}</b-button>
 		</b-form>
 	</b-modal>
-	<b-modal id="logoutConfirm" title="Logout" aria-labelledby="logoutConfirm" aria-hidden="true" :hide-footer="true">
+	<b-modal v-else id="logoutConfirm" title="Logout" aria-labelledby="logoutConfirm" aria-hidden="true" :hide-footer="true">
 		<b-form @submit="handleLogout">
 			<p class="justify-content-center align-items-center" id="logoutText">Confirm Logout?</p>
 			<b-button id="logoutpg" type="submit" variant="success" class="d-flex mx-auto mb-1" size="lg"
@@ -34,6 +34,12 @@ import { doc, getDoc } from 'firebase/firestore'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+const props = defineProps({
+	user: {
+		type: String,
+		required: true
+	}
+})
 const router = useRouter()
 const email = ref('')
 const password = ref('')
@@ -48,6 +54,8 @@ const loginpg = ref(false)
 const LoginText = ref('Login')
 
 const handleLogin = async() => {
+	const btn = event.target.closest('.modal-content')
+                            .querySelector('.btn-close')
 	const pathName = selected.value
 	LoginText.value = 'Logging in...'
 	loginpg.value = true
@@ -58,18 +66,15 @@ const handleLogin = async() => {
 		if(res) {
 			const docRef = doc(db, pathName + 's', res.uid)
 			await getDoc(docRef).then((doc) => {
-				if(doc.exists()) {
-					document.querySelector('.btn-close').click()
-					// console.log('Document data:', doc.data())
+				if(doc.exists()) {	// console.log('Document data:', doc.data())
+					btn.click(); warnmsg.value = ''
 					router.push({ path: `/${pathName}/${res.uid}` })
-					warnmsg.value = ''
 				} else {
 					warnmsg.value = 'No such user as ' + pathName + '!'
 				}
 			})
 		}
-		else {
-			// loginErr Not showing for invalid credentials
+		else {	// loginErr Not showing for invalid credentials
 			warnmsg.value = 'User not found!'
 		}
 	})

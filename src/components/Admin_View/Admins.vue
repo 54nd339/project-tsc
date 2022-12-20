@@ -3,7 +3,7 @@
         <div class="shadow m-3 p-1 rounded-3" style="background-color:#57CC99">
             <h3 class="text-center" style>Admins</h3>
         </div>
-        <div id="content" class="container-fluid">
+        <b-container fluid id="content">
             <b-button-group class="my-1 d-flex">
                 <b-button variant="success" v-b-modal.addAdmin>Add</b-button>
                 <b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteAdmin>Delete</b-button>
@@ -22,20 +22,18 @@
                 </tr></thead>
                 <tbody ref="rows" id="rows">
                     <tr v-for="admin in admins" :key="admin">
-                        <td>
-                            <b-form-checkbox :value="admin.id" @click="updateSelected" /><!-- {{ admin.id }} -->
-                        </td>
+                        <td><b-form-checkbox :value="admin.id" @click="updateSelected" /></td>
                         <td>{{ admin.name }}</td>
                         <td>{{ admin.phone }}</td>
                         <td>{{ admin.email }}</td>
                     </tr>
                 </tbody>
             </table></div>
-            <AddUser title="Admin" @submitClick="addAdmin"/>
-            <ModifyUser title="Admin" :id="docID" ref="modUser" @submitClick="modAdmin"/>
-            <DeleteModal title="Admin" :ids="selected" @submitClick="delAdmin"/>
-        </div> 
+        </b-container> 
     </div>
+    <AddUser title="Admin" @submitClick="addAdmin"/>
+    <ModifyUser title="Admin" :id="docID" ref="modUser" @submitClick="modAdmin"/>
+    <DeleteModal title="Admin" :ids="selected" @submitClick="delAdmin"/>
 </template>
 
 <script setup>
@@ -86,9 +84,10 @@ const addAdmin = (user) => {
 	admins.value.push(user)
     refresh()
 }
-const modAdmin = (id, name, phone) => {
+const modAdmin = (id, name, email, phone) => {
 	const index = admins.value.findIndex((admin) => admin.id == id)
 	admins.value[index].name = name
+    admins.value[index].email = email
 	admins.value[index].phone = phone
     refresh()
 }
@@ -98,6 +97,7 @@ const delAdmin = (ids) => {
 	})
     refresh()
 }
+
 </script>
 
 <style>

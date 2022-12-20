@@ -1,20 +1,18 @@
 <template>
 	<Suspense>
-		<Navbar :key="$route.fullPath" v-if="$route.name != 'NotFound'"/>
+		<Navbar :key="$route.fullPath" v-if="$route.name != 'NotFound'" />
 	</Suspense>
-	<Modal />
 	<Suspense><router-view /></Suspense>
-	<Footer v-if="$route.name != 'NotFound'"/>
+	<Footer v-if="$route.name != 'NotFound'" />
 </template>
 
 <script>
 	import Navbar from '@/components/Navbar.vue'
-	import Modal from '@/components/Modal.vue'
 	import Footer from '@/components/Footer.vue'
 
 	export default {
 		components: {
-			Navbar, Modal, Footer
+			Navbar, Footer
 		}
 	}
 </script>
@@ -32,6 +30,7 @@
     padding-top: .1rem !important;
     padding-bottom: .1rem !important;
 }
+
 ::-webkit-scrollbar {
 	width: 7px;
 }
@@ -49,16 +48,17 @@
 ::-webkit-scrollbar-thumb:hover {
 	background: #22577A;
 }
+
 h2 {
 	color: black;
 }
 .underline {
 	text-decoration: underline;
 }
+
 footer {
-	margin-top: 4vh;
 	position: fixed;
-	height: 5vh;
+	height: 3vh;
 	bottom: 0;
 	width: 100vh;
 }

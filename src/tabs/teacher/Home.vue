@@ -1,14 +1,14 @@
 <template>
-	<div id="content" class="container-fluid">
-		<div class="row justify-content-center">
+	<b-container fluid id="content">
+		<b-row align-h="center">
 			<Personal :teacher="user" :classList="classes" @clsChanged="updateCls" />
 			<Performance :cls="clas" :key="clas" />	
-		</div>
-		<div class="row justify-content-center">
+		</b-row>
+		<b-row align-h="center">
 			<Timetable :classList="classes" />
 			<ToDo :teacher="user" />
-		</div>
-	</div>
+		</b-row>
+	</b-container>
 </template>
 
 <script setup>

@@ -1,32 +1,28 @@
 <template>
-	<div id="content" class="container-fluid">
+	<b-container fluid id="content">
 		<b-form-select mx-5 p-5 v-model="subject" :options="props.subjects" @update:model-value="loadData" />
-		<div id="currtests" class="row featurette p-2 m-2">
+		<b-row id="currtests" class="featurette p-2 m-2">
 			<h2 class="featurette-heading pb-md-2">Take Tests</h2>
-			<div class="col-md-4" v-for="test in tests" :key="test">
-				<div class="card" style="width: 18rem;">
-					<div class="card-body">
-						<h5 class="card-title">{{ test.topic }}</h5>
-						<b-button>Take Tests</b-button>
-					</div>
-				</div>
-			</div>
-		</div>
+			<b-col md="4" v-for="(test, index) in tests" :key="test">
+				<b-card border-variant="success" :header="test.topic" align="center" class="m-3" :class="{ shadow: isHover && ind == index && sec == 'take' }"
+					@mouseover="isHover = true; ind = index; sec = 'take'" @mouseout="isHover = false; ind = -1; sec = ''">
+					<b-button>Take Tests</b-button>
+				</b-card>
+			</b-col>
+		</b-row>
 		<hr class="featurette-divider">
-		<div id="prevtests" class="row featurette p-2 m-2">
+		<b-row id="prevtests" class="featurette p-2 m-2">
 			<h2 class="featurette-heading pb-md-2">Previous Tests</h2>
-			<div class="col-md-4" v-for="test in prevTests" :key="test">
-				<div class="card" style="width: 18rem;">
-					<div class="card-body">
-						<h5 class="card-title">{{ test.topic }}</h5>
-						<b-button @click="download(test)" :disabled="downloadText != 'Download'">
-							{{ downloadText }}
-						</b-button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+			<b-col md="4" v-for="(test, index) in prevTests" :key="test">
+				<b-card border-variant="success" :header="test.topic" align="center" class="m-3" :class="{ shadow: isHover && ind == index && sec == 'prev' }"
+					@mouseover="isHover = true; ind = index; sec = 'prev'" @mouseout="isHover = false; ind = -1; sec = ''">
+					<b-button variant="success" @click="download(test)" :disabled="downloadText != 'Download'">
+						{{ downloadText }}
+					</b-button>
+				</b-card>
+			</b-col>
+		</b-row>
+	</b-container>
 </template>
 
 <script setup>
@@ -44,6 +40,9 @@ const props = defineProps({
 		required: true
 	}
 })
+const isHover = ref(false)
+const ind = ref(-1)
+const sec = ref('')
 const subject = ref('default')
 const res = ref([])
 const prevTests = ref([])
@@ -88,6 +87,7 @@ await getCollection('tests')
 	console.log(err)
 })
 
+// something just like this - coldplay
 </script>
 
 <style>

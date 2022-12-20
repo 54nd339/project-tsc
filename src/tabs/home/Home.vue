@@ -3,25 +3,25 @@
 		<Slides title="Banners" :urls="banUrls" :captions="banCaptions" :texts="banTexts" />
 	</div>
 	<div id="content" class="container-fluid">
-		<div class="row">
-			<div id="main" class="col-md-8 px-md-3 mx-md-3">
-				<Vision />
-				<div id="extras" class ="row m-md-3">
-					<Enquiry /><Notices />
-				</div>
-			</div>
-			<Toppers />
-		</div>
+		<Vision />
+		<Batches />
+		<Toppers />
+		<b-row id="extras" class="m-md-3">
+			<Enquiry /><Notices /><Faqs />
+		</b-row>
 	</div>
+	<SiteLinks />
 </template>
 
 <script setup>
 import Slides from '@/components/Slides.vue'
 import Vision from '@/components/Welcome_Home/Vision.vue'
+import Batches from '@/components/Welcome_Home/Batches.vue'
+import Toppers from '@/components/Welcome_Home/Toppers.vue'
 import Enquiry from '@/components/Welcome_Home/Enquiry.vue'
 import Notices from '@/components/Welcome_Home/Notices.vue'
-import Toppers from '@/components/Welcome_Home/Toppers.vue'
-	
+import Faqs from '@/components/Welcome_Home/Faqs.vue'
+import SiteLinks from '@/components/Welcome_Home/SiteLinks.vue'
 import getCollection from '@/db/getCollection'
 import { ref } from 'vue'
 

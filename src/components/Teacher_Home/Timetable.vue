@@ -3,52 +3,46 @@
         <div class="shadow m-3 p-1 rounded-3" style="background-color:#80ED99">
             <h3 class="text-center" style>Time Table</h3>
         </div>
-        <div id="content" class="container-fluid">
+        <b-container fluid id="content">
             <table class="table table-hover table-responsive">
                 <thead><tr>
                     <th scope="col">Days</th>
                     <th scope="col" v-for="col in 3" :key="col">Period {{col}}</th>
                 </tr></thead>
                 <tbody ref="rows" id="rows">
-                    <tr>
-                        <td>Monday</td>
+                    <tr><td>Monday</td>
                         <td v-for="(period, index) in schedule.mon" :key="index">
                             <p v-if="schedule.mon[index] != 'default'">{{ period }}</p>
                         </td>
                     </tr>
-                    <tr>
-                        <td>Tuesday</td>
+                    <tr><td>Tuesday</td>
                         <td v-for="(period, index) in schedule.tue" :key="index">
                             <p v-if="schedule.tue[index] != 'default'">{{ period }}</p>
                         </td>
                     </tr>
-                    <tr>
-                        <td>Wednesday</td>
+                    <tr><td>Wednesday</td>
                         <td v-for="(period, index) in schedule.wed" :key="index">
                             <p v-if="schedule.wed[index] != 'default'">{{ period }}</p>
                         </td>
                     </tr>
-                    <tr>
-                        <td>Thursday</td>
+                    <tr><td>Thursday</td>
                         <td v-for="(period, index) in schedule.thu" :key="index">
                             <p v-if="schedule.thu[index] != 'default'">{{ period }}</p>
                         </td>
                     </tr>
-                    <tr>
-                        <td>Friday</td>
+                    <tr><td>Friday</td>
                         <td v-for="(period, index) in schedule.fri" :key="index">
                             <p v-if="schedule.fri[index] != 'default'">{{ period }}</p>
                         </td>
                     </tr>
-                    <tr>
-                        <td>Saturday</td>
+                    <tr><td>Saturday</td>
                         <td v-for="(period, index) in schedule.sat" :key="index">
                             <p v-if="schedule.sat[index] != 'default'">{{ period }}</p>
                         </td>
                     </tr>
                 </tbody>
             </table>
-        </div> 
+        </b-container> 
     </div>
 </template>
 
@@ -68,8 +62,9 @@ const schedule = ref({
     wed: ['default', 'default', 'default'],
     thu: ['default', 'default', 'default'],
     fri: ['default', 'default', 'default'],
-    sat: ['default', 'default', 'default']
+    sat: ['default', 'default', 'default'],
 })
+
 const loadData = async () => {
     let res = []
     props.classList.forEach((cls) => {
@@ -89,27 +84,27 @@ const loadData = async () => {
         (await useDocument('schedule', cls.classId))
         .getDetail().then((doc) => {
             if(doc) {
-                doc.mon.forEach((period, index) => {
+                doc.mon.periods.forEach((period, index) => {
                     if(period == cls.sub)
                         schedule.value.mon[index] = cls.classId+'_'+cls.sub
                 })
-                doc.tue.forEach((period, index) => {
+                doc.tue.periods.forEach((period, index) => {
                     if(period == cls.sub)
                         schedule.value.tue[index] = cls.classId+'_'+cls.sub
                 })
-                doc.wed.forEach((period, index) => {
+                doc.wed.periods.forEach((period, index) => {
                     if(period == cls.sub)
                         schedule.value.wed[index] = cls.classId+'_'+cls.sub
                 })
-                doc.thu.forEach((period, index) => {
+                doc.thu.periods.forEach((period, index) => {
                     if(period == cls.sub)
                         schedule.value.thu[index] = cls.classId+'_'+cls.sub
                 })
-                doc.fri.forEach((period, index) => {
+                doc.fri.periods.forEach((period, index) => {
                     if(period == cls.sub)
                         schedule.value.fri[index] = cls.classId+'_'+cls.sub
                 })
-                doc.sat.forEach((period, index) => {
+                doc.sat.periods.forEach((period, index) => {
                     if(period == cls.sub)
                         schedule.value.sat[index] = cls.classId+'_'+cls.sub
                 })

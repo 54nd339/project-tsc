@@ -3,13 +3,13 @@
         <div class="shadow m-3 p-1 rounded-3" style="background-color:#80ED99">
             <h3 class="text-center" style>Uploads</h3>
         </div>
-        <div id="content" class="container-fluid">
+        <b-container fluid id="content">
             <b-button-group class="my-1 d-flex">
                 <b-form-select v-model="course" :options="courseList" @update:modelValue="loadData" />
                 <b-form-select v-model="grade" :options="gradeList" @update:modelValue="loadData" />
                 <b-form-select v-model="subject" :options="subjectList" @update:modelValue="loadData" />
                 <b-button v-if="course != 'default' && grade != 0 && subject != 'default'"
-                    variant="success" v-b-modal.addNote>Add</b-button>
+                    variant="success" v-b-modal.addNote @click="setTarget">Add</b-button>
             </b-button-group>
             <div style="overflow-x:auto"><table class="table table-hover table-responsive">
                 <thead><tr>
@@ -28,29 +28,14 @@
                     </tr>
                 </tbody>
             </table></div>
-            <b-modal id="addNote" title="Add Note" aria-labelledby="addNote" aria-hidden="true" :hide-footer="true">
-                <b-form @submit="addNote">
-                    <b-form-input v-model="topic" class="d-flex mx-auto my-1"
-                        size="lg" placeholder="Enter Topic" required />
-                    <input type="file" class="d-flex mx-auto my-1" name="file" @change="onFileChange" required/>
-                    <div class="d-flex mb-1 justify-content-end">
-                        <b-button-group>
-                            <b-button type="reset" variant="danger" size="lg">Reset </b-button>
-                            <b-button type="submit" variant="primary" size="lg"
-                            :disabled="uploadText != 'Upload'">{{ uploadText }}</b-button>
-                        </b-button-group>
-                    </div>
-                </b-form>
-            </b-modal>
-        </div>
+        </b-container>
     </div>
+    <Note :target="targetNote" ref="noteRef" @submitClick="updateRes" />
 </template>
 
 <script setup>
+import Note from '@/components/Notes.vue'
 import getCollection from '@/db/getCollection'
-import addCollection from '@/db/addDocument'
-import useDocument from '@/db/useDocument'
-import useStorage from '@/db/useStorage'
 import { ref } from 'vue'
 
 const props = defineProps({  
@@ -70,94 +55,59 @@ const props = defineProps({
 const course = ref('ICSE')
 const grade = ref(10)
 const subject = ref('eng1')
-const topic = ref('')
-const file1 = ref(null)
-const onFileChange = (e) => {
-    file1.value = e.target.files[0]
-}
 const openUrl = (url) => {
     window.open(url)
 }
 
-const res = ref([])
-await (getCollection('notes'))
-.getDocuments().then((docs) => {
-    res.value = docs
-}).catch((err) => {
-    console.log(err)
+const targetNote = ref({
+    id: '',
+    course: '',
+    class: 0,
+    subject: '',
+    topic: '',
+    url: '',
+    path: '',
+    date: ''
 })
+const setTarget = () => {
+    targetNote.value.class = grade.value
+    targetNote.value.course = course.value
+    targetNote.value.subject = subject.value
+}
+const noteRef = ref()
+const delNote = (note) => {
+    targetNote.value = note
+    setTimeout(() => {
+        noteRef.value.delNote()
+    }, 100)
+}
+
 const notes = ref([])
 const loadData = async () => {
     if(course.value == 'default' || grade.value == 0 || subject.value == 'default') {
         return
     }
-    
     notes.value = res.value.filter((note) => {
         return note.course == course.value && note.class == grade.value && note.subject == subject.value
     })
 }
+const res = ref([])
+await (getCollection('notes'))
+.getDocuments().then((docs) => {
+    res.value = docs
+    loadData()
+}).catch((err) => {
+    console.log(err)
+})
 
-const uploadText = ref('Upload')
-const addNote = async () => {
-    let file = file1.value
-    let path = `notes/${course.value + '_' + grade.value}/${subject.value}/${file.name}` 
-    uploadText.value = 'Uploading...'
-
-    await useStorage().uploadFile(file, path).then(async(fileRef) => {
-        if(fileRef) {
-            await (await addCollection('notes')).addDocument('', {
-                course: course.value,
-                class: grade.value,
-                subject: subject.value,
-                topic: topic.value,
-                url: fileRef.url,
-                path: fileRef.snapshot.metadata.fullPath,
-                date: fileRef.snapshot.metadata.timeCreated
-            }).then((uid) => {
-                res.value.push({
-                    id: uid,
-                    course: course.value,
-                    class: grade.value,
-                    subject: subject.value,
-                    topic: topic.value,
-                    url: fileRef.url,
-                    path: fileRef.snapshot.metadata.fullPath,
-                    date: fileRef.snapshot.metadata.timeCreated
-                })
-                topic.value = ''
-                file1.value = null
-                uploadText.value = 'Upload'
-                loadData()
-            }).catch((err) => {
-                console.log(err)
-            })
-        }
-        else
-            console.log('File not uploaded')
-    }).catch((err) => {
-        console.log(err)
-    })
+const updateRes = async (mod, target) => {
+    if (mod == 'add') {
+        res.value.push(target)
+    } else if (mod == 'del') {
+        res.value = res.value.filter((note) => note.id != target.id)
+    }
+    loadData()
 }
-
-const delNote = async (note) => {
-    await useStorage().deleteFile(note.path).then(async(fileRef) => {
-        if(fileRef) {
-            await (await useDocument('notes', note.id))
-            .delDoc().then(() => {
-                res.value = res.value.filter((note1) => note1.id != note.id)
-                loadData()
-            }).catch((err) => {
-                console.log(err)
-            })
-        }
-        else
-            console.log('File not found')
-    }).catch((err) => {
-        console.log(err)
-    })
-}
-
-loadData()
 </script>
 
 <style>

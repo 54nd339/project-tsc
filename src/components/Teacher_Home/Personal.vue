@@ -4,18 +4,20 @@
             <h3 class="text-center" style>{{ teacher.name }}</h3>
         </div>
         <h6 class="mx-3"><b>CLASSES :</b></h6>
-        <table class="table table-hover table-responsive">
-            <thead><tr>
-                <th scope="col">Class ID</th>
-                <th scope="col">View</th>
-            </tr></thead>
-            <tbody ref="rows" id="rows">
-                <tr v-for="cls in classList" :key="cls">
-                    <td v-if="cls != 'default'">{{ cls }}</td>
-                    <td v-if="cls != 'default'"><b-button @click="emit('clsChanged', cls)">view</b-button></td>
-                </tr>
-            </tbody>
-        </table>
+        <b-container fluid id="content">
+            <table class="table table-hover table-responsive">
+                <thead><tr>
+                    <th scope="col">Class ID</th>
+                    <th scope="col">View</th>
+                </tr></thead>
+                <tbody ref="rows" id="rows">
+                    <tr v-for="cls in classList" :key="cls">
+                        <td v-if="cls != 'default'">{{ cls }}</td>
+                        <td v-if="cls != 'default'"><b-button @click="emit('clsChanged', cls)">view</b-button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </b-container>
     </div>
 </template>
 
@@ -31,8 +33,6 @@ const props = defineProps({
 	}
 })
 const emit = defineEmits(['clsChanged'])
-
-// do something
 </script>
 
 <style>

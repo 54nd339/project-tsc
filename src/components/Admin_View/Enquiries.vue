@@ -1,5 +1,5 @@
 <template>
-	<section class="container-fluid">
+	<b-container fluid>
 		<b-button-group class="my-1">
 			<b-button :disabled="selected.length == 0" variant="danger" v-b-modal.deleteEnquiry>Delete</b-button>
 		</b-button-group>
@@ -25,8 +25,8 @@
 				</tr>
 			</tbody>
 		</table></div>
-		<DeleteModal title="Enquiry" :ids="selected" @submitClick="delEnq"/>
-	</section>
+	</b-container>
+	<DeleteModal title="Enquiry" :ids="selected" @submitClick="delEnq"/>
 </template>
 
 <script setup>

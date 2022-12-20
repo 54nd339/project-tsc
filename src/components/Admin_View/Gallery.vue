@@ -1,5 +1,5 @@
 <template>
-	<section class="container-fluid">
+	<b-container fluid>
 		<b-button-group class="my-1 d-flex">
 			<b-form-select v-model="role" :options="roles" @update:modelValue="loadData" />
 			<b-button variant="success" :disabled="role == 'default'" v-b-modal.addPic>Add</b-button>
@@ -26,22 +26,22 @@
 				</tr>
 			</tbody>
 		</table></div>
-		<b-modal id="addPic" title="Add Pic" aria-labelledby="addPic" aria-hidden="true" :hide-footer="true">
-			<b-form @submit="addPic">
-				<b-form-input v-model="title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />
-				<b-form-input v-model="context" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Context" />
-				<input type="file" class="d-flex mx-auto my-1" name="file" @change="onFileChange" required/>
-				<div class="d-flex mb-1 justify-content-end">
-					<b-button-group>
-						<b-button type="reset" variant="danger" size="lg">Reset </b-button>
-						<b-button type="submit" variant="primary" size="lg"
-						:disabled="uploadText != 'Upload'">{{ uploadText }}</b-button>
-					</b-button-group>
-				</div>
-			</b-form>
-		</b-modal>
-		<ViewImage name="Pic" :title="target.title" :src="target.url" />
-	</section>
+    </b-container>
+    <b-modal id="addPic" title="Add Pic" aria-labelledby="addPic" aria-hidden="true" :hide-footer="true">
+        <b-form @submit="addPic">
+            <b-form-input v-model="title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />
+            <b-form-input v-model="context" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Context" />
+            <input type="file" class="d-flex mx-auto my-1" name="file" @change="onFileChange" required/>
+            <div class="d-flex mb-1 justify-content-end">
+                <b-button-group>
+                    <b-button type="reset" variant="danger" size="lg">Reset </b-button>
+                    <b-button type="submit" variant="primary" size="lg"
+                    :disabled="uploadText != 'Upload'">{{ uploadText }}</b-button>
+                </b-button-group>
+            </div>
+        </b-form>
+    </b-modal>
+    <ViewImage name="Pic" :title="target.title" :src="target.url" />
 </template>
 
 <script setup>
@@ -84,25 +84,20 @@ const addPic = async () => {
     let path = `gallery/${role.value}/${file.name}` 
     uploadText.value = 'Uploading...'
 
-    await useStorage().uploadFile(file, path).then(async(file) => {
+    await useStorage().uploadFile(file, path)
+    .then(async(file) => {
         if(file) {
-            await (await addCollection('gallery')).addDocument('', {
+            const newPic = {
                 role: role.value,
                 title: title.value,
                 context: context.value,
                 url: file.url,
                 path: file.snapshot.metadata.fullPath,
                 date: file.snapshot.metadata.timeCreated
-            }).then((uid) => {
-                res.value.push({
-                    id: uid,
-                    role: role.value,
-                    title: title.value,
-                    context: context.value,
-                    url: file.url,
-                    path: file.snapshot.metadata.fullPath,
-                    date: file.snapshot.metadata.timeCreated
-                })
+            }
+            await (await addCollection('gallery'))
+            .addDocument('', newPic).then((uid) => {
+                res.value.push({ id: uid, ...newPic })
                 title.value = ''
 				context.value = ''
                 file1.value = null

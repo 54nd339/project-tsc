@@ -8,13 +8,13 @@ export default async function test() {
         for(let i = 5; i <= 12; i++) {
             (await addDocument('schedule'))
             .addDocument(item+'_'+i, {
-                mon: ['default', 'default', 'default'],
-                tue: ['default', 'default', 'default'],
-                wed: ['default', 'default', 'default'],
-                thu: ['default', 'default', 'default'],
-                fri: ['default', 'default', 'default'],
-                sat: ['default', 'default', 'default'],
-            })
+                mon: {periods: ['default', 'default', 'default'], start: 4, end: 7},
+                tue: {periods: ['default', 'default', 'default'], start: 4, end: 7},
+                wed: {periods: ['default', 'default', 'default'], start: 4, end: 7},
+                thu: {periods: ['default', 'default', 'default'], start: 4, end: 7},
+                fri: {periods: ['default', 'default', 'default'], start: 4, end: 7},
+                sat: {periods: ['default', 'default', 'default'], start: 4, end: 7},
+            }).then((res) => console.log(res))
         }
     })
 }

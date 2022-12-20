@@ -1,38 +1,27 @@
 <template>
-	<div id="content" class="row justify-content-center">
+	<b-row id="content" class="justify-content-center">
 		<b-button-group class="my-1 d-flex mx-6">
 			<b-form-select mx-5 p-5 v-model="clas" :options="props.classes" @update:model-value="loadData" />
-			<b-button :disabled="clas == 'default'" v-b-modal.addNote>Add</b-button>
+			<b-button variant="success" :disabled="clas == 'default'" v-b-modal.addNote @click="setTarget">Add</b-button>
 		</b-button-group>
-		<div class="col-md-3 m-3" v-for="note in notes" :key="note">
-			<div class="card" style="width: 18rem;">
-				<div class="card-body">
-					<h5 class="card-title">{{ note.topic }}</h5>
-					<b-button @click="openUrl(note.url)">view</b-button>
+		<b-col md="4" v-for="(note, index) in notes" :key="note">
+			<b-card border-variant="success" :header="note.topic" align="center" class="m-3" :class="{ shadow: isHover && ind == index }"
+				@mouseover="isHover = true; ind = index" @mouseout="isHover = false; ind = -1">
+				<div class="d-flex justify-content-between">
+					<b-button variant="outline-danger" size="sm" class="m-1" @click="delNote(note)">
+						<font-awesome-icon icon="fa-solid fa-trash" size="1x" />
+					</b-button>
+					<b-button variant="success" @click="openUrl(note.url)">View</b-button>
 				</div>
-			</div>
-		</div>
-		<b-modal id="addNote" title="Add Note" aria-labelledby="addNote" aria-hidden="true" :hide-footer="true">
-			<b-form @submit="addNote">
-				<b-form-input v-model="topic" class="d-flex mx-auto my-1"
-					size="lg" placeholder="Enter Topic" required />
-				<input type="file" class="d-flex mx-auto my-1" name="file" @change="onFileChange" required/>
-				<div class="d-flex mb-1 justify-content-end">
-					<b-button-group>
-						<b-button type="reset" variant="danger" size="lg">Reset </b-button>
-						<b-button type="submit" variant="primary" size="lg"
-						:disabled="uploadText != 'Upload'">{{ uploadText }}</b-button>
-					</b-button-group>
-				</div>
-			</b-form>
-		</b-modal>
-	</div>
+			</b-card>
+		</b-col>
+	</b-row>
+    <Note :target="targetNote" ref="noteRef" @submitClick="updateRes" />
 </template>
 
 <script setup>
+import Note from '@/components/Notes.vue'
 import getCollection from '@/db/getCollection'
-import addCollection from '@/db/addDocument'
-import useStorage from '@/db/useStorage'
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -45,14 +34,31 @@ const props = defineProps({
 		required: true
 	}
 })
+const isHover = ref(false)
+const ind = ref(-1)
+const clas = ref('default')
 const course = ref('default')
 const grade = ref(0)
 const subject = ref('default')
 const openUrl = (url) => {
     window.open(url)
 }
-const clas = ref('default')
-const res = ref([])
+const targetNote = ref({
+    id: '',
+    course: '',
+    class: 0,
+    subject: '',
+    topic: '',
+    url: '',
+    path: '',
+    date: ''
+})
+const setTarget = () => {
+    targetNote.value.class = grade.value
+    targetNote.value.course = course.value
+    targetNote.value.subject = subject.value
+}
+
 const notes = ref([])
 const loadData = async() => {
 	if(clas.value == 'default') {
@@ -67,55 +73,8 @@ const loadData = async() => {
 	notes.value = res.value.filter(note => {
 		return note.course == course.value && note.class == grade.value && note.subject == subject.value
 	})
-	uploadText.value = 'Upload'
 }
-
-const topic = ref('')
-const file1 = ref(null)
-const uploadText = ref('Upload')
-const onFileChange = (e) => {
-    file1.value = e.target.files[0]
-}
-const addNote = async () => {
-    let file = file1.value
-    let path = `notes/${course.value + '_' + grade.value}/${subject.value}/${file.name}` 
-    uploadText.value = 'Uploading...'
-
-    await useStorage().uploadFile(file, path).then(async(fileRef) => {
-        if(fileRef) {
-            await (await addCollection('notes')).addDocument('', {
-                course: course.value,
-                class: grade.value,
-                subject: subject.value,
-                topic: topic.value,
-                url: fileRef.url,
-                path: fileRef.snapshot.metadata.fullPath,
-                date: fileRef.snapshot.metadata.timeCreated
-            }).then((uid) => {
-				res.value.push({
-					id: uid,
-					course: course.value,
-					class: grade.value,
-					subject: subject.value,
-					topic: topic.value,
-					url: fileRef.url,
-					path: fileRef.snapshot.metadata.fullPath,
-					date: fileRef.snapshot.metadata.timeCreated,
-				})
-                topic.value = ''
-                file1.value = null
-				loadData()
-            }).catch((err) => {
-                console.log(err)
-            })
-        }
-        else
-            console.log('File not uploaded')
-    }).catch((err) => {
-        console.log(err)
-    })
-}
-
+const res = ref([])
 await getCollection('notes')
 .getDocuments().then((data) => {
 	res.value = data
@@ -123,6 +82,22 @@ await getCollection('notes')
 }).catch((err) => {
 	console.log(err)
 })
+
+const updateRes = async (mod, target) => {
+    if (mod == 'add') {
+        res.value.push(target)
+    } else if (mod == 'del') {
+        res.value = res.value.filter((note) => note.id != target.id)
+    }
+    loadData()
+}
+const noteRef = ref()
+const delNote = (note) => {
+    targetNote.value = note
+    setTimeout(() => {
+        noteRef.value.delNote()
+    }, 100)
+}
 </script>
 
 <style>

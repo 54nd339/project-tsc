@@ -1,44 +1,30 @@
 <template>
-  <div id="content" class="container-fluid">
-	<div class="row featurette">
-		<section class="container-fluid">
+	<b-container fluid id="content">
+		<b-row id="awards" class="featurette">
 			<div class="light-overlay">
-				<div class="container">
-					<h2>Award & Achievements</h2>
-					<div class="photo-section">
-						<Slides title="Awardss" :urls="awardUrls" :captions="awardCaptions" :texts="awardTexts" />
-					</div>
+				<h2>Award & Achievements</h2>
+				<div class="photo-section shadow rounded">
+					<Slides title="Awardss" :urls="awardUrls" :captions="awardCaptions" :texts="awardTexts" />
 				</div>
 			</div>
-		</section> 
-	</div>
-	
-	<div class="row featurette">
-		<section class="container-fluid">
+		</b-row>
+		<b-row id="activities" class="featurette">
 			<div class="light-overlay">
-				<div class="container">
-					<h2>Cultural Activities</h2>
-					<div class="photo-section">
-						<Slides title="Activities" :urls="actUrls" :captions="actCaptions" :texts="actTexts" />
-					</div>
+				<h2>Cultural Activities</h2>
+				<div class="photo-section shadow rounded">
+					<Slides title="Activities" :urls="actUrls" :captions="actCaptions" :texts="actTexts" />
 				</div>
 			</div>
-		</section> 
-	</div>
-	
-	<div class="row featurette">
-		<section class="container-fluid">
+		</b-row>
+		<b-row id="others" class="featurette">
 			<div class="light-overlay">
-				<div class="container">
-					<h2>Gallery</h2>
-					<div class="photo-section">
-						<Slides title="Gallery" :urls="galUrls" :captions="galCaptions" :texts="galTexts" />
-					</div>
+				<h2>Gallery</h2>
+				<div class="photo-section shadow rounded">
+					<Slides title="Gallery" :urls="galUrls" :captions="galCaptions" :texts="galTexts" />
 				</div>
 			</div>
-		</section> 
-	</div>
-</div>
+		</b-row>
+	</b-container>
 </template>
 
 <script setup>
@@ -81,7 +67,6 @@ const loadData = async() => {
 		console.log(err)
 	})
 }
-
 loadData()
 </script>
 

@@ -8,11 +8,11 @@
 		<div class="d-flex mb-1 justify-content-center">
 			<b-button variant="primary" v-b-modal.viewChart>View</b-button>
 		</div>
-		<b-modal size="lg" id="viewChart" title="Your Performance" aria-labelledby="ViewChart" aria-hidden="true" :hide-footer="true">
-			<ViewChart chartId="performChartModal" :scores="student.subjects[subject]"
-				:course="student.course" :grade="student.class" :sub="subject" />
-		</b-modal>
     </div>
+	<b-modal size="lg" id="viewChart" title="Your Performance" aria-labelledby="ViewChart" aria-hidden="true" :hide-footer="true">
+		<ViewChart chartId="performChartModal" :scores="student.subjects[subject]"
+			:course="student.course" :grade="student.class" :sub="subject" />
+	</b-modal>
 </template>
 
 <script setup>

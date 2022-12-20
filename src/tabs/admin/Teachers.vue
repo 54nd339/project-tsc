@@ -1,5 +1,5 @@
 <template>
-	<div id="content" class="container-fluid">
+	<b-container fluid id="content">
 		<b-button-group class="my-1 d-flex">
 			<b-button variant="secondary" v-b-modal.resetRate>Reset Ratings</b-button>
 			<b-button variant="secondary" v-b-modal.resetTeacher>Reset Attendance</b-button>
@@ -93,7 +93,7 @@
 				</b-form>
 			</div>
 		</b-modal>
-	</div>
+	</b-container>
 </template>
 
 <script setup>
@@ -175,9 +175,10 @@ const refresh = () => {
 const addTeacher = (user) => {
 	teachers.value.push(user)
 }
-const modTeacher = (id, name, phone) => { 
+const modTeacher = (id, name, email, phone) => { 
 	const index = teachers.value.findIndex((teacher) => teacher.id == id)
 	teachers.value[index].name = name
+	teachers.value[index].email = email
 	teachers.value[index].phone = phone
 	refresh()
 }
@@ -198,8 +199,7 @@ const addSub = (teacher) => {
 	}					
 	if (teacher.classes[clas].includes(subject.value)) {
 		return
-	}
-	// Fix Dropdowns
+	} // Fix Dropdowns
 	teacher.classes[clas].push(subject.value)
 }
 const delSub = async(id, classes, grad, index) => {

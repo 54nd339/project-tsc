@@ -1,33 +1,33 @@
 <template>
-  <div id="vision" class="row border rounded border-success">
-    <div class="col-lg-12">
+    <b-container fluid id="vision" class="my-1">
         <h1 class="m-2 py-4 d-flex justify-content-center border-bottom">Our Process</h1>
-    </div>
-    <div class="col-lg-4 pt-5">
-        <img src="@/assets/images/our_process_1.png" alt="Our Process 1" class="img-fluid" height="85px" width="85px">
-        <h2>What do we do?</h2>
-        <p>Every student is different. We try to find the best in them and work passionately in order to awaken the inner potential and channelize it to an optimum level.</p>
-    </div>
-    <div class="col-lg-4 pt-5">
-        <img src="@/assets/images/our_process_2.png" alt="Our Process 2" class="img-fluid" height="85px" width="85px">
-        <h2>How do we do it?</h2>
-        <p>Well, everyone is blessed with unique skills. We figure out the capabilities of each individual and combine them to work in conjunction.</p>
-    </div>
-    <div class="col-lg-4 pt-5">
-        <img src="@/assets/images/our_process_3.png" alt="Our Process 3" class="img-fluid" height="85px" width="85px">
-        <h2>How are we unique?</h2>
-        <p>Individual attention and performance analysis are the key factors to our success. Of course, we have other secret ingredients as well!</p>
-    </div>
-    <!-- <div class="col-lg-12 d-flex justify-content-center">
-        <button class="my-3 btn btn-success">Register Now</button>
-    </div> -->
-</div>
-
+        <b-row align-h="center">
+            <b-col md="4" class="p-2" v-for="(image, index) in images" :key="image">
+                <b-container class="m-1 p-4 shadow rounded h-100 border border-success text-center">
+                    <b-img :src="require(`../../assets/images/our_process_${index+1}.png`)" alt="Our Process"
+                        class="img-fluid" height="85px" width="85px" />
+                    <h2>{{ image.title }}</h2>
+                    <p>{{ image.context }}</p>
+                </b-container>
+            </b-col>
+            <div class="d-flex justify-content-center m-2">
+                <b-button variant="success" class="shadow" v-b-modal.registerForm>Register Now</b-button>
+            </div>
+        </b-row>
+    </b-container>
 </template>
 
 <script setup>
-// do something
-
+const images = [{
+    title: 'What do we do?',
+    context: 'Every student is different. We try to find the best in them and work passionately in order to awaken the inner potential and channelize it to an optimum level.'
+}, {
+    title: 'How do we do it?',
+    context: 'Well, everyone is blessed with unique skills. We figure out the capabilities of each individual and combine them to work in conjunction.'
+}, {
+    title: 'How are we unique?',
+    context: 'Individual attention and performance analysis are the key factors to our success. Of course, we have other secret ingredients as well!'
+}]
 </script>
 
 <style>

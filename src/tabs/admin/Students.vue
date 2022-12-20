@@ -1,5 +1,5 @@
 <template>
-	<div id="content" class="container-fluid">
+	<b-container fluid id="content">
 		<b-button-group class="my-1 d-flex">
 			<b-form-select v-model="course" :options="courses" @update:modelValue="loadData" />
 			<b-form-select v-model="grade" :options="grades" @update:modelValue="loadData" />
@@ -69,7 +69,7 @@
 						<div v-else>
 							<tr v-for="(mark) in student.subjects[subject]" :key="mark">
 								<td class="mx-2">{{ mark.topic }} ({{ mark.date }})</td>
-								<td><b-input-group :prepend="mark.mark ? mark.mark : 0" :append="'/' + mark.fm">
+								<td><b-input-group :prepend="mark.mark ? mark.mark : 0" :append="`/${mark.fm}`">
 									<b-form-input @blur="handleUpdate(mark, $event)" type="number" />
 								</b-input-group></td>
 							</tr>
@@ -104,7 +104,7 @@
 			<ViewChart chartId="studentPerformModal" :scores="target.subjects[subject]"
 				:course="target.course" :grade="target.class" :sub="subject" :key="JSON.stringify(target) + subject" />
 		</b-modal>
-	</div>
+	</b-container>
 </template>
 
 <script setup>
@@ -141,7 +141,6 @@ const target = ref({
 	course: '',
 	class: 0
 })
-
 const res = ref([])
 const fetchData = async () => { 
 	await getCollection('students')
@@ -201,9 +200,10 @@ const addStudent = (user) => {
 	res.value.push(user)
 	loadData()
 }
-const modStudent = (id, name, phone) => {
+const modStudent = (id, name, email, phone) => {
 	const index = res.value.findIndex((student) => student.id == id)
 	res.value[index].name = name
+	res.value[index].email = email
 	res.value[index].phone = phone
 	loadData()
 }

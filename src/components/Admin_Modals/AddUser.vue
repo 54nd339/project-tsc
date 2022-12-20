@@ -1,14 +1,17 @@
 <template>
 	<b-modal :id="modalId" :title="titleName" aria-labelledby="addUser" aria-hidden="true" :hide-footer="true">
 		<b-form @submit="onSubmit">
-			<b-form-input v-model="email" type="email" class="d-flex mx-auto my-1"
-				size="lg" placeholder="Enter email" required />
-			<b-form-input v-model="password" type="password" class="d-flex mx-auto my-1"
-				size="lg" placeholder="Enter password" required />
 			<b-form-input v-model="name" type="text" class="d-flex mx-auto my-1"
 				size="lg" placeholder="Enter name" required />
 			<b-form-input v-model="phone" type="tel" class="d-flex mx-auto my-1"
 				size="lg" placeholder="Enter phone" required />
+			<b-input-group size="lg" prepend="Enter DOB">
+				<input v-model="dob" type="date" class="d-flex mx-auto my-1" required/>
+			</b-input-group>
+			<b-form-input v-model="email" type="email" class="d-flex mx-auto my-1"
+				size="lg" placeholder="Enter email" required />
+			<b-form-input v-model="password" type="password" class="d-flex mx-auto my-1"
+				size="lg" placeholder="Enter password" required />
 			<div class="d-flex mb-1 justify-content-end">
 				<b-button-group>
 					<b-button type="reset" variant="danger" size="lg">Reset </b-button>
@@ -41,10 +44,11 @@ const titleName = 'Add ' + props.title
 const modalId = 'add' + props.title
 const collectionId = props.title.toLowerCase() + 's'
 
-const email = ref('')
-const password = ref('')
 const name = ref('')
 const phone = ref('')
+const dob = ref('')
+const email = ref('')
+const password = ref('')
 const addText = ref('Submit')
 
 const onSubmit = async() => {
@@ -57,6 +61,7 @@ const onSubmit = async() => {
 				name: name.value,
 				phone: phone.value,
 				email: email.value,
+				dob: dob.value
 			}).then(async() => {
 				addText.value = 'Submit'
 				if(collectionId == 'admins')

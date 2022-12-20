@@ -1,5 +1,5 @@
 <template>
-	<section class="container-fluid">
+	<b-container fluid>
 		<b-button-group class="my-1">
             <b-button variant="success" v-b-modal.addFaq>Add</b-button>
             <b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteFaq>Delete</b-button>
@@ -19,34 +19,34 @@
 				</tr>
 			</tbody>
 		</table></div>
-        <b-modal id="addFaq" title="Add Faq" aria-labelledby="addFaq" aria-hidden="true" :hide-footer="true">
-            <b-form @submit="addFaq">
-                <b-form-input v-model="question" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Question" required />
-                <b-form-textarea v-model="answer" class="d-flex mx-auto my-1" size="lg" no-resize
-                    placeholder="Enter Answer" rows="3" max-rows="8" required />
-                <div class="d-flex mb-1 justify-content-end">
-                    <b-button-group>
-                        <b-button type="reset" variant="danger" size="lg">Reset </b-button>
-                        <b-button type="submit" variant="primary" size="lg">Submit</b-button>
-                    </b-button-group>
-                </div>
-            </b-form>
-        </b-modal>
-        <b-modal id="modifyFaq" title="Modify Faq" aria-labelledby="modifyFaq" aria-hidden="true" :hide-footer="true">
-            <b-form @submit="modFaq">
-                <b-form-input v-model="target.question" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Question" required />
-                <b-form-textarea v-model="target.answer" class="d-flex mx-auto my-1" size="lg" no-resize
-                    placeholder="Enter Answer" rows="3" max-rows="8" required />
-                <div class="d-flex mb-1 justify-content-end">
-                    <b-button-group>
-                        <b-button type="reset" variant="danger" size="lg">Reset </b-button>
-                        <b-button type="submit" variant="primary" size="lg">Submit</b-button>
-                    </b-button-group>
-                </div>
-            </b-form>
-        </b-modal>
-		<DeleteModal title="Faq" :ids="selected" @submitClick="delFaq"/>
-	</section>
+    </b-container>
+    <b-modal id="addFaq" title="Add Faq" aria-labelledby="addFaq" aria-hidden="true" :hide-footer="true">
+        <b-form @submit="addFaq">
+            <b-form-input v-model="question" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Question" required />
+            <b-form-textarea v-model="answer" class="d-flex mx-auto my-1" size="lg" no-resize
+                placeholder="Enter Answer" rows="3" max-rows="8" required />
+            <div class="d-flex mb-1 justify-content-end">
+                <b-button-group>
+                    <b-button type="reset" variant="danger" size="lg">Reset </b-button>
+                    <b-button type="submit" variant="primary" size="lg">Submit</b-button>
+                </b-button-group>
+            </div>
+        </b-form>
+    </b-modal>
+    <b-modal id="modifyFaq" title="Modify Faq" aria-labelledby="modifyFaq" aria-hidden="true" :hide-footer="true">
+        <b-form @submit="modFaq">
+            <b-form-input v-model="target.question" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Question" required />
+            <b-form-textarea v-model="target.answer" class="d-flex mx-auto my-1" size="lg" no-resize
+                placeholder="Enter Answer" rows="3" max-rows="8" required />
+            <div class="d-flex mb-1 justify-content-end">
+                <b-button-group>
+                    <b-button type="reset" variant="danger" size="lg">Reset </b-button>
+                    <b-button type="submit" variant="primary" size="lg">Submit</b-button>
+                </b-button-group>
+            </div>
+        </b-form>
+    </b-modal>
+    <DeleteModal title="Faq" :ids="selected" @submitClick="delFaq"/>
 </template>
 
 <script setup>
@@ -89,16 +89,14 @@ const refresh = () => {
 const question = ref('')
 const answer = ref('')
 const addFaq = async() => {
-    await (await addCollection('faqs'))
-    .addDocument('', {
+    const newFaq = {
         question: question.value,
         answer: answer.value
-    }).then((uid) => {
-        faqs.value.push({
-            id: uid,
-            question: question.value,
-            answer: answer.value
-        })
+    }
+    await (await addCollection('faqs'))
+    .addDocument('', newFaq)
+    .then((uid) => {
+        faqs.value.push({ id: uid, ...newFaq })
         question.value = ''
         answer.value = ''
         refresh()
@@ -106,7 +104,6 @@ const addFaq = async() => {
         console.log(err)
     }) 
 }
-
 const modFaq = async() => {
     const btn = event.target.closest('.modal-content')
                         .querySelector('.btn-close')
@@ -131,8 +128,6 @@ const delFaq = (ids) => {
 	})
     refresh()
 }
-
-// Do somthing
 </script>
 
 <style>

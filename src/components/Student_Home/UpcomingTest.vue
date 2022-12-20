@@ -3,7 +3,7 @@
         <div class="shadow m-3 p-1 rounded-3" style="background-color:#80ED99">
             <h3 class="text-center" style>Upcoming Tests</h3>
         </div> 
-        <div id="content" class="container-fluid">
+        <b-container fluid id="content">
             <table class="table table-hover table-responsive">
                 <thead><tr>
                     <th scope="col">Topic</th>
@@ -18,7 +18,7 @@
                     </tr>
                 </tbody>
             </table>
-        </div> 
+        </b-container> 
     </div>
 </template>
 

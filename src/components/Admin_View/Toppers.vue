@@ -1,5 +1,5 @@
 <template>
-	<section class="container-fluid">
+	<b-container fluid>
 		<b-button-group class="my-1">
 			<b-button variant="success" v-b-modal.addTopper>Add</b-button>
 		</b-button-group>
@@ -23,23 +23,25 @@
 				</tr>
 			</tbody>
 		</table></div>
-		<b-modal id="addTopper" title="Add Topper" aria-labelledby="addTopper" aria-hidden="true" :hide-footer="true">
-			<b-form @submit="addTopper">
-				<b-form-input v-model="name" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Name" required />
-				<b-form-input v-model="course" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Course" required />
-				<b-form-input v-model="score" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Score" required />
-				<input type="file" class="d-flex mx-auto my-1" :name="file1" @change="onFileChange" required/>
-				<div class="d-flex mb-1 justify-content-end">
-					<b-button-group>
-						<b-button type="reset" variant="danger" size="lg">Reset </b-button>
-						<b-button type="submit" variant="primary" size="lg"
-						:disabled="uploadText != 'Upload'">{{ uploadText }}</b-button>
-					</b-button-group>
-				</div>
-			</b-form>
-		</b-modal>
-		<ViewImage name="Topper" :title="target.title" :src="target.url" />
-	</section>
+	</b-container>
+    <b-modal id="addTopper" title="Add Topper" aria-labelledby="addTopper" aria-hidden="true" :hide-footer="true">
+        <b-form @submit="addTopper">
+            <b-form-input v-model="name" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Name" required />
+            <b-form-input v-model="course" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Course" required />
+            <b-form-input v-model="score" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Score" required />
+            <b-input-group size="lg" prepend="Upload Pic">
+                <input type="file" class="d-flex mx-auto my-1" :name="file1" @change="onFileChange" required/>
+            </b-input-group>
+            <div class="d-flex mb-1 justify-content-end">
+                <b-button-group>
+                    <b-button type="reset" variant="danger" size="lg">Reset </b-button>
+                    <b-button type="submit" variant="primary" size="lg"
+                    :disabled="uploadText != 'Upload'">{{ uploadText }}</b-button>
+                </b-button-group>
+            </div>
+        </b-form>
+    </b-modal>
+    <ViewImage name="Topper" :title="target.title" :src="target.url" />
 </template>
 
 <script setup>
@@ -65,7 +67,6 @@ await (getCollection('toppers'))
 }).catch((err) => {
     console.log(err)
 })
-
 const uploadText = ref('Upload')
 const addTopper = async () => {
     let file = file1.value
@@ -74,23 +75,17 @@ const addTopper = async () => {
 
     await useStorage().uploadFile(file, path).then(async(res) => {
         if(res) {
-            await (await addCollection('toppers')).addDocument('', {
+            const newTopper = {
                 name: name.value,
                 course: course.value,
                 score: score.value,
                 url: res.url,
                 path: res.snapshot.metadata.fullPath,
                 date: res.snapshot.metadata.timeCreated
-            }).then((uid) => {
-                toppers.value.push({
-                    id: uid,
-                    name: name.value,
-                    course: course.value,
-                    score: score.value,
-                    url: res.url,
-                    path: res.snapshot.metadata.fullPath,
-                    date: res.snapshot.metadata.timeCreated
-                })
+            }
+            await (await addCollection('toppers'))
+            .addDocument('', newTopper).then((uid) => {
+                toppers.value.push({ id: uid, ...newTopper })
                 name.value = ''
 				course.value = ''
                 score.value = ''

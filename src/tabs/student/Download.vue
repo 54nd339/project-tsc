@@ -1,17 +1,15 @@
 <template>
-  	<div id="content" class="row justify-content-center">
+  	<b-row id="content" class="justify-content-center">
 		<b-form-select mx-5 px-5 v-model="subject" :options="props.subjects" @update:model-value="loadData" />
-		<div class="col-md-3 m-3" v-for="note in notes" :key="note">
-			<div class="card" style="width: 18rem;">
-				<div class="card-body">
-					<h5 class="card-title">{{ note.topic }}</h5>
-					<b-button @click="download(note)" :disabled="downloadText != 'Download'">
-						{{ downloadText }}
-					</b-button>
-				</div>
-			</div>
-		</div>
-	</div>
+		<b-col md="4" v-for="(note, index) in notes" :key="note">
+			<b-card border-variant="success" :header="note.topic" align="center" class="m-3" :class="{ shadow: isHover && ind == index }"
+				@mouseover="isHover = true; ind = index" @mouseout="isHover = false; ind = -1">
+				<b-button variant="success" @click="download(note)" :disabled="downloadText != 'Download'">
+					{{ downloadText }}
+				</b-button>
+			</b-card>
+		</b-col>
+	</b-row>
 </template>
 
 <script setup>
@@ -29,6 +27,8 @@ const props = defineProps({
 		required: true
 	}
 })
+const isHover = ref(false)
+const ind = ref(-1)
 const subject = ref('default')
 const res = ref([])
 const notes = ref([])

@@ -1,5 +1,5 @@
 <template>
-  	<main role="main" id="content" class="tab-content mt-3 mb-5" style="min-height: 85vh;">
+  	<main role="main" id="content" class="tab-content mt-3 mb-4" style="min-height: 85vh;">
 		<div id="home" class="tab-pane fade show active tab-content" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
 			<Home :courses="courseList" :grades="gradeList" :subjects="subjectList" />
 		</div>
@@ -8,6 +8,9 @@
 		</div>
 		<div id="teachers" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-success-tab" tabindex="0">
             <Teachers :courses="courseList" :grades="gradeList" :subjects="subjectList" />
+		</div>
+		<div id="pending" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-success-tab" tabindex="0">
+            <Pending />
 		</div>
         <div id="site" class="tab-pane fade tab-content" role="tabpanel" aria-labelledby="pills-about-tab" tabindex="0">
             <Site />
@@ -19,6 +22,7 @@
 import Home from '@/tabs/admin/Home.vue'
 import Students from '@/tabs/admin/Students.vue'
 import Teachers from '@/tabs/admin/Teachers.vue'
+import Pending from '@/tabs/admin/Pending.vue'
 import Site from '@/tabs/admin/Site.vue'
 
 const gradeList = [
@@ -55,6 +59,7 @@ const courseList = [
 	{ value: 'CHSE', text: 'CHSE' },
 	{ value: 'JEE_NEET', text: 'JEE/NEET' }
 ]
+
 </script>
 
 <style>

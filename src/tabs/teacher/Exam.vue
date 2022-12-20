@@ -1,64 +1,66 @@
 <template>
-	<div id="content" class="container-fluid">
-		<b-form-select mx-5 p-5 v-model="clas" :options="props.classes" @update:model-value="loadData" />
-		<div id="currtests" class="row featurette p-2 m-2">
+	<b-container fluid id="content">
+		<b-button-group class="my-1 d-flex">
+			<b-form-select mx-5 p-5 v-model="clas" :options="props.classes" @update:model-value="loadData" />
+			<b-button v-if="course != 'default' && grade != 0 && subject != 'default'"
+				variant="success" v-b-modal.addTest @click="setTarget">Add</b-button>
+		</b-button-group>
+		<b-row id="nexttests" class="featurette p-2 m-2">
 			<h2 class="featurette-heading pb-md-2">Upcoming Tests</h2>
-			<div class="col-md-4" v-for="test in nextTests" :key="test">
-				<div class="card" style="width: 18rem;">
-					<div class="card-body">
-						<h5 class="card-title">{{ test.topic }}</h5>
-						<h6 class="card-subtitle mb-2 text-muted">{{ test.date }}</h6>
-						<b-button v-if="test.url" @click="openUrl(test.url)">View</b-button>
-                        <b-button v-else v-b-modal.addTestFile @click="target = test">Upload File</b-button>
+			<b-col md="4" v-for="(test, index) in nextTests" :key="test">
+				<b-card border-variant="success" :header="test.topic" align="center" class="m-3" :class="{ shadow: isHover && ind == index && sec == 'next' }"
+				@mouseover="isHover = true; ind = index; sec = 'next'" @mouseout="isHover = false; ind = -1; sec = ''">
+					<h6 class="card-subtitle mb-2 text-muted">{{ test.date }}</h6>
+					<div class="d-flex justify-content-between">
+						<b-button variant="outline-danger" size="sm" class="m-1" @click="delFiles(test);">
+                            <font-awesome-icon icon="fa-solid fa-trash" size="1x" />
+						</b-button>
+						<b-button variant="success" v-b-modal.viewFiles @click="viewFiles(test)">View</b-button>
 					</div>
-				</div>
-			</div>
-		</div>
+				</b-card>
+			</b-col>
+		</b-row>
 		<hr class="featurette-divider">
-		<div id="currtests" class="row featurette p-2 m-2">
+
+		<b-row id="currtests" class="featurette p-2 m-2">
 			<h2 class="featurette-heading pb-md-2">Today's Tests</h2>
-			<div class="col-md-4" v-for="test in tests" :key="test">
-				<div class="card" style="width: 18rem;">
-					<div class="card-body">
-						<h5 class="card-title">{{ test.topic }}</h5>
-						<b-button v-if="test.url" @click="openUrl(test.url)">View</b-button>
-                        <b-button v-else v-b-modal.addTestFile @click="target = test">Upload File</b-button>
+			<b-col md="4" v-for="(test, index) in tests" :key="test">
+				<b-card border-variant="success" :header="test.topic" align="center" class="m-3" :class="{ shadow: isHover && ind == index && sec == 'take' }"
+				@mouseover="isHover = true; ind = index; sec = 'take'" @mouseout="isHover = false; ind = -1; sec = ''">
+					<h6 class="card-subtitle mb-2 text-muted">{{ test.date }}</h6>
+					<div class="d-flex justify-content-between">
+						<b-button variant="outline-danger" size="sm" class="m-1" @click="delFiles(test);">
+                            <font-awesome-icon icon="fa-solid fa-trash" size="1x" />
+						</b-button>
+						<b-button variant="success" v-b-modal.viewFiles @click="viewFiles(test)">View</b-button>
 					</div>
-				</div>
-			</div>
-		</div>
+				</b-card>
+			</b-col>
+		</b-row>
 		<hr class="featurette-divider">
-		<div id="prevtests" class="row featurette p-2 m-2">
+
+		<b-row id="prevtests" class="featurette p-2 m-2">
 			<h2 class="featurette-heading pb-md-2">Previous Tests</h2>
-			<div class="col-md-4" v-for="test in prevTests" :key="test">
-				<div class="card" style="width: 18rem;">
-					<div class="card-body">
-						<h5 class="card-title">{{ test.topic }}</h5>
-						<h6 class="card-subtitle mb-2 text-muted">{{ test.date }}</h6>
-						<b-button @click="openUrl(test.url)">view</b-button>
+			<b-col md="4" v-for="(test, index) in prevTests" :key="test">
+				<b-card border-variant="success" :header="test.topic" align="center" class="m-3" :class="{ shadow: isHover && ind == index && sec == 'prev' }"
+				@mouseover="isHover = true; ind = index; sec = 'prev'" @mouseout="isHover = false; ind = -1; sec = ''">
+					<h6 class="card-subtitle mb-2 text-muted">{{ test.date }}</h6>
+					<div class="d-flex justify-content-between">
+						<b-button variant="outline-danger" size="sm" class="m-1" @click="delFiles(test);">
+                            <font-awesome-icon icon="fa-solid fa-trash" size="1x" />
+						</b-button>
+						<b-button variant="success" v-b-modal.viewFiles @click="viewFiles(test)">View</b-button>
 					</div>
-				</div>
-			</div>
-		</div>
-		<b-modal id="addTestFile" title="Add File" aria-labelledby="addTestFile" aria-hidden="true" :hide-footer="true">
-			<b-form @submit="addTestFile">
-				<input name="file" class="d-flex mx-auto my-1" type="file" @change="onFileChange" required/>
-				<div class="d-flex mb-1 justify-content-end">
-					<b-button-group>
-						<b-button type="reset" variant="danger" size="lg">Reset </b-button>
-						<b-button type="submit" variant="primary" size="lg"
-						:disabled="uploadText != 'Upload'">{{ uploadText }}</b-button>
-					</b-button-group>
-				</div>
-			</b-form>
-		</b-modal>
-	</div>
+				</b-card>
+			</b-col>
+		</b-row>
+	</b-container>
+    <Test :target="targetTest" ref="testRef" @submitClick="updateRes" />
 </template>
 
 <script setup>
+import Test from '@/components/Test.vue'
 import getCollection from '@/db/getCollection'
-import useDocument from '@/db/useDocument'
-import useStorage from '@/db/useStorage'
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -71,8 +73,44 @@ const props = defineProps({
 		required: true
 	}
 })
+const isHover = ref(false)
+const ind = ref(-1)
+const sec = ref('')
 const clas = ref('default')
-const res = ref([])
+const course = ref('default')
+const grade = ref(0)
+const subject = ref('default')
+const targetTest = ref({
+    id: '',
+    course: '',
+    class: 0,
+    subject: '',
+    topic: '',
+    fm: '',
+    date: '',
+    marked: false,
+    url: '', path: ''
+})
+const setTarget = () => {
+    targetTest.value.class = grade.value
+    targetTest.value.course = course.value
+    targetTest.value.subject = subject.value
+}
+
+const testRef = ref()
+const viewFiles = (test) => {
+    targetTest.value = test
+    setTimeout(() => {
+        testRef.value.setSheet()
+    }, 100)
+}
+const delFiles = (test) => {
+    targetTest.value = test
+    setTimeout(() => {
+        test.url ? testRef.value.delTest() : testRef.value.delDoc()
+    }, 100)
+}
+
 const prevTests = ref([])
 const tests = ref([])
 const nextTests = ref([])
@@ -82,14 +120,13 @@ const loadData = async() => {
 	}
 	const today = new Date().toJSON().slice(0, 10)
 	const arr = clas.value.split('_')
-	let course, grade, subject
 	if(arr.length == 3)
-		[course, grade, subject] = [arr[0], Number(arr[1]), arr[2]]
+		[course.value, grade.value, subject.value] = [arr[0], Number(arr[1]), arr[2]]
 	else
-		[course, grade, subject] = [arr[0]+'_'+arr[1], Number(arr[2]), arr[3]]
+		[course.value, grade.value, subject.value] = [arr[0]+'_'+arr[1], Number(arr[2]), arr[3]]
 
 	const docs = res.value.filter(doc => {
-		return doc.course == course && doc.class == grade && doc.subject == subject
+		return doc.course == course.value && doc.class == grade.value && doc.subject == subject.value
 	})
 
 	prevTests.value = []
@@ -108,49 +145,7 @@ const loadData = async() => {
 		}
 	})
 }
-
-const file1 = ref(null)
-const onFileChange = (e) => {
-    file1.value = e.target.files[0]
-}
-const openUrl = (url) => {
-    window.open(url)
-}
-const target = ref(null)
-const uploadText = ref('Upload')
-const addTestFile = async () => {
-    const btn = event.target.closest('.modal-content')
-                .querySelector('.btn-close')
-    let file = file1.value
-    let path = `tests/${target.value.course + '_' + target.value.class}/${target.value.subject}/${file.name}` 
-    uploadText.value = 'Uploading...'
-
-    await useStorage().uploadFile(file, path)
-    .then(async(fileRef) => {
-        if(fileRef) {
-            await (await useDocument('tests', target.value.id))
-            .updateDocs({
-                url: fileRef.url,
-                path: fileRef.snapshot.metadata.fullPath
-            }).then(() => {
-				// update the test in the array
-				const index = res.value.findIndex(test => test.id == target.value.id)
-				res.value[index].url = fileRef.url
-				res.value[index].path = fileRef.snapshot.metadata.fullPath
-                file1.value = null
-                btn.click()
-				uploadText.value = 'Upload'
-                loadData()
-            }).catch((err) => {
-                console.log(err)
-            })
-        }
-        else
-            console.log('File not uploaded')
-    }).catch((err) => {
-        console.log(err)
-    })
-}
+const res = ref([])
 await getCollection('tests')
 .getDocuments().then((data) => {
 	res.value = data
@@ -158,6 +153,21 @@ await getCollection('tests')
 }).catch((err) => {
 	console.log(err)
 })
+
+const updateRes = (mod, target) => {
+	if(mod == 'add') {
+		res.value.push(target)
+	} else if(mod == 'del') {
+		res.value = res.value.filter(doc => {
+			return doc.id != target.id
+		})
+	} else if(mod == 'edit') {
+		res.value = res.value.map(doc => {
+			return doc.id == target.id ? target : doc
+		})
+	}
+	loadData()
+}
 </script>
 
 <style>

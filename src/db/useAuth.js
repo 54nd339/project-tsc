@@ -2,7 +2,8 @@ import { ref } from 'vue'
 import { auth } from '@/db/config'
 import { createUserWithEmailAndPassword, updateProfile,
         signInWithEmailAndPassword, signOut,
-        onAuthStateChanged } from 'firebase/auth'
+        sendPasswordResetEmail, setPersistence,
+        browserSessionPersistence } from 'firebase/auth'
 
 const useAuth = () => {
     const error = ref(null)
@@ -26,15 +27,22 @@ const useAuth = () => {
     const login = async (email, password) => {
         isPending.value = true
 
-        return await signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            isPending.value = false
-            return userCredential.user
+        return await setPersistence(auth, browserSessionPersistence)
+        .then(async() => {
+            return await signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                isPending.value = false
+                return userCredential.user
+            }).catch((err) => {
+                console.log(err.message)
+                error.value = 'Incorrect login credentials'
+                isPending.value = false
+            }) 
         }).catch((err) => {
             console.log(err.message)
-            error.value = 'Incorrect login credentials'
+            error.value = 'Could not log in'
             isPending.value = false
-        }) 
+        })
     }
 
     const logout = async () => {
@@ -49,7 +57,19 @@ const useAuth = () => {
         })
     }
 
-    return { error, signup, login, logout, isPending }
+    const passwordReset = async (email) => {
+        isPending.value = true
+
+        return await sendPasswordResetEmail(auth, email)
+        .then(() => {
+            isPending.value = false
+        }).catch((err) => {
+            console.log(err.message)
+            error.value = 'Could not reset password'
+            isPending.value = false
+        })
+    }
+    return { error, signup, login, logout, passwordReset, isPending }
 }
 
 export default useAuth

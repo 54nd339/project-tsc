@@ -1,5 +1,5 @@
 <template>
-	<section class="container-fluid">
+	<b-container fluid>
 		<b-button-group class="my-1">
             <b-button variant="success" v-b-modal.addNotice>Add</b-button>
             <b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteNotice>Delete</b-button>
@@ -19,34 +19,34 @@
 				</tr>
 			</tbody>
 		</table></div>
-        <b-modal id="addNotice" title="Add Notice" aria-labelledby="addNotice" aria-hidden="true" :hide-footer="true">
-            <b-form @submit="addNotice">
-                <b-form-input v-model="title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />
-                <b-form-textarea v-model="context" class="d-flex mx-auto my-1" size="lg" no-resize
-                    placeholder="Enter Context" rows="3" max-rows="8" required />
-                <div class="d-flex mb-1 justify-content-end">
-                    <b-button-group>
-                        <b-button type="reset" variant="danger" size="lg">Reset </b-button>
-                        <b-button type="submit" variant="primary" size="lg">Submit</b-button>
-                    </b-button-group>
-                </div>
-            </b-form>
-        </b-modal>
-        <b-modal id="modifyNotice" title="Modify Notice" aria-labelledby="modifyNotice" aria-hidden="true" :hide-footer="true">
-            <b-form @submit="modNotice">
-                <b-form-input v-model="target.title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />
-                <b-form-textarea v-model="target.context" class="d-flex mx-auto my-1" size="lg" no-resize
-                    placeholder="Enter Context" rows="3" max-rows="8" required />
-                <div class="d-flex mb-1 justify-content-end">
-                    <b-button-group>
-                        <b-button type="reset" variant="danger" size="lg">Reset </b-button>
-                        <b-button type="submit" variant="primary" size="lg">Submit</b-button>
-                    </b-button-group>
-                </div>
-            </b-form>
-        </b-modal>
-		<DeleteModal title="Notice" :ids="selected" @submitClick="delNotice"/>
-	</section>
+	</b-container>
+    <b-modal id="addNotice" title="Add Notice" aria-labelledby="addNotice" aria-hidden="true" :hide-footer="true">
+        <b-form @submit="addNotice">
+            <b-form-input v-model="title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />
+            <b-form-textarea v-model="context" class="d-flex mx-auto my-1" size="lg" no-resize
+                placeholder="Enter Context" rows="3" max-rows="8" required />
+            <div class="d-flex mb-1 justify-content-end">
+                <b-button-group>
+                    <b-button type="reset" variant="danger" size="lg">Reset </b-button>
+                    <b-button type="submit" variant="primary" size="lg">Submit</b-button>
+                </b-button-group>
+            </div>
+        </b-form>
+    </b-modal>
+    <b-modal id="modifyNotice" title="Modify Notice" aria-labelledby="modifyNotice" aria-hidden="true" :hide-footer="true">
+        <b-form @submit="modNotice">
+            <b-form-input v-model="target.title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />
+            <b-form-textarea v-model="target.context" class="d-flex mx-auto my-1" size="lg" no-resize
+                placeholder="Enter Context" rows="3" max-rows="8" required />
+            <div class="d-flex mb-1 justify-content-end">
+                <b-button-group>
+                    <b-button type="reset" variant="danger" size="lg">Reset </b-button>
+                    <b-button type="submit" variant="primary" size="lg">Submit</b-button>
+                </b-button-group>
+            </div>
+        </b-form>
+    </b-modal>
+    <DeleteModal title="Notice" :ids="selected" @submitClick="delNotice"/>
 </template>
 
 <script setup>
@@ -89,16 +89,13 @@ const refresh = () => {
 const title = ref('')
 const context = ref('')
 const addNotice = async() => {
-    await (await addCollection('notices'))
-    .addDocument('', {
+    const newNotice = {
         title: title.value,
         context: context.value
-    }).then((uid) => {
-        notices.value.push({
-            id: uid,
-            title: title.value,
-            context: context.value
-        })
+    }
+    await (await addCollection('notices'))
+    .addDocument('', newNotice).then((uid) => {
+        notices.value.push({ id: uid, ...newNotice })
         title.value = ''
         context.value = ''
         refresh()
@@ -128,8 +125,11 @@ const delNotice = (ids) => {
 		notices.value = notices.value.filter((notice) => notice.id != id)
 	})
 }
+
 </script>
 
 <style>
-
+/* body {
+    background-color: #f5f5f5;
+} */
 </style>

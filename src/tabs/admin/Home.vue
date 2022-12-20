@@ -1,14 +1,14 @@
 <template>
-	<div id="content" class="container-fluid">
-		<div class="row justify-content-center">
+	<b-container fluid id="content">
+		<b-row class="justify-content-center">
 			<TimeTable :courseList="courses" :gradeList="grades" :subjectList="subjects" />
 			<Tests :courseList="courses" :gradeList="grades" :subjectList="subjects" />
-		</div>
-		<div class="row justify-content-center">
+		</b-row>
+		<b-row class="justify-content-center">
 			<Uploads :courseList="courses" :gradeList="grades" :subjectList="subjects" />
 			<Admins />
-		</div>
-	</div>
+		</b-row>
+	</b-container>
 </template>
 
 <script setup>

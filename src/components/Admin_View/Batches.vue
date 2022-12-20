@@ -1,5 +1,5 @@
 <template>
-	<section class="container-fluid">
+	<b-container fluid>
 		<b-button-group class="my-1">
             <b-button variant="success" v-b-modal.addBatch>Add</b-button>
             <b-button v-if="selected.length > 0" variant="danger" v-b-modal.deleteBatch>Delete</b-button>
@@ -26,38 +26,38 @@
 				</tr>
 			</tbody>
 		</table></div>
-        <b-modal id="addBatch" title="Add Batch" aria-labelledby="addBatch" aria-hidden="true" :hide-footer="true">
-            <b-form @submit="addBatch">
-                <b-form-input v-model="title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />
-                <b-form-input v-model="subtitle" class="d-flex mx-auto my-1" size="lg" placeholder="Enter SubTitle" required />
-                <b-form-textarea v-model="context" class="d-flex mx-auto my-1" size="lg" no-resize
-                    placeholder="Enter Context" rows="3" max-rows="8" required />
-                <input name="file" class="d-flex mx-auto my-1" type="file" @change="onFileChange" required/>
-                <div class="d-flex mb-1 justify-content-end">
-                    <b-button-group>
-                        <b-button type="reset" variant="danger" size="lg">Reset </b-button>
-                        <b-button type="submit" variant="primary" size="lg"
-                            :disabled="uploadText != 'Upload'">{{ uploadText }}</b-button>
-                    </b-button-group>
-                </div>
-            </b-form>
-        </b-modal>
-        <b-modal id="modifyBatch" title="Modify Batch" aria-labelledby="modifyBatch" aria-hidden="true" :hide-footer="true">
-            <b-form @submit="modBatch">
-                <b-form-input v-model="target.title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />
-                <b-form-input v-model="target.subtitle" class="d-flex mx-auto my-1" size="lg" placeholder="Enter SubTitle" required />
-                <b-form-textarea v-model="target.context" class="d-flex mx-auto my-1" size="lg" no-resize
-                    placeholder="Enter Context" rows="3" max-rows="8" required />
-                <div class="d-flex mb-1 justify-content-end">
-                    <b-button-group>
-                        <b-button type="reset" variant="danger" size="lg">Reset </b-button>
-                        <b-button type="submit" variant="primary" size="lg">Submit</b-button>
-                    </b-button-group>
-                </div>
-            </b-form>
-        </b-modal>
-		<ViewImage name="Batch" :title="target.title" :src="target.url" />
-	</section>
+    </b-container>
+    <b-modal id="addBatch" title="Add Batch" aria-labelledby="addBatch" aria-hidden="true" :hide-footer="true">
+        <b-form @submit="addBatch">
+            <b-form-input v-model="title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />
+            <b-form-input v-model="subtitle" class="d-flex mx-auto my-1" size="lg" placeholder="Enter SubTitle" required />
+            <b-form-textarea v-model="context" class="d-flex mx-auto my-1" size="lg" no-resize
+                placeholder="Enter Context" rows="3" max-rows="8" required />
+            <input name="file" class="d-flex mx-auto my-1" type="file" @change="onFileChange" required/>
+            <div class="d-flex mb-1 justify-content-end">
+                <b-button-group>
+                    <b-button type="reset" variant="danger" size="lg">Reset </b-button>
+                    <b-button type="submit" variant="primary" size="lg"
+                        :disabled="uploadText != 'Upload'">{{ uploadText }}</b-button>
+                </b-button-group>
+            </div>
+        </b-form>
+    </b-modal>
+    <b-modal id="modifyBatch" title="Modify Batch" aria-labelledby="modifyBatch" aria-hidden="true" :hide-footer="true">
+        <b-form @submit="modBatch">
+            <b-form-input v-model="target.title" class="d-flex mx-auto my-1" size="lg" placeholder="Enter Title" required />
+            <b-form-input v-model="target.subtitle" class="d-flex mx-auto my-1" size="lg" placeholder="Enter SubTitle" required />
+            <b-form-textarea v-model="target.context" class="d-flex mx-auto my-1" size="lg" no-resize
+                placeholder="Enter Context" rows="3" max-rows="8" required />
+            <div class="d-flex mb-1 justify-content-end">
+                <b-button-group>
+                    <b-button type="reset" variant="danger" size="lg">Reset </b-button>
+                    <b-button type="submit" variant="primary" size="lg">Submit</b-button>
+                </b-button-group>
+            </div>
+        </b-form>
+    </b-modal>
+    <ViewImage name="Batch" :title="target.title" :src="target.url" />
 </template>
 
 <script setup>
@@ -108,30 +108,41 @@ const onFileChange = (e) => {
     file1.value = e.target.files[0]
 }
 
+const summarise = async(context) => {
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            prompt: 'Summarise this in less than 75 words:\n"' + context + '"',
+        })
+    }
+    const response = await fetch('https://us-central1-tsc-web-361112.cloudfunctions.net/generate', requestOptions)
+    const data = await response.json()
+    return data.result
+}
+
 const addBatch = async() => {
     let file = file1.value
     let path = `gallery/batches/${file.name}` 
     uploadText.value = 'Uploading...'
 
-    await useStorage().uploadFile(file, path).then(async(res) => {
+    await useStorage().uploadFile(file, path)
+    .then(async(res) => {
         if(res) {
-            await (await addCollection('batches')).addDocument('', {
+            const newBatch = {
                 title: title.value,
                 subtitle: subtitle.value,
                 context: context.value,
+                summary: await summarise(context.value),
                 url: res.url,
                 path: res.snapshot.metadata.fullPath,
                 date: res.snapshot.metadata.timeCreated
-            }).then((uid) => {
-                batches.value.push({
-                    id: uid,
-                    title: title.value,
-                    subtitle: subtitle.value,
-                    context: context.value,
-                    url: res.url,
-                    path: res.snapshot.metadata.fullPath,
-                    date: res.snapshot.metadata.timeCreated
-                })
+            }
+            await (await addCollection('batches'))
+            .addDocument('', newBatch).then((uid) => {
+                batches.value.push({ id: uid, ...newBatch })
                 title.value = ''
                 subtitle.value = ''
                 context.value = ''
@@ -151,7 +162,11 @@ const addBatch = async() => {
 const modBatch = async() => {
     const btn = event.target.closest('.modal-content')
                         .querySelector('.btn-close')
-                        
+    
+    if(target.value.context != batches.value.find((batch) => batch.id == target.value.id).context) {
+        target.value.summary = await summarise(target.value.context)
+    }
+
     await(await useDocument('batches', target.value.id))
     .updateDocs(target.value).then(() => {
         btn.click()
