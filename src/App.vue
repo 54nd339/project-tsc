@@ -25,6 +25,7 @@
 .sticky-top {
 	position: fixed; top: 0;
     transition: all 0.25s ease-in;
+	width: 100%;
 }
 .stuck .navbar.sticky-top {
     padding-top: .1rem !important;
