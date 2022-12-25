@@ -8,7 +8,7 @@
                 <div class="scroller p-3">
                     <div class="scroller__item m-2 rounded border border-success" v-for="(topper, index) in toppers" :key="topper"
                         :class="{ shadow: isHover && ind == index }"  @mouseover="isHover = true; ind = index" @mouseout="isHover = false; ind = -1">
-                        <img :src="topper.url" width="250" height="250" />
+                        <img :src="topper.url" width="250" height="250" alt="topper" />
                         <div class="d-flex flex-column align-items-center justify-content-center">
                             <h4><strong>{{ topper.name }}</strong></h4>
                             <h6>{{ topper.course }} : {{ topper.score }}</h6>

@@ -4,7 +4,7 @@
         <b-row align-h="center">
             <b-col md="4" class="p-2" v-for="(image, index) in images" :key="image">
                 <b-container class="m-1 p-4 shadow rounded h-100 border border-success text-center">
-                    <b-img :src="require(`../../assets/images/our_process_${index+1}.png`)" alt="Our Process"
+                    <b-img :src="getSrc(index)" alt="Our Process"
                         class="img-fluid" height="85px" width="85px" />
                     <h2>{{ image.title }}</h2>
                     <p>{{ image.context }}</p>
@@ -28,6 +28,10 @@ const images = [{
     title: 'How are we unique?',
     context: 'Individual attention and performance analysis are the key factors to our success. Of course, we have other secret ingredients as well!'
 }]
+
+const getSrc = (index) => {
+    return new URL(`../../assets/images/our_process_${index+1}.png`, import.meta.url).href
+}
 </script>
 
 <style>

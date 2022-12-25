@@ -5,7 +5,7 @@
                 <b-row class="p-md-2">
                     <b-row class="justify-content-center">
                         <a class="navbar-brand" href="#">
-                            <img src="@/assets/logos/TSC_Wide_Banner.png" class="img-fluid">
+                            <img src="@/assets/logos/TSC_Wide_Banner.png" class="img-fluid" alt="banner">
                         </a>
                     </b-row>
                     <b-row align-h="end" class="mx-auto mt-2 d-flex justify-content-center">

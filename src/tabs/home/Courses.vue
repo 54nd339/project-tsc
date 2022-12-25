@@ -6,7 +6,7 @@
 				<p class="lead">{{ batch.context }}</p>
 			</div>
 			<div :class="[(index%2) == 0 ? '' : 'order-md-1', 'col-md-5']" class="justify-content-center">
-				<img :src="batch.url" class="img-fluid shadow rounded" height="500" width="500" />
+				<img :src="batch.url" class="img-fluid shadow rounded" height="500" width="500" alt="courses" />
 			</div>
 		</b-row>
 		<hr class="featurette-divider" v-if="index != batches.length - 1">

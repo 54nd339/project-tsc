@@ -1,45 +1,43 @@
 <template>
 	<header>
-	<nav class="navbar navbar-expand-md sticky-top border-bottom bg-light shadow bg-body">
-		<div class="container-fluid">
-			<a class="navbar-brand" href="#" style="max-width: 2.5%;" @click="home()">
-				<img src="@/assets/logos/logo_coloured.png" class="img-fluid">
-			</a>
-			<h1 class="navbar-brand d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-2 mb-1 text-primary" v-if="userType === 'Guest'">{{ name }}</h1>
-			<h3 class="navbar-brand d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-2 mb-1 text-success" v-else>{{ greeting }}, {{ userName }}!</h3>
-			<b-button class="navbar-toggler collapsed position-relative" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-				<span> </span><span> </span><span> </span>
-			</b-button>
+	<nav class="navbar navbar-expand-lg sticky-top border-bottom bg-light shadow bg-body">
+		<a class="navbar-brand mx-2" href="#" style="width: 35px;" @click="home()">
+			<img src="@/assets/logos/logo_coloured.png" alt="logo" class="img-fluid">
+		</a>
+		<h1 class="navbar-brand d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-2 mb-1 text-primary" v-if="userType === 'Guest'">{{ name }}</h1>
+		<h3 class="navbar-brand d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-2 mb-1 text-success" v-else>{{ greeting }}, {{ userName }}!</h3>
+		<b-button class="navbar-toggler collapsed position-relative" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+			<span> </span><span> </span><span> </span>
+		</b-button>
 
-			<div class="collapse navbar-collapse justify-content-center" id="navbarCollapse">
-				<div class="nav nav-pills col-12 col-md-auto mb-2 text-center mb-md-0">
-					<button :id="`${tab.id}_pill`" class="nav-link" :class="{active: !index}"
-						v-for="(tab, index) in tabs[userType]" :key="tab" 
-						data-bs-toggle="pill" :data-bs-target="`#${tab.id}`">
-							{{ tab.name }}
-					</button>
-				</div>
-				<div class="col-md-3 text-end" v-if="userType === 'Guest'">
-					<b-button-group class="mx-md-2">
-						<b-button id="login" variant="outline-success" v-b-modal.loginForm>Login</b-button>
-						<b-button id="register" variant="success" v-b-modal.registerForm>Register</b-button>
-					</b-button-group>
-					<Register />
-				</div>
-				<div class="col-md-3 text-end" v-else>
-					<b-button-group class="mx-md-1">
-						<b-button id="search" variant="outline-success" v-b-modal.searchModal>
-							<font-awesome-icon icon="fa-solid fa-magnifying-glass" />
-						</b-button>
-						<b-button id="setting" variant="outline-success" v-b-modal.modifyUser @click="invoke">
-							<font-awesome-icon icon="fa-solid fa-gear" />
-						</b-button>
-					</b-button-group>
-					<Search :name="userName" />
-    				<ModifyUser :title="`Nav_${userType}`" :id="uid" ref="modRef" @setNav="modUser"/>
-					<b-button id="logout" variant="outline-success" class="mx-md-1" v-b-modal.logoutConfirm>Logout</b-button>
-				</div> 
+		<div class="collapse navbar-collapse justify-content-center" id="navbarCollapse">
+			<div class="nav nav-pills col-12 col-md-auto mb-2 text-center mb-md-0">
+				<button :id="`${tab.id}_pill`" class="nav-link" :class="{active: !index}"
+					v-for="(tab, index) in tabs[userType]" :key="tab" 
+					data-bs-toggle="pill" :data-bs-target="`#${tab.id}`">
+						{{ tab.name }}
+				</button>
 			</div>
+			<div class="col-md-3 text-end" v-if="userType === 'Guest'">
+				<b-button-group class="mx-md-2">
+					<b-button id="login" variant="outline-success" v-b-modal.loginForm>Login</b-button>
+					<b-button id="register" variant="success" v-b-modal.registerForm>Register</b-button>
+				</b-button-group>
+				<Register />
+			</div>
+			<div class="col-md-3 text-end" v-else>
+				<b-button-group class="mx-md-1">
+					<b-button id="search" variant="outline-success" v-b-modal.searchModal>
+						<font-awesome-icon icon="fa-solid fa-magnifying-glass" />
+					</b-button>
+					<b-button id="setting" variant="outline-success" v-b-modal.modifyUser @click="invoke">
+						<font-awesome-icon icon="fa-solid fa-gear" />
+					</b-button>
+				</b-button-group>
+				<Search :name="userName" />
+				<ModifyUser :title="`Nav_${userType}`" :id="uid" ref="modRef" @setNav="modUser"/>
+				<b-button id="logout" variant="outline-success" class="mx-md-1" v-b-modal.logoutConfirm>Logout</b-button>
+			</div> 
 		</div>
 	</nav>
 	</header>

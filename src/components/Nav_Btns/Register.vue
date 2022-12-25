@@ -17,7 +17,7 @@
 			</b-card>
 			<b-card id="pay" class="fade">
 				<p>Pay Here, ignore if you have already paid. You'll be Informed Soon. Contact 9439133317 for fee details and approval status.</p>
-				<b-img src="https://www.payumoney.com/media/images/payby_payumoney/new_buttons/21.png" fluid />
+				<b-img src="https://www.payumoney.com/media/images/payby_payumoney/new_buttons/21.png" fluid alt="QR" />
 				<b-input-group prepend="Upload Screenshot">
 					<input type="file" class="d-flex mx-auto my-1" :name="payscreen" @change="onPayChange" required/>
 				</b-input-group>

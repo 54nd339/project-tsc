@@ -1,33 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-IN">
   <head>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="title" content="Talent Sprint Classes">
     <meta name="description" content="Join Talent Sprint Classes, One of the best coaching institute for board and entrances exams in Berhampur">
     <meta name="keywords" content="Talent Sprint Classes, Institution in Berhampur, ICSE, CBSE, JEE, NEET, preparation, courses, Classes, Talent Sprint, Study, Coaching centre, Coaching, Bidwan Classes, Gajapati Nagar, CBSE Hub">
     <meta name="robots" content="index, follow">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="language" content="English">
     <meta name="revisit-after" content="15 days">
     <meta name="author" content="4rt3mi5">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="icon" href="/favicon.ico">
     <title>Talent Sprint Classes - Find the best in you</title>
   </head>
   <body>
-    <span class="position-absolute trigger"> <!-- hidden trigger to apply 'stuck' styles --> </span>
+    <span class="position-absolute trigger">
+      <!-- hidden trigger to apply 'stuck' styles -->
+    </span>
     <noscript>
       <strong>We're sorry but 'Talent Sprint Classes' doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app"></div>
-    <!-- built files will be auto injected -->
+    <script type="module" src="/src/main.js"></script>
   </body>
   <script>
     (new IntersectionObserver((e,o) => {
-        if (e[0].intersectionRatio > 0)
-                document.documentElement.removeAttribute('class')
-        else 
-                document.documentElement.setAttribute('class','stuck')
+      if (e[0].intersectionRatio > 0)
+        document.documentElement.removeAttribute('class')
+      else 
+        document.documentElement.setAttribute('class','stuck')
     })).observe(document.querySelector('.trigger'))
   </script>
 </html>
