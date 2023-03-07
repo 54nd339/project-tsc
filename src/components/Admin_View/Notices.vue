@@ -59,7 +59,7 @@ import { ref } from 'vue'
 const notices = ref([])
 await(getCollection('notices'))
 .getDocuments().then((docs) => {
-    notices.value = docs
+    notices.value = docs.filter((doc) => doc.id != 'feedback')
 }).catch((err) => {
     console.log(err)
 })

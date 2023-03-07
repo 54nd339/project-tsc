@@ -88,7 +88,7 @@
 		<b-modal size="lg" id="viewStat" title="Teacher Ratings" aria-labelledby="viewRate" aria-hidden="true" :hide-footer="true">
 			<div class="d-flex justify-content-center"> Total Responses: {{ count }}</div>
 			<div class="d-flex mb-1 justify-content-center">
-				<b-form><b-form-group v-for="(question, index) in questions" :key="question"
+				<b-form><b-form-group v-for="(question, index) in queries" :key="question"
 					content-cols="2" :label="question"> {{ getRating(target.rating, index) }} / 5 </b-form-group>
 				</b-form>
 			</div>
@@ -120,17 +120,14 @@ const props = defineProps({
 		required: true
 	}
 })
-const questions = [
-    "Q1. The teacher covers the whole syllabus :",
-    "Q2. The teacher discusses syllabus in detail :",
-    "Q3. The teacher possesses deep knowledege of the subject taught :",
-    "Q4. The teacher communicates clearly :",
-    "Q5. The teacher inspires me by his/her knowledege in the subject :",
-    "Q6. The teacher is punctual to the class :",
-    "Q7. The teacher engages the class for the full duration and completes the course in time :",
-    "Q8. The teacher comes fully prepared for the class :",
-    "Q9. The teacher provides guidance counselling in academic and non-academic matters in/out side the class :"
-]
+
+const queries = ref([])
+await(await useDocument('notices', 'feedback'))
+.getDetail().then((data) => {
+    queries.value = data.queries
+}).catch((err) => {
+    console.log(err)
+})
 
 const target = ref({})
 const editMode = ref(false)
@@ -212,6 +209,9 @@ const getRating = (rating, ind) => {
 		return 0
 	}
 	count.value = rating.count
+	if(rating.count == 0) {
+		return 0
+	}
 	return (rating.vals[ind] / rating.count).toFixed(2)
 }
 const ResetRate = async() => {
@@ -223,12 +223,12 @@ const ResetRate = async() => {
 		.updateDocs({
 			rating: {
 				count: 0, val: 0,
-				vals: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+				vals: Array(queries.value.length).fill(0)
 			}
 		}).then(() => {
 			teacher.rating = {
 				count: 0, val: 0,
-				vals: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+				vals: Array(queries.value.length).fill(0)
 			}			
 		}).catch((err) => {
 			console.log(err)

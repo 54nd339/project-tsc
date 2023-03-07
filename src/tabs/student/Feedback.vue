@@ -41,17 +41,13 @@ const options = [
     { name: 'Agree', item: 4 },
     { name: 'Strongly Agree', item: 5 }
 ]
-const questions = [
-    "Q1. The teacher covers the whole syllabus :",
-    "Q2. The teacher discusses syllabus in detail :",
-    "Q3. The teacher possesses deep knowledege of the subject taught :",
-    "Q4. The teacher communicates clearly :",
-    "Q5. The teacher inspires me by his/her knowledege in the subject :",
-    "Q6. The teacher is punctual to the class :",
-    "Q7. The teacher engages the class for the full duration and completes the course in time :",
-    "Q8. The teacher comes fully prepared for the class :",
-    "Q9. The teacher provides guidance counselling in academic and non-academic matters in/out side the class :"
-]
+const questions = ref([])
+await(await useDocument('notices', 'feedback'))
+.getDetail().then((data) => {
+    questions.value = data.queries
+}).catch((err) => {
+    console.log(err)
+})
 
 const selects = Array.from({ length: questions.length }, () => ref(0))
 const teacherId = ref('default')

@@ -12,6 +12,12 @@
 		</b-row>
 		<hr class="featurette-divider">
 
+		<b-row id="notices" class="featurette">
+			<h2 class="featurette-heading pb-md-2">Feedback</h2>
+			<Feedback />
+		</b-row>
+		<hr class="featurette-divider">
+
 		<b-row id="toppers" class="featurette">
 			<h2 class="featurette-heading pb-md-2">Toppers</h2>
 			<Toppers />
@@ -40,12 +46,11 @@
 <script setup>
 import Enquiries from '@/components/Admin_View/Enquiries.vue'
 import Notices from '@/components/Admin_View/Notices.vue'
+import Feedback from '@/components/Admin_View/Feedback.vue'
 import Toppers from '@/components/Admin_View/Toppers.vue'
 import Gallery from '@/components/Admin_View/Gallery.vue'
 import Faqs from '@/components/Admin_View/Faqs.vue'
 import Batches from '@/components/Admin_View/Batches.vue'
-
-// do something
 </script>
 
 <style>

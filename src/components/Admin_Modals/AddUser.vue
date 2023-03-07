@@ -103,7 +103,7 @@ const onSubmit = async() => {
 						rating: {
 							count: 0,
 							val: 0,
-							vals: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+							vals: []
 						},
 						todo: []
 					}).then(() => {
@@ -117,7 +117,7 @@ const onSubmit = async() => {
 							rating: {
 								count: 0,
 								val: 0,
-								vals: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+								vals: []
 							},
 						})
 					}).catch((err) => {
