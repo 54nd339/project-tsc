@@ -8,6 +8,7 @@
 		<b-button-group class="my-1 d-flex">
 			<b-button v-b-modal.promoteAll>Promote All</b-button>
 			<b-button v-b-modal.resetStudent>Reset Attendance</b-button>
+			<b-button v-b-modal.resetFee>Reset Fees</b-button>
 			<b-button v-b-modal.closeFeedback v-if="course != 'default' && grade != 0 && subject != 'default' && openfb">Close Feedback</b-button>
 			<b-button v-if="course != 'default' && grade != 0 && subject != 'default' && !openfb" @click="openFeedback">Open Feedback</b-button>
 			<b-button @click="editMode = !editMode; if(!editMode) saveEdits()">{{ editMode ? 'Save Edits' : 'Enter Edit Mode' }}</b-button>
@@ -32,6 +33,7 @@
 				<th scope="col">Phone</th>
 				<th scope="col">Email</th>
 				<th scope="col">Attendance</th>
+				<th scope="col">Fees</th>
 				<th scope="col" v-if="subject != 'default'">Marks</th>
 			</tr></thead>
 			<tbody ref="rows" id="rows">
@@ -63,6 +65,11 @@
 								<b-form-input type="number" v-model="student.attendance" />
 							</b-input-group>
 						</td>
+					</tr></td>
+					<td><tr>
+						<td v-if="student.paid">
+							<b-button @click="targetStud = student" v-b-modal.FeePic>View</b-button>
+						</td><td v-else>Not Paid</td>
 					</tr></td>
 					<td v-if="subject != 'default'">
 						<b-button v-if="!editMode" variant="primary" v-b-modal.viewStudentChart @click="target = student">View</b-button>
@@ -100,10 +107,17 @@
 				<b-button type="Close" variant="danger d-flex mx-auto mt-2" size="lg">Close</b-button>
 			</b-form>
 		</b-modal>
+		<b-modal id="resetFee" title="Reset Fees" aria-labelledby="Reset Fees" aria-hidden="true" :hide-footer="true">
+			<b-form @submit="resetFees">
+				<p class="justify-content-center align-items-center" id="promoteText">Confirm Reset?</p>
+				<b-button type="Close" variant="danger d-flex mx-auto mt-2" size="lg">Reset</b-button>
+			</b-form>
+		</b-modal>
 		<b-modal size="lg" id="viewStudentChart" title="Performance" aria-labelledby="ViewChart" aria-hidden="true" :hide-footer="true">
 			<ViewChart chartId="studentPerformModal" :scores="target.subjects[subject]"
 				:course="target.course" :grade="target.class" :sub="subject" :key="JSON.stringify(target) + subject" />
 		</b-modal>
+		<ViewImage name="FeePic" :title="`${targetStud.name} Fees`" :src="targetStud.ssURL" />
 	</b-container>
 </template>
 
@@ -112,10 +126,12 @@ import AddUser from '@/components/Admin_Modals/AddUser.vue'
 import DeleteModal from '@/components/Admin_Modals/DeleteModal.vue'
 import ModifyUser from '@/components/Admin_Modals/ModifyUser.vue'
 import ResetUser from '@/components/Admin_Modals/ResetUser.vue'
+import ViewImage from '@/components/Admin_Modals/ViewImage.vue'
 import ViewChart from '@/components/ViewChart.vue'
 
 import getCollection from '@/db/getCollection'
 import useDocument from '@/db/useDocument'
+import useStorage from '@/db/useStorage'
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -135,7 +151,10 @@ const props = defineProps({
 const course = ref('default')
 const grade = ref(0)
 const subject = ref('default')
-const targetMark = ref(null)
+const targetStud = ref({
+	name: '',
+	ssURL: ''
+})
 const target = ref({
 	subjects: {},
 	course: '',
@@ -151,7 +170,6 @@ const fetchData = async () => {
 		console.log(err)
 	})
 }
-
 const students = ref([])
 const selected = ref([])
 const docID = ref('default')
@@ -224,6 +242,7 @@ const resetAtt = (students) => {
 const saveAtt = async() => {
 	event.target.closest('.modal-content')
 				.querySelector('.btn-close').click()
+
 	selected.value.forEach(async (id) => {
 		await (await useDocument('students', id))
 		.updateDocs({
@@ -241,6 +260,7 @@ const saveAtt = async() => {
 const promoteAll = async() => {
 	event.target.closest('.modal-content')
 				.querySelector('.btn-close').click()
+
 	students.value.forEach(async(student) => {
 		student.class += 1
 		await (await useDocument('students', student.id))
@@ -253,6 +273,40 @@ const promoteAll = async() => {
 		})
 	})
 }
+
+const resetFees = () => (async() => {
+	event.target.closest('.modal-content')
+				.querySelector('.btn-close').click()
+    
+	students.value.forEach(async(student) => {
+		await useStorage().deleteFile(student.ssPath)
+		.then(async(file) => {
+			if(file) {
+				await (await useDocument('students', student.id))
+				.updateDocs({
+					paid: false,
+					ssURL: '',
+					ssPath: '',
+				}).then(() => {
+					const index = res.value.findIndex((user) => user.id == student.id)
+					res.value[index].paid = false
+					res.value[index].ssURL = ''
+					res.value[index].ssPath = ''		
+				}).catch((err) => {
+					console.log(err)
+				})
+			}
+			else
+				console.log('File not found')
+		}).catch((err) => {
+			console.log(err)
+		})
+	})
+})().then(() => {
+	loadData()
+}).catch((err) => {
+	console.log(err)
+})
 
 const openfb = ref(false)
 const openFeedback = () => (async() => {
@@ -272,6 +326,7 @@ const openFeedback = () => (async() => {
 const closeFeedback = () => (async() => {
 	event.target.closest('.modal-content')
 				.querySelector('.btn-close').click()
+
 	students.value.forEach(async (student) => {
 		await (await useDocument('students', student.id))
 		.updateDocs({feedback: 'default'}).then(() => {

@@ -78,6 +78,9 @@ const onSubmit = async() => {
 						class: props.cls,
 						course: props.crs,
 						feedback: 'default',
+						paid: true,
+						ssURL: '',
+						ssPath: '',
 						subjects: {}
 					}).then(() => {
 						emit('submitClick', {
@@ -89,6 +92,9 @@ const onSubmit = async() => {
 							class: props.cls,
 							course: props.crs,
 							feedback: 'default',
+							paid: true,
+							ssURL: '',
+							ssPath: '',
 							subjects: {}
 						})
 					}).catch((err) => {
@@ -127,8 +133,7 @@ const onSubmit = async() => {
 			}).catch((err) => {
 				console.log(err)
 			})
-		}
-		else {
+		} else {
 			console.log('error')
 		}
 	})

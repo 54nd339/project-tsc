@@ -33,8 +33,12 @@
 					<b-button id="setting" variant="outline-success" v-b-modal.modifyUser @click="invoke">
 						<font-awesome-icon icon="fa-solid fa-gear" />
 					</b-button>
+					<b-button id="setting" variant="outline-success" v-b-modal.payFee v-if="userType === 'Student'">
+						<font-awesome-icon icon="fa-solid fa-indian-rupee-sign" />
+					</b-button>
 				</b-button-group>
 				<Search :name="userName" />
+				<Fee v-if="userType === 'Student'" />
 				<ModifyUser :title="`Nav_${userType}`" :id="uid" ref="modRef" @setNav="modUser"/>
 				<b-button id="logout" variant="outline-success" class="mx-md-1" v-b-modal.logoutConfirm>Logout</b-button>
 			</div> 
@@ -48,6 +52,7 @@
 import LogUser from '@/components/Nav_Btns/LogUser.vue'
 import Register from '@/components/Nav_Btns/Register.vue'
 import Search from '@/components/Nav_Btns/Search.vue'
+import Fee from '@/components/Nav_Btns/Fee.vue'
 import ModifyUser from '@/components/Admin_Modals/ModifyUser.vue'
 
 import { db } from '@/db/config'
@@ -102,6 +107,8 @@ const userName = ref('User')
 const dob = ref('')
 const email = ref('')
 const uid = ref('')
+const clas = ref('')
+const course = ref('')
 if(userType.value != 'Guest') { 
 	uid.value = route.params.id
 	const docName = routeName.toString().toLowerCase() + 's'
@@ -112,6 +119,10 @@ if(userType.value != 'Guest') {
 			userName.value = doc.data().name
 			dob.value = doc.data().dob
 			email.value = doc.data().email
+			if(userType.value == 'Student') {
+				clas.value = doc.data().class
+				course.value = doc.data().course
+			}
 		} else {
 			console.log("No User Found!")
 		}
@@ -119,6 +130,7 @@ if(userType.value != 'Guest') {
 		console.log("Error getting document:", error)
 	})
 }
+
 const greeting = ref('Welcome')
 const today = new Date()
 const bday = new Date(dob.value)

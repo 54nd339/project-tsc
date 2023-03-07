@@ -9,10 +9,10 @@ import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faYoutube, faInstagram, faFacebook } from '@fortawesome/free-brands-svg-icons'
 import { faAnglesUp, faPenToSquare, faPlus, faTrash, faCheck, faLocationDot,
-    faMagnifyingGlass, faGear } from '@fortawesome/free-solid-svg-icons'
+    faMagnifyingGlass, faGear, faIndianRupeeSign } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faYoutube, faInstagram, faFacebook, faAnglesUp, faPenToSquare, faTrash, faPlus,
-    faCheck, faLocationDot, faMagnifyingGlass, faGear)
+    faCheck, faLocationDot, faMagnifyingGlass, faGear, faIndianRupeeSign)
 
 import App from '@/App.vue'
 import router from '@/router/index.js'
