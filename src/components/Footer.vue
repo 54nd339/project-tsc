@@ -6,7 +6,7 @@
 			</button>
 		</p>
 		<div id="details" class="nav justify-content-center">
-			<p>&copy; 2017–2022 <b>Talent Sprint Classes</b></p>
+			<p>&copy; 2017–2023 <b>Talent Sprint Classes</b></p>
 			<p>&middot; All Rights Reserved</p>
 			<p>&middot; Made with 💖 by <b>4rt3mi5</b></p>
 		</div>

@@ -24,6 +24,7 @@
 					<b-button id="register" variant="success" v-b-modal.registerForm>Register</b-button>
 				</b-button-group>
 				<Register />
+				<LogUser :user="userType" />
 			</div>
 			<div class="col-md-3 text-end" v-else>
 				<b-button-group class="mx-md-1">
@@ -39,13 +40,12 @@
 				</b-button-group>
 				<Search :name="userName" />
 				<Fee v-if="userType === 'Student'" />
-				<ModifyUser :title="`Nav_${userType}`" :id="uid" ref="modRef" @setNav="modUser"/>
+				<ModifyUser :title="`Nav_${userType}`" :id="uid" ref="modRef" @setNav="modUser" />
 				<b-button id="logout" variant="outline-success" class="mx-md-1" v-b-modal.logoutConfirm>Logout</b-button>
 			</div> 
 		</div>
 	</nav>
 	</header>
-	<LogUser :user="userType" />
 </template>
 
 <script setup>
