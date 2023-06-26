@@ -1,29 +1,32 @@
-# project-tsc
+# Talent Sprint Classes
 
-This template should help get you started developing with Vue 3 in Vite.
+This repo contains the official website for Talent Sprint Classes, Berhampur.
 
-## Recommended IDE Setup
+## Tech Stack
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+- [Vue.js](https://vuejs.org/)
+- [Bootstrap](https://getbootstrap.com/)
+- [Firebase](https://firebase.google.com/)
 
-## Customize configuration
+## Project setup
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+1. Clone the repo
+```bash
+git clone https://github.com/54nd339/project-tsc.git
+```
+2. Install dependencies
+```bash
 npm install
 ```
-
-### Compile and Hot-Reload for Development
-
-```sh
+3. Run the project
+```bash
 npm run dev
 ```
-
-### Compile and Minify for Production
-
-```sh
+4. Build the project
+```bash
 npm run build
+```
+5. Preview the project
+```bash
+npm run preview
 ```
