@@ -52,7 +52,7 @@
 			</b-card>
 			<b-card id="student_detail" class="fade">
 				<b-form-input v-model="marks" type="text" class="d-flex mx-auto my-1"
-					size="lg" placeholder="Enter Recent Marks" required />
+					size="lg" placeholder="Enter Recent Marks (% or CGPA)" required />
 				<b-input-group class="m-1" prepend="Upload Photo">
 					<input type="file" class="d-flex mx-auto my-1" :name="pic" @change="onPicChange" required/>
 				</b-input-group>
@@ -130,7 +130,7 @@ const options = [
 const school = ref('')
 const grade = ref(0)
 const gradeList = [
-	{ value: 0, text: 'Select Grade'},
+	{ value: 0, text: 'Select Class'},
     { value: 5, text: '5' },
     { value: 6, text: '6' },
     { value: 7, text: '7' },

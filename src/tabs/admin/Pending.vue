@@ -17,7 +17,7 @@
 				<th scope="col" v-if="role == 'default'">Role</th>
 				<th scope="col">Email</th>
 				<th scope="col">View</th>
-                <th scope="col" v-if="role == 'student' || role == 'teacher'">Grade</th>
+                <th scope="col" v-if="role == 'student' || role == 'teacher'">Class</th>
                 <th scope="col" v-if="role == 'student'">Course</th>
                 <th scope="col" v-if="role == 'teacher'">Subject</th>
                 <th scope="col" v-if="role == 'staff'">Qualification</th>
@@ -56,7 +56,7 @@
                     <tr v-if="target.role == 'student'"><td>School</td><td>{{ target.school }}</td></tr>
                     <tr v-else><td>Qualification</td><td>{{ target.qualification }}</td></tr>
                     <tr v-if="target.role == 'student' || target.role == 'teacher'">
-                        <td>Grade</td><td>{{ target.class }}</td>
+                        <td>Class</td><td>{{ target.class }}</td>
                     </tr>
                     <tr v-else><td>Stream</td><td>{{ target.stream }}</td></tr>
                     <tr v-if="target.role == 'teacher'"><td>Subject</td><td>{{ target.subject }}</td></tr>

@@ -57,7 +57,8 @@ const submitQuery = async() => {
             limit: 100
         })
     }
-    const response = await fetch('https://us-central1-tsc-web-361112.cloudfunctions.net/generate', requestOptions)    
+    const response = await fetch('https://us-central1-tsc-web-361112.cloudfunctions.net/generate', requestOptions)  
+    console.log(response)  
     const data = await response.json()
     answer.value = data.result
     answers.value.push({

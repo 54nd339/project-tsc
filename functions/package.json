@@ -18,6 +18,7 @@
     "openai": "^3.1.0"
   },
   "devDependencies": {
+    "@gradio/client": "^0.10.0",
     "firebase-functions-test": "^0.2.0"
   },
   "private": false

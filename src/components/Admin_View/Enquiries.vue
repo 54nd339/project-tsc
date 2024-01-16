@@ -8,7 +8,7 @@
 				<th scope="col">#</th>
 				<th scope="col">Name</th>
 				<th scope="col">Course</th>
-				<th scope="col">Grade</th>
+				<th scope="col">Class</th>
 				<th scope="col">Phone</th>
 				<th scope="col">Enquiry</th>
 			</tr></thead>

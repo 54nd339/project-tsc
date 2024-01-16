@@ -37,7 +37,7 @@ const courseList = [
 ]
 const grade = ref(0)
 const gradeList = [
-	{ value: 0, text: 'Select Grade'},
+	{ value: 0, text: 'Select Class'},
     { value: 5, text: '5' },
     { value: 6, text: '6' },
     { value: 7, text: '7' },
