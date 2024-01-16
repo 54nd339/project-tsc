@@ -1,44 +1,19 @@
 const functions = require("firebase-functions")
-// const { Configuration, OpenAIApi } = require('openai')
 
 const cors = require('cors')
 const corsHandler = cors({ origin: true })
 
-// const config = new Configuration({
-// 	apiKey: process.env.OPENAI_KEY,
-// })
-// const openai = new OpenAIApi(config)
-
-// exports.generate = functions.https.onRequest(async (req, res) => {
-// 	corsHandler(req, res, async () => {
-// 		const completion = await openai.createCompletion({
-// 			model: 'text-davinci-003',
-// 			prompt: req.body.prompt,
-// 			temperature: 0.5,
-// 			max_tokens: req.body.limit,
-// 			top_p: 0.3,
-// 			frequency_penalty: 0.5,
-// 			presence_penalty: 0,
-// 		})
-// 		res.status(200).json({ result: completion.data.choices[0].text })
-// 	})
-// })
-import { client } from "@gradio/client";
-
-const app = await client("https://chansung-llama2-with-gradio-chat.hf.space/");
 exports.generate = functions.https.onRequest(async (req, res) => {
 	corsHandler(req, res, async () => {
+		const dynamic = new Function('modulePath', 'return import(modulePath)');
+		const { client } = await dynamic('@gradio/client');
+		const app = await client("https://chansung-llama2-with-gradio-chat.hf.space/");
 		const completion = await app.predict(1, [req.body.prompt])
 		res.status(200).json({ result: completion })
 	})
 });
 
 const admin = require('firebase-admin')
-// const serviceAccount = require('admin-creds.json')
-// admin.initializeApp({
-// 	credential: admin.credential.cert(serviceAccount),
-// 	databaseURL: "https://tsc-web-361112-default-rtdb.asia-southeast1.firebasedatabase.app/",
-// })
 admin.initializeApp()
 
 const delUser = (uid, data) => {
