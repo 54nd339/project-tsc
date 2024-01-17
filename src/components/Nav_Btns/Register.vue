@@ -17,7 +17,7 @@
 			</b-card>
 			<b-card id="pay" class="fade">
 				<p>Pay Here, ignore if you have already paid. You'll be Informed Soon. Contact 9439133317 for fee details and approval status.</p>
-				<b-img src="https://www.payumoney.com/media/images/payby_payumoney/new_buttons/21.png" fluid alt="QR" />
+				<b-img src="https://firebasestorage.googleapis.com/v0/b/tsc-web-361112.appspot.com/o/QR%20Code%20-%20M_s%20TALENT%20SPRINT%20GROUP%20OF%20INSTITUTIONS%20%20(2).png?alt=media&token=7a9d57d0-ad68-4871-a52d-923344311fe1" fluid alt="QR" />
 				<b-input-group prepend="Upload Screenshot">
 					<input type="file" class="d-flex mx-auto my-1" :name="payscreen" @change="onPayChange" required/>
 				</b-input-group>
