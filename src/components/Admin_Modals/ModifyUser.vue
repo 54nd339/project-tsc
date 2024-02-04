@@ -33,10 +33,10 @@ const props = defineProps({
 const emit = defineEmits(['submitClick', 'setNav'])
 
 const index = props.title.indexOf('_')
-var colId = props.title.toLowerCase() + 's'
+var collectionId = props.title.toLowerCase() + 's'
 var titId = props.title
 if(index > 0) {
-	colId = colId.substring(index + 1)
+	collectionId = collectionId.substring(index + 1)
 	titId = 'User'
 }
 const titleName = 'Modify ' + titId
@@ -48,7 +48,7 @@ const phone = ref('')
 const dob = ref('')
 
 const loadData = async () => {
-	(await useDocument(colId, props.id))
+	(await useDocument(collectionId, props.id))
 	.getDetail().then((doc) => {
 		name.value = doc.name
 		email.value = doc.email

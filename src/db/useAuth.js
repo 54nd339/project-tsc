@@ -27,20 +27,13 @@ const useAuth = () => {
     const login = async (email, password) => {
         isPending.value = true
 
-        return await setPersistence(auth, browserSessionPersistence)
-        .then(async() => {
-            return await signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                isPending.value = false
-                return userCredential.user
-            }).catch((err) => {
-                console.log(err.message)
-                error.value = 'Incorrect login credentials'
-                isPending.value = false
-            }) 
+        return await signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            isPending.value = false
+            return userCredential.user
         }).catch((err) => {
             console.log(err.message)
-            error.value = 'Could not log in'
+            error.value = 'Incorrect login credentials'
             isPending.value = false
         })
     }

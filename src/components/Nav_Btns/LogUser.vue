@@ -65,8 +65,11 @@ const handleLogin = async() => {
 		loginpg.value = false
 		if(res) {
 			const docRef = doc(db, pathName + 's', res.uid)
+			localStorage.setItem('role', pathName)
+			localStorage.setItem('uid', res.uid)
+
 			await getDoc(docRef).then((doc) => {
-				if(doc.exists()) {	// console.log('Document data:', doc.data())
+				if(doc.exists()) {
 					btn.click(); warnmsg.value = ''
 					router.push({ path: `/${pathName}/${res.uid}` })
 				} else {
@@ -93,6 +96,9 @@ const handleLogout = async() => {
 		logoutpg.value = false
 		btn.click()
 		router.push({ path: `/` })
+
+		localStorage.removeItem('role')
+		localStorage.removeItem('uid')
 	}).catch((err) => {
 		console.log(err)
 		warnmsg.value = logoutErr
@@ -101,5 +107,4 @@ const handleLogout = async() => {
 </script>
 
 <style>
-
 </style>

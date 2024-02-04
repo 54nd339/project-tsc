@@ -3,13 +3,16 @@ import { auth } from '@/db/config'
 import Welcome from '@/views/Welcome.vue'
 
 const requireAuth = (to, from, next) => {
-    let user = auth.currentUser
-    if (!user) {
-        next({ name: 'Welcome' })
-    } else {
-        next()
-    }
+    const unsubscribe = auth.onAuthStateChanged(user => {
+        if (!user) {
+            next({ name: 'Welcome' })
+        } else {
+            next()
+        }
+        unsubscribe();
+    });
 }
+
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL), 
     routes: [ 
@@ -17,7 +20,19 @@ const router = createRouter({
             path: '/',
             name: 'Welcome',
             component: Welcome,
-            meta: { title: 'Talent Sprint Classes' }
+            meta: { title: 'Talent Sprint Classes' },
+            beforeEnter: (to, from, next) => {
+                const role = localStorage.getItem('role')
+                if (role) {
+                    next({
+                        name: role.charAt(0).toUpperCase() + role.slice(1),
+                        params: { id: localStorage.getItem('uid') }
+                    })
+                } else {
+                    next()
+                }
+            }
+
         },
         {
             path: '/admin/:id',
@@ -40,10 +55,10 @@ const router = createRouter({
             meta: { title: 'TSC - Teacher' },
             beforeEnter: requireAuth
         },
-        // {
-        //     path: '/:catchAll(.*)',
-        //     redirect: { name: 'Welcome' }
-        // }
+        {
+            path: '/:catchAll(.*)',
+            redirect: { name: 'Welcome' }
+        }
     ]
 })
 
