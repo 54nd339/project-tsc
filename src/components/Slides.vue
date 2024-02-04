@@ -1,24 +1,10 @@
 <template>
-	<b-carousel controls indicators :id="title">
-		<b-carousel-slide active :img-src="urls[0]"
-			img-height="480px" img-width="1024px" :caption="captions[0]"
-			:text="texts[0]" alt="image slot" />
-
-		<b-carousel-slide :img-src="urls[1]"
-			img-height="480px" img-width="1024px" :caption="captions[1]"
-			:text="texts[1]" alt="image slot" />
-
-		<b-carousel-slide :img-src="urls[2]"
-			img-height="480px" img-width="1024px" :caption="captions[2]"
-			:text="texts[2]" alt="image slot" />
-
-		<b-carousel-slide :img-src="urls[3]"
-			img-height="480px" img-width="1024px" :caption="captions[3]"
-			:text="texts[3]" alt="image slot" />
-
-		<b-carousel-slide :img-src="urls[4]"
-			img-height="480px" img-width="1024px" :caption="captions[4]"
-			:text="texts[4]" alt="image slot" />
+	<b-carousel controls :id="title">
+		<b-carousel-slide v-for="(item, index) in carouselItems" :key="item.id"
+			:img-src="item.url" img-height="480px" img-width="1024px"
+			:active="index === 0" :id="item.id" :img-alt="item.title"
+			:caption="item.title" :text="item.context"
+		/>
 	</b-carousel>
 </template>
 
@@ -28,23 +14,16 @@ const props = defineProps({
 		type: String,
 		required: true,
 	},
-	urls: {
+	carouselItems: {
 		type: Array,
 		required: true,
 	},
-	captions: {
-		type: Array,
-		required: true,
-	},
-	texts: {
-		type: Array,
-		required: true,
-	}
-})
-
-// Do something
+});
 </script>
 
 <style>
-
+.carousel-caption {
+	display: inline-block;
+	background: radial-gradient(circle, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+}
 </style>

@@ -4,7 +4,7 @@
 			<div class="light-overlay">
 				<h2>Award & Achievements</h2>
 				<div class="photo-section shadow rounded">
-					<Slides title="Awardss" :urls="awardUrls" :captions="awardCaptions" :texts="awardTexts" />
+					<Slides title="Awards" :carouselItems="awards" />
 				</div>
 			</div>
 		</b-row>
@@ -12,7 +12,7 @@
 			<div class="light-overlay">
 				<h2>Cultural Activities</h2>
 				<div class="photo-section shadow rounded">
-					<Slides title="Activities" :urls="actUrls" :captions="actCaptions" :texts="actTexts" />
+					<Slides title="Activities" :carouselItems="activities" />
 				</div>
 			</div>
 		</b-row>
@@ -20,7 +20,7 @@
 			<div class="light-overlay">
 				<h2>Gallery</h2>
 				<div class="photo-section shadow rounded">
-					<Slides title="Gallery" :urls="galUrls" :captions="galCaptions" :texts="galTexts" />
+					<Slides title="Gallery" :carouselItems="gallery" />
 				</div>
 			</div>
 		</b-row>
@@ -32,15 +32,9 @@ import Slides from '@/components/Slides.vue'
 import getCollection from '@/db/getCollection'
 import { ref } from 'vue'
 
-const awardUrls = ref([])
-const awardCaptions = ref([])
-const awardTexts = ref([])
-const actUrls = ref([])
-const actCaptions = ref([])
-const actTexts = ref([])
-const galUrls = ref([])
-const galCaptions = ref([])
-const galTexts = ref([])
+const awards = ref([])
+const activities = ref([])
+const gallery = ref([])
 
 const loadData = async() => {
     await(getCollection('gallery'))
@@ -48,19 +42,13 @@ const loadData = async() => {
 		if(docs)
 			docs.forEach((doc) => {
 				if(doc.role == 'awards') {
-					awardUrls.value.push(doc.url)
-					awardCaptions.value.push(doc.caption)
-					awardTexts.value.push(doc.text)
+					awards.value.push(doc)
 				}
 				else if(doc.role == 'activities') {
-					actUrls.value.push(doc.url)
-					actCaptions.value.push(doc.caption)
-					actTexts.value.push(doc.text)
+					activities.value.push(doc)
 				}
 				else if(doc.role == 'photos') {
-					galUrls.value.push(doc.url)
-					galCaptions.value.push(doc.caption)
-					galTexts.value.push(doc.text)
+					gallery.value.push(doc)
 				}
 			})
 	}).catch((err) => {

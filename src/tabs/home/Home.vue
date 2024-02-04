@@ -1,6 +1,6 @@
 <template>
 	<div class="shadow mb-4">
-		<Slides title="Banners" :urls="banUrls" :captions="banCaptions" :texts="banTexts" />
+		<Slides title="Banners" :carouselItems="banners" />
 	</div>
 	<div id="content" class="container-fluid">
 		<Vision />
@@ -24,18 +24,12 @@ import Faqs from '@/components/Welcome_Home/Faqs.vue'
 import getCollection from '@/db/getCollection'
 import { ref } from 'vue'
 
-const banUrls = ref([])
-const banCaptions = ref([])
-const banTexts = ref([])
+const banners = ref([])
 const loadData = async() => {
     await(getCollection('gallery', ['role', '==', 'banners']))
     .getDocuments().then((docs) => {
 		if(docs) {
-			docs.forEach((doc) => {
-				banUrls.value.push(doc.url)
-				banCaptions.value.push(doc.title)
-				banTexts.value.push(doc.context)
-			})
+			banners.value = docs
 		}
 	}).catch((err) => {
 		console.log(err)

@@ -8,7 +8,7 @@
                 <div class="scroller p-3">
                     <div class="scroller__item m-2 rounded border border-success" v-for="(topper, index) in toppers" :key="topper"
                         :class="{ shadow: isHover && ind == index }"  @mouseover="isHover = true; ind = index" @mouseout="isHover = false; ind = -1">
-                        <img :src="topper.url" width="250" height="250" alt="topper" />
+                        <img :src="topper.url" class="topper-image rounded" alt="topper" />
                         <div class="d-flex flex-column align-items-center justify-content-center">
                             <h4><strong>{{ topper.name }}</strong></h4>
                             <h6>{{ topper.course }} : {{ topper.score }}</h6>
@@ -44,7 +44,7 @@ loadData()
     /* How long one slide is visible on screen (from entering screen to leaving it) */
     --scrolling-gallery-item-duration: 15s;
     /* How many items we want to see on screen at once */
-    --scrolling-gallery-items-visible: 5;
+    --scrolling-gallery-items-visible: v-bind(toppers.length/2);
     /* How many items are to scroll */
     --scrolling-gallery-items-total: v-bind(toppers.length/2);
     overflow: hidden;
@@ -99,5 +99,10 @@ loadData()
 }
 .scroller:hover, .scroller:focus {
     animation-play-state: paused;
+}
+.topper-image {
+    max-height: 550px;
+    width: auto;
+    max-width: 100%;
 }
 </style>
