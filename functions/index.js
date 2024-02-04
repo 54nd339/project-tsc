@@ -7,7 +7,7 @@ exports.generate = functions.https.onRequest(async (req, res) => {
 	corsHandler(req, res, async () => {
 		const dynamic = new Function('modulePath', 'return import(modulePath)');
 		const { client } = await dynamic('@gradio/client');
-		const app = await client("https://chansung-llama2-with-gradio-chat.hf.space/");
+		const app = await client("https://chansung-palm-with-gradio-chat.hf.space/");
 		const completion = await app.predict(1, [req.body.prompt])
 		res.status(200).json({ result: completion })
 	})
