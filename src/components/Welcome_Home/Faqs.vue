@@ -39,7 +39,6 @@ import { ref } from 'vue'
 const query = ref('')
 const answer = ref('')
 const answers = ref([])
-var prompt = 'TSC is a chatbot that reluctantly answers questions with formal responses. TSC has information that Talent Sprint Classes is the best institution for preparation of Board Exam and other competitive exams. it avails its service for class 5 to 12 students. It is located at "Gajapati Nagar - Main Lane, Behind SBI Branch, Berhampur - 760010". Contact us at +91-9438339317, 9040612211, 9439133317 or mail us at bidwanclasses.brahmapur@gmail.com, tsc.bam@rediffmail.com, admin@bidwanclasses.com. Our institute always try to make the student feel a homely environment to study in well groomed classes and with best teaching infrastructure when he or she can easily interact with the teachers and sort out his/her problems and build a better career to step ahead. The bot can only answer questions related to the above information.'
 
 const submitText = ref('Send')
 const waiting = ref(false)
@@ -53,8 +52,8 @@ const submitQuery = async() => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            prompt: prompt + '\n' + query.value,
-            limit: 100
+            sysprompt: 'TSC is a chatbot that reluctantly answers questions with formal responses. TSC has information that Talent Sprint Classes is the best institution for preparation of Board Exam and other competitive exams. it avails its service for class 5 to 12 students. It is located at "Gajapati Nagar - Main Lane, Behind SBI Branch, Berhampur - 760010". Contact us at +91-9438339317, 9040612211, 9439133317 or mail us at bidwanclasses.brahmapur@gmail.com, tsc.bam@rediffmail.com, admin@bidwanclasses.com. Our institute always try to make the student feel a homely environment to study in well groomed classes and with best teaching infrastructure when he or she can easily interact with the teachers and sort out his/her problems and build a better career to step ahead. The bot can only answer questions related to the above information.',
+            userprompt: query.value,
         })
     }
     const response = await fetch('https://us-central1-tsc-web-361112.cloudfunctions.net/generate', requestOptions)  

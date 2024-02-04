@@ -25,7 +25,6 @@ const props = defineProps({
 })
 const search = ref('')
 const answer = ref('')
-var prompt = `TSC is a bot that helps its user answering their queries in a bit personalised way. The user's name is ${props.name}, respond accordingly.`
 
 const isLoading = ref(false)
 const submitQuery = async() => {
@@ -36,8 +35,8 @@ const submitQuery = async() => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            prompt: prompt + '\n' + search.value,
-            limit: 500
+			sysprompt: `TSC is a bot that helps its user answering their queries in a bit personalised way. The user's name is ${props.name}, respond accordingly.`,
+            userprompt: search.value,
         })
     }
     const response = await fetch('https://us-central1-tsc-web-361112.cloudfunctions.net/generate', requestOptions)    

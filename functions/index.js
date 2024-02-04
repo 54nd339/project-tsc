@@ -7,9 +7,19 @@ exports.generate = functions.https.onRequest(async (req, res) => {
 	corsHandler(req, res, async () => {
 		const dynamic = new Function('modulePath', 'return import(modulePath)');
 		const { client } = await dynamic('@gradio/client');
-		const app = await client("https://chansung-palm-with-gradio-chat.hf.space/");
-		const completion = await app.predict(1, [req.body.prompt])
-		res.status(200).json({ result: completion })
+		const app = await client("https://huggingface-projects-llama-2-7b-chat.hf.space/--replicas/djqud/");
+		
+		const result = await app.predict("/chat", [
+			req.body.userprompt,
+			req.body.sysprompt,
+			50,		// Max tokens (between 1 and 2048)
+			1,		// Temperature (between 0.1 and 4.0)
+			0.05,	// Top-p (nucleus sampling) (between 0.05 and 1.0))
+			1,		// Top-k (between 1 and 1000)
+			1,		// Repetition penalty (between 1.0 and 2.0)
+		]);
+
+		res.status(200).json({ result: result.data });
 	})
 });
 
