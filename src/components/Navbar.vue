@@ -23,6 +23,7 @@
 					<b-button id="login" variant="outline-success" v-b-modal.loginForm>Login</b-button>
 					<b-button id="register" variant="success" v-b-modal.registerForm>Register</b-button>
 				</b-button-group>
+				<b-button id="download" variant="outline-success" class="mx-md-1" @click="onClick">Download APK</b-button>
 				<Register />
 			</div>
 			<div class="col-md-3 text-end" v-else>
@@ -162,6 +163,12 @@ const modUser = async(name, mail) => {
 		})
 	}
 }
+
+const onClick = async() => {
+	const appLink = 'https://firebasestorage.googleapis.com/v0/b/tsc-web-361112.appspot.com/o/base.apk?alt=media&token=78705e7b-a3c3-4af2-80a6-9aeb56f6c448'
+    window.open(appLink, '_blank')
+}
+
 const home = () => {
 	const btn = document.getElementById('logout')
 	if(btn)
