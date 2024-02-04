@@ -28,9 +28,9 @@
 			</div>
 			<div class="col-md-3 text-end" v-else>
 				<b-button-group class="mx-md-1">
-					<b-button id="search" variant="outline-success" v-b-modal.searchModal>
+					<!-- <b-button id="search" variant="outline-success" v-b-modal.searchModal>
 						<font-awesome-icon icon="fa-solid fa-magnifying-glass" />
-					</b-button>
+					</b-button> -->
 					<b-button id="setting" variant="outline-success" v-b-modal.modifyUser @click="invoke">
 						<font-awesome-icon icon="fa-solid fa-gear" />
 					</b-button>
@@ -38,7 +38,7 @@
 						<font-awesome-icon icon="fa-solid fa-indian-rupee-sign" />
 					</b-button>
 				</b-button-group>
-				<Search :name="userName" />
+				<!-- <Search :name="userName" /> -->
 				<Fee v-if="userType === 'Student'" />
 				<ModifyUser :title="`Nav_${userType}`" :id="uid" ref="modRef" @setNav="modUser" />
 				<b-button id="logout" variant="outline-success" class="mx-md-1" v-b-modal.logoutConfirm>Logout</b-button>
@@ -52,7 +52,7 @@
 <script setup>
 import LogUser from '@/components/Nav_Btns/LogUser.vue'
 import Register from '@/components/Nav_Btns/Register.vue'
-import Search from '@/components/Nav_Btns/Search.vue'
+// import Search from '@/components/Nav_Btns/Search.vue'
 import Fee from '@/components/Nav_Btns/Fee.vue'
 import ModifyUser from '@/components/Admin_Modals/ModifyUser.vue'
 

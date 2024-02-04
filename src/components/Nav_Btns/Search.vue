@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
 	<b-modal id="searchModal" title="Search" aria-labelledby="searchModal" aria-hidden="true" :hide-footer="true">
 		<b-form>
 			<b-input-group size="lg">
@@ -51,4 +51,8 @@ const submitQuery = async() => {
 
 <style>
 
-</style>
+</style> -->
+
+<template>
+	
+</template>

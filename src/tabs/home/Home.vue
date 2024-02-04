@@ -7,7 +7,7 @@
 		<Batches />
 		<Toppers />
 		<b-row id="extras" class="m-md-3">
-			<Enquiry /><Notices /><Faqs />
+			<Enquiry /><Notices /><Map />
 		</b-row>
 	</div>
 </template>
@@ -19,7 +19,8 @@ import Batches from '@/components/Welcome_Home/Batches.vue'
 import Toppers from '@/components/Welcome_Home/Toppers.vue'
 import Enquiry from '@/components/Welcome_Home/Enquiry.vue'
 import Notices from '@/components/Welcome_Home/Notices.vue'
-import Faqs from '@/components/Welcome_Home/Faqs.vue'
+import Map from '@/components/Welcome_Home/Map.vue'
+// import Faqs from '@/components/Welcome_Home/Faqs.vue'
 
 import getCollection from '@/db/getCollection'
 import { ref } from 'vue'

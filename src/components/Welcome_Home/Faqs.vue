@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <b-col md="4" id="queries" class="p-1">
         <b-container fluid>
             <h2 class="m-md-1 py-3 d-flex justify-content-center heading">Chat With Us</h2>
@@ -82,4 +82,8 @@ const submitQuery = async() => {
     /* Control snap from here */
     scroll-snap-align: start;
 }
-</style>
+</style> -->
+
+<template>
+    
+</template>
