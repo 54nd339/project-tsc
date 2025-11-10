@@ -1,26 +1,24 @@
-.DS_Store
-node_modules
-/dist
+# dependencies
+/node_modules
 
-# local env files
-.env.local
-.env.*.local
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# env files
+.env*.local
 .env
 
-# Log files
+# debug
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
 
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 
-ToDo
-/src/TEST
+# misc
+.DS_Store
+

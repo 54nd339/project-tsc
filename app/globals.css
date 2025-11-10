@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 222 47% 31%;
+    --secondary: 174 48% 44%;
+    --accent: 152 56% 58%;
+  }
+
+  * {
+    @apply box-border;
+  }
+
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 overflow-x-hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-gray-900;
+  }
+}
+
+@layer components {
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded-lg;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary-600 rounded-lg hover:bg-primary-700;
+  }
+
+  /* Card Component */
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden;
+  }
+
+  .card-header {
+    @apply px-6 py-4 border-b border-gray-200 bg-gray-50;
+  }
+
+  .card-body {
+    @apply p-6;
+  }
+
+  /* Button Components */
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500;
+  }
+
+  .btn-success {
+    @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+  }
+
+  .btn-warning {
+    @apply bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500;
+  }
+
+  .btn-info {
+    @apply bg-cyan-600 text-white hover:bg-cyan-700 focus:ring-cyan-500;
+  }
+
+  .btn-outline-primary {
+    @apply border border-blue-600 text-blue-600 hover:bg-blue-50 focus:ring-blue-500;
+  }
+
+  .btn-outline-success {
+    @apply border border-green-600 text-green-600 hover:bg-green-50 focus:ring-green-500;
+  }
+
+  .btn-outline-danger {
+    @apply border border-red-600 text-red-600 hover:bg-red-50 focus:ring-red-500;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+
+  /* Badge Component */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .bg-success {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .bg-warning {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .bg-danger {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .bg-info {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  /* Form Components */
+  .form-control {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+
+  .form-select {
+    @apply form-control;
+  }
+
+  /* Loading Spinner */
+  .loading-spinner {
+    @apply border-4 border-gray-200 border-t-blue-600 rounded-full w-10 h-10 animate-spin;
+  }
+}
+
+@layer utilities {
+  .text-primary {
+    @apply text-blue-600;
+  }
+
+  .text-success {
+    @apply text-green-600;
+  }
+
+  .text-danger {
+    @apply text-red-600;
+  }
+
+  .text-warning {
+    @apply text-yellow-600;
+  }
+
+  .text-muted {
+    @apply text-gray-500;
+  }
+
+  .bg-light {
+    @apply bg-gray-50;
+  }
+}
+
